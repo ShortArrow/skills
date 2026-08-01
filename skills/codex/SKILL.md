@@ -1,36 +1,44 @@
 ---
 name: codex
-description: OpenAI Codex CLIを使用したコードレビュー、分析、コードベースへの質問を実行する。使用場面: (1) コードレビュー依頼時、(2) コードベース全体の分析、(3) 実装に関する質問、(4) バグの調査、(5) リファクタリング提案、(6) 解消が難しい問題の調査。トリガー: "codex", "コードレビュー", "レビューして", "分析して", "/codex"
+description: Run a code review, an analysis, or a question about a codebase through the OpenAI Codex CLI. Use when asked to review code, analyse a whole codebase, explain an implementation, investigate a bug, suggest a refactor, or look into a problem that has resisted a direct approach — that is, when a second independent reading is worth more than continuing alone.
 ---
 
 # Codex
 
-Codex CLIを使用してコードレビュー・分析を実行するスキル。
+Delegates reading to the Codex CLI. The sandbox is read-only, so this
+analyses and reports; it never edits.
 
-## 実行コマンド
-
+```
 codex exec --full-auto --sandbox read-only --cd <project_directory> "<request>"
+```
 
-## パラメータ
+| Parameter | Meaning |
+|---|---|
+| `--full-auto` | Run without prompting |
+| `--sandbox read-only` | Cannot write — safe for analysis |
+| `--cd <dir>` | The project to read |
+| `"<request>"` | What to ask. Any language. |
 
-| パラメータ | 説明 |
-|-----------|------|
-| `--full-auto` | 完全自動モードで実行 |
-| `--sandbox read-only` | 読み取り専用サンドボックス（安全な分析用） |
-| `--cd <dir>` | 対象プロジェクトのディレクトリ |
-| `"<request>"` | 依頼内容（日本語可） |
+## Examples
 
-## 使用例
+Review:
 
-### コードレビュー
-codex exec --full-auto --sandbox read-only --cd /path/to/project "このプロジェクトのコードをレビューして、改善点を指摘してください"
+```
+codex exec --full-auto --sandbox read-only --cd /path/to/project \
+  "Review this project's code and point out what should be improved"
+```
 
-### バグ調査
-codex exec --full-auto --sandbox read-only --cd /path/to/project "認証処理でエラーが発生する原因を調査してください"
+Investigate:
 
-## 実行手順
+```
+codex exec --full-auto --sandbox read-only --cd /path/to/project \
+  "Find out why the authentication path raises an error"
+```
 
-1. ユーザーから依頼内容を受け取る
-2. 対象プロジェクトのディレクトリを特定する
-3. 上記コマンド形式でCodexを実行
-4. 結果をユーザーに報告
+## Procedure
+
+1. Take the request.
+2. Identify the project directory — Codex reads only what `--cd` points at.
+3. Run the command above.
+4. Report the result, and say plainly where it disagrees with your own
+   reading rather than silently merging the two.

@@ -1,98 +1,174 @@
 ---
 name: clean-docs
-description: 恒久成果物 (PR body・commit・CHANGELOG・ADR・README・PRD・仕様書・ソースコード) を書くときの規律。(1) 会話内でしか通じない略称・ラベルを持ち込まない。(2) ドキュメントにも DIP がある — 安定・抽象な生きた文書 (README/PRD/原則/コード) は揮発・具体なジャーナル (ADR/CHANGELOG/PR) に依存してはいけない。生きた文書から ADR 番号・§参照・リンクを張らない、相互リンク(循環)禁止、本文は今の仕様だけ書き旧仕様や経緯を残さない、未決事項は TODO/ロードマップへ分離、ADR は判断ロジックを書き経緯ナラティブは書かない。(3) 生きた文書は docs ルートに集約。トリガー: "PR作って", "commit", "CHANGELOG", "ADR", "issue", README/PRD の編集、レビュー結果や監査結果を成果物に書き写すとき、「See ADR-NNNN」を書きたくなったとき。
+description: Discipline for writing durable artifacts — PR bodies, commits, CHANGELOGs, ADRs, READMEs, PRDs, specifications, source code. (1) Never carry a label that only means something inside the conversation. (2) Documents obey the dependency inversion principle: a stable, abstract living document (README, PRD, principles, code) must not depend on a volatile, concrete journal (ADR, CHANGELOG, PR). No ADR numbers or section references pointing out of a living document, no mutual links, no former behaviour or history in the body, undecided items separated out, and an ADR that records reasoning rather than narrative. (3) Living documents belong together under the docs root. Use when writing a PR, a commit, a CHANGELOG, an ADR or an issue, when editing a README or PRD, when copying review or audit findings into an artifact, and whenever you are about to write "See ADR-NNNN".
 ---
 
 # Self-Contained Artifacts
 
-恒久成果物は、**この会話が存在しなくなった後に、会話を見たことがない人が読む**。さらにドキュメント群には**アーキテクチャ (層と依存方向) がある**。プログラムの実装だけでなくドキュメンテーションもクリーンアーキテクチャであるべき、というのがこのスキルの核。
+A durable artifact is **read after this conversation has ceased to exist,
+by someone who never saw it**. Beyond that, a set of documents has an
+**architecture — layers, and a direction of dependency**. Clean
+architecture is not only for the implementation; the documentation has one
+too. That is the whole of this skill.
 
-## 規律 1: 会話内ラベルを成果物に持ち込まない
+## Discipline 1: conversation labels stay in the conversation
 
-### 実際に起きた失敗
+### What actually happened
 
-プロジェクト全体監査で findings に H1/H2/H3、M1-M4 というラベルを付けて会話内で整理し、そのラベルを PR body にそのまま書いた:
+During a project-wide audit the findings were organised in conversation as
+H1/H2/H3 and M1–M4, and those labels went straight into a PR body:
 
 > This PR fixes all three (the audit's H1-H3): ...
 
-H1-H3 の定義はどのドキュメントにも存在せず、会話ログの中にしかない。user 指摘: 「ドキュメントにも書いてないしPRに書いてもあとから読んで理解不能だろ変なところで略称つかうな」。
+H1–H3 are defined in no document. They exist only in the conversation log.
+The user's response: *it isn't in any document either, and putting it in
+the PR makes it unreadable later — stop using abbreviations in places they
+don't belong.*
 
-### 規則
+### Rules
 
-1. **会話内ラベルは成果物に書く瞬間に展開する。** H1/M2、「案A」、「前述の3件」、「例の問題」— 成果物側では「どのファイルの何がどうなっているか」の平文に置き換える。
-2. **成果物単体で全文が理解できるかを提出前に確認する。** その成果物だけを読んで (a) 何が変わったか、(b) なぜか、(c) 何が残っているか、が分かるか。会話ログ・自分の記憶への暗黙参照が必要なら書き直し。
-3. **整理用ラベルは会話内では使ってよい。** 禁止するのは「成果物への持ち込み」だけ。
-4. **PR body は特に混入しやすい。** commit message からのコピペではなく会話の要約から書きがちなため。
+1. **Expand a conversation label at the moment it enters an artifact.**
+   H1/M2, "option A", "the three from earlier", "that problem" — in the
+   artifact, write plainly which file, and what about it.
+2. **Check before submitting that the artifact stands alone.** Reading only
+   this artifact, can someone tell (a) what changed, (b) why, and (c) what
+   is left? If it needs the conversation log or your memory, rewrite it.
+3. **Labels are fine inside the conversation.** What is forbidden is
+   carrying them across.
+4. **PR bodies are where this leaks most.** They tend to be written from a
+   summary of the conversation rather than from the commits.
 
-## 規律 2: ドキュメントの DIP (依存関係逆転)
+## Discipline 2: dependency inversion for documents
 
-### 核
+### The core
 
-**安定・抽象な文書（生きた文書＝上位）は、揮発・具体な文書（ジャーナル＝下位）への依存を持ってはいけない。ポインタは常に具体側が持つ。** これは DIP そのもの — 上位方針が下位詳細に結合すると、揮発物の変更で安定物が壊れる。コードで避けることを、ドキュメントでも避ける。
+**A stable, abstract document (a living document — the upper layer) must
+not depend on a volatile, concrete one (a journal — the lower layer). The
+pointer always belongs to the concrete side.** This is DIP exactly: when
+a high-level policy couples to a low-level detail, a change in the
+volatile thing breaks the stable one. Avoid in documentation what you
+avoid in code.
 
-「参照は一方向」はこの帰結であって公理ではない。公理は「安定を揮発から守る」で、向きも・相互リンク禁止も・下記の全規則もそこから導ける。
+"References point one way" is a consequence, not the axiom. The axiom is
+*protect the stable from the volatile*, and the direction, the ban on
+mutual links, and every rule below all follow from it.
 
-### 層の定義
+### The layers
 
-| 層 | 文書 | 性質 |
+| Layer | Documents | Nature |
 |---|---|---|
-| 上位 (安定・抽象・現在形) | 原則文書 (PRINCIPLES 等)、PRD・仕様書、README、ソースコード・スキーマ | 常に「今の姿」を語る。編集されて進化する |
-| 下位 (揮発・具体・過去形) | ADR、CHANGELOG、リリースノート、PR、issue、commit | 追記専用の決定・変更の記録。書いた時点で凍結 |
+| Upper — stable, abstract, present tense | Principles, PRD and specifications, README, source code and schemas | Always describe how things *are*. Edited as they evolve. |
+| Lower — volatile, concrete, past tense | ADR, CHANGELOG, release notes, PR, issue, commit | Append-only records of a decision or a change. Frozen when written. |
 
-ジャーナル内部にも詳細度の階層がある (commit < PR < CHANGELOG < ADR)。層はフラクタルに入れ子になっている。
+The journals have their own internal gradient of specificity — commit <
+PR < CHANGELOG < ADR. The layering is fractal.
 
-### 規則: 参照は 具体 → 抽象 の一方向
+### Rule: references run concrete → abstract only
 
-- **生きた文書からジャーナルへの参照は NG。** README・PRD・原則文書・ソースコードコメントに「ADR-0032 参照」「(ADR-0028)」「詳細は CHANGELOG の 0.0.34」と書かない。それは安定→揮発の依存＝DIP 違反。
-- **ポインタは具体側が持つ。** ADR / CHANGELOG が仕様の §番号・ファイルパス・関数名を名指しするのは正しい (揮発物が安定物を指す方向)。
-- **相互リンクは禁止。** 双方向＝循環参照。安定物が揮発物に依存する辺が必ず生まれる。
-- **フラクタルに適用する。** ジャーナル内部でも同じ。同一階層内の参照は可、別階層をまたぐ参照は 具体→抽象 の一方向のみ。「ジャーナル同士なら無条件 OK」ではない。
-- **ジャーナルは凍結後に参照先の改訂へ追従しない。** §番号・パスだけに依存せず、対象の内容を一文引用して自己完結させる。
+- **A living document never points at a journal.** No "see ADR-0032", no
+  "(ADR-0028)", no "details in CHANGELOG 0.0.34" in a README, a PRD, a
+  principles document or a source comment. That is a stable→volatile
+  dependency, and a DIP violation.
+- **The pointer belongs to the concrete side.** An ADR or CHANGELOG naming
+  a specification section, a file path or a function is correct — the
+  volatile thing points at the stable one.
+- **Mutual links are forbidden.** Bidirectional means circular, and one of
+  the two edges will always be stable depending on volatile.
+- **Apply it fractally.** The same holds inside the journals. References
+  within one level are fine; crossing levels goes concrete → abstract only.
+  "Journals may reference journals" is not unconditional.
+- **A frozen journal does not follow later revisions.** Do not rely on a
+  section number or a path alone — quote a sentence of what you are
+  referring to so the entry stands on its own.
 
-### 規則: 生きた文書は「今」だけを語る
+### Rule: a living document describes only the present
 
-- **git が履歴を持つのだから、本文には現在の仕様だけを書く。** 旧仕様・「かつては〜だった」・決定に至る経緯を本文に残さない。それらは下位（ジャーナル / git の差分）の持ち物。
-- **経緯 (Why) は ADR、履歴の差分は git、現在の What は本文。** バージョン番号のような恒久事実 (「0.0.34 で改名」) は本文に書いてよい。
+- **Git holds the history, so the body holds only the current
+  specification.** No former behaviour, no "this used to be…", no account
+  of how the decision was reached. Those belong to the lower layer — the
+  journals, and git's diffs.
+- **Why belongs in the ADR, the historical diff in git, the current What in
+  the body.** A permanent fact such as a version number ("renamed in
+  0.0.34") may appear in the body.
 
-### 規則: 未決事項を本体に溶かさない
+### Rule: undecided items do not dissolve into the body
 
-- **「まだ決めていない」「後でやる」「暫定」を仕様本文のプロースに混ぜない。** 本文が「今の確定した姿」であることを壊し、読者が確定仕様と未確定の希望を区別できなくなる。
-- 未決事項は **TODO** か、**ロードマップ（上位の生きた文書）への昇格**として分離する。
+- **Keep "not decided yet", "later" and "provisional" out of specification
+  prose.** They break the body's promise of being the settled present, and
+  the reader can no longer separate what is fixed from what is hoped for.
+- Separate them into a **TODO**, or promote them into a **roadmap** — which
+  is itself a living document.
 
-### コードコメントの扱い
+### Code comments
 
-コードは生きた文書なので、上記の規則がコメントにもそのまま効く。種別ごとに:
+Code is a living document, so everything above applies to its comments.
+By kind:
 
-- **インラインコメント（関数内）は原則書かない。** 意図は関数名・変数名・構造で表す。**唯一の正当な例外は、コードが表現できない制約**だけ — 不変条件、外部仕様・環境が課す理由、あえてそうしない理由 (why-not)。「次の行が何をするか」の実況や、コードを読めば分かる説明は書かない。
-- **変数コメントはリネームの合図。** 変数に説明コメントを付けたくなったら、コメントではなく名前を直す。
-- **docstring（関数コメント）はインターフェースの契約を書く場所。** 何をするか・引数・戻り値・不変条件を書く。実装の How は本体で表す。
-- **経緯コメントを残さない。** `// かつては同期版だった` `// bug #123 対策で非同期化` は生きた文書に経緯を残す行為。判断は ADR、変更は commit/PR、履歴は git が持つ。コメントには今の制約だけを書く。
-- **由来・レビュー痕を書かない。** `// added per review` `// レビュー指摘対応` `// 〜の依頼で` — 会話・作業の由来を成果物に持ち込まない (規律 1 と同じ)。
-- **`// TODO` は本文プロースへの未決混入。** 未決事項をコメントに溜めない。トラッカーかロードマップ（上位の生きた文書）へ分離する。
+- **Do not write inline comments inside a function.** Intent belongs in
+  the function name, the variable names and the structure. **The one
+  legitimate exception is a constraint the code cannot express** — an
+  invariant, a reason imposed by an external specification or environment,
+  or a deliberate why-not. Never narrate what the next line does, and never
+  explain what reading the code would tell you.
+- **A comment on a variable is a signal to rename it.** When you want to
+  explain a variable, fix the name instead.
+- **A docstring is where the interface contract goes.** What it does, its
+  arguments, its return value, its invariants. The How lives in the body.
+- **No history in comments.** `// this used to be synchronous`, `// made
+  async to fix bug #123` — that is history stored in a living document. The
+  decision belongs to an ADR, the change to a commit or PR, the history to
+  git. A comment records only what constrains the code now.
+- **No provenance, no review scars.** `// added per review`, `// addresses
+  the review comment`, `// requested by …` — the origin of the work does
+  not belong in the artifact. Same as Discipline 1.
+- **`// TODO` is an undecided item leaking into prose.** Do not accumulate
+  them in comments. Move them to the tracker or the roadmap.
 
-### ADR に書くこと / 書かないこと
+### What an ADR is, and is not
 
-- **ADR は「どの設計が正しいか、それをどう判断したか」。** 判断のロジック・基準・トレードオフ・棄却した代替案を書く。
-- **「どんな経緯・事件があってこの判断に至ったか」の物語は書かない。** 障害の実況や会話の流れは、判断根拠として必要な事実だけを引用し、ナラティブとしては残さない。
+- **An ADR records which design is right and how that was judged.** The
+  reasoning, the criteria, the trade-offs, the alternatives rejected.
+- **It is not the story of what happened on the way there.** Where an
+  incident or a discussion supplies a fact the reasoning needs, quote the
+  fact; do not keep the narrative.
 
-### Why (DIP 違反が何を壊すか)
+### Why: what a DIP violation breaks
 
-1. **現在の仕様を理解するのにアーカイブ読みが必須になる。** 「See ADR-NNNN」は本文の説明不足を輸出しているだけ。本文が自己完結していれば参照は不要。
-2. **安定側が揮発側に結合する。** ADR が superseded になったとき、生きたドキュメント側に stale な参照が残り、全文 grep で刈り取る作業が発生する。上位層は下位層の変更で編集されてはいけない。
-3. **Why の置き場が二重化する。** Why は ADR、What は仕様書、How は実装 — 生きたドキュメントに ADR 参照を書き始めると Why が本文へ滲み出し、責務分離が崩れる。
+1. **Understanding the current specification starts to require reading the
+   archive.** "See ADR-NNNN" only exports the body's failure to explain
+   itself. A self-contained body needs no reference.
+2. **The stable side couples to the volatile side.** When an ADR is
+   superseded, stale references remain in the living documents and have to
+   be hunted down by grep. An upper layer must not need editing because a
+   lower one changed.
+3. **Why ends up in two places.** Why in the ADR, What in the
+   specification, How in the implementation — once a living document starts
+   citing ADRs, the Why bleeds into the body and the separation collapses.
 
-### 「Why を知りたい読者」への導線
+### The reader who wants to know why
 
-生きたドキュメント側に link が無くても Why には到達できる — ADR index を層の入口 (例: docs/decisions/README.md) として一覧し、各 ADR 本文が対象ファイル・§を名指ししているので、grep / index 経由で見つかる。コードから domain を探すときに usage 検索するのと同じで、導線はジャーナル側が持つ。
+They can still get there without a link from the living document. Index
+the ADRs at the entrance to their layer — `docs/decisions/README.md`, say —
+and since each ADR names the file and section it concerns, grep or the
+index finds it. It is the same as searching for usages to find a domain
+from the code: the path is the journal's responsibility, not the
+specification's.
 
-### Litmus テスト
+### Litmus test
 
-書こうとしている参照について:
-- 「この参照を辿らないと**現在の仕様**が分からない」→ 本文の説明不足。参照を消して本文を書き足す。
-- 「辿るのは**なぜこうなのか**知りたい人だけ」→ その導線は ADR 側の責務。参照を書かない。
-- 参照先がジャーナル (ADR/CHANGELOG/PR) で、書いている文書が生きたドキュメント → 安定→揮発の依存。書かない。
+For the reference you are about to write:
 
-## 規律 3: 生きた文書は docs ルートに集約する
+- "Without following this, the **current specification** is unclear" → the
+  body is underexplained. Delete the reference and finish the body.
+- "Only someone asking **why it is this way** would follow it" → that path
+  is the ADR's job. Do not write the reference.
+- The target is a journal (ADR, CHANGELOG, PR) and you are writing a living
+  document → stable depending on volatile. Do not write it.
 
-- **「今の姿」の入口は 1 つに保つ。** 生きた文書が散らばると、どれが現在の正か分からなくなり、更新漏れで版がずれる。docs ルート（＋明確な index）へ一元化する。
-- これは参照方向ではなく**物理配置**の規律。目的は「現在の仕様への単一の入口」を維持すること。
+## Discipline 3: living documents belong under the docs root
+
+- **Keep one entrance to the present.** Scattered living documents make it
+  unclear which one is currently right, and versions drift apart as updates
+  are missed. Consolidate under the docs root, with a clear index.
+- This is about **physical placement**, not reference direction. The
+  purpose is to maintain a single entrance to the current specification.

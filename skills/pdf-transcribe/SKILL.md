@@ -1,71 +1,82 @@
 ---
 name: pdf-transcribe
-description: PDF を Markdown に書き起こすときの品質規律。Read ツールの pages パラメータで PDF を直接読み、見たものだけを書く。推測でテーブル・リレーション・エンティティを補完しない。長い PDF は範囲を区切って task.md で進捗を追う。トリガー: 「PDF を Markdown に変換して」「この仕様書を読んで文書化して」、設計書・データモデル・帳票の PDF を扱うとき。
+description: Discipline for transcribing a PDF into Markdown. Read the PDF directly with the Read tool's pages parameter and write only what the page shows — never infer a table, a relation or an entity that is not there. Use when asked to convert a PDF to Markdown or to document a specification, and especially for design documents, data models and forms, where one invented line misleads whoever implements from it.
 ---
 
 # PDF to Markdown
 
-Read ツールは PDF を直接読める。`pages` で範囲を指定し、1 回あたり最大 20 ページ。10 ページを超える PDF では `pages` の指定が必須。
+The Read tool opens PDFs directly. `pages` selects the range, up to 20
+pages per call, and is required for a PDF longer than 10 pages.
 
 ```
 Read(file_path="spec.pdf", pages="1-5")
 ```
 
-**画像への変換は不要。** poppler も pdf2image も要らない。外部依存を増やさずに読める。
+**No conversion to images.** Neither poppler nor pdf2image is involved,
+so there is nothing to install.
 
-## このスキルの目的
+## What this skill governs
 
-変換の手順ではなく、**変換の規律**を定めるもの。PDF は読めるが、読めることと正しく書き起こせることは別。
+Not the procedure — the discipline. Reading a PDF is easy; transcribing
+one faithfully is not the same thing.
 
-## 禁止事項
+## Not allowed
 
-PDF に書かれていないものを成果物に出さない。
+Nothing may reach the output that the page does not show.
 
-- **推測禁止** — 図に無いテーブルやリレーションを足さない
-- **補完禁止** — 属性名から存在を推測してエンティティを起こさない
-- **黙って埋めない** — 判読できない箇所は `(判読不能: p.12 右下の注記)` と明示する
+- **Do not infer.** No table or relation that the diagram does not draw
+- **Do not complete.** No entity conjured from the shape of an attribute
+  name
+- **Do not fill silently.** Mark what cannot be read:
+  `(illegible: note at lower right of p.12)`
 
-判断に迷ったら、埋めずにユーザーに確認する。設計書の書き起こしでは、補完された 1 行が実装を丸ごと誤らせる。
+When in doubt, ask rather than fill. In a design document, one completed
+line sends the whole implementation the wrong way.
 
-## 進め方
+## Working through it
 
-1. **範囲と出力先を確認する** — 対象ページ、既存ファイルへの追記か新規作成か
-2. **5〜10 ページずつ読む** — 上限は 20 だが、精度は範囲を狭めるほど上がる
-3. **読んだ範囲だけ書く** — 先のページを推測して構成を作らない
-4. **範囲ごとに報告する** — 変換したページ、内容の要約、次の範囲
+1. **Agree the range and the destination** — which pages, and whether
+   this appends to an existing file or starts a new one
+2. **Read 5 to 10 pages at a time** — the limit is 20, but accuracy rises
+   as the window narrows
+3. **Write only what was read** — do not scaffold sections for pages you
+   have not seen
+4. **Report per range** — pages covered, what they contained, what comes
+   next
 
-## 変換ルール
+## Conversion
 
-| 元の形式 | Markdown |
+| Source | Markdown |
 |---|---|
-| 大見出し / 中見出し | `#` `##` / `###` |
-| 箇条書き | `- 項目` / `1. 項目` |
-| 表 | Markdown テーブル（列数を揃える） |
-| 図・イラスト | `【図】〇〇の概念図` + 内容を文章で再現 |
-| 引用・コメント | `> 引用` |
-| 強調 | `**太字**` |
+| Major / minor heading | `#` `##` / `###` |
+| List | `- item` / `1. item` |
+| Table | Markdown table, columns aligned |
+| Figure, illustration | `[Figure] <caption>` plus the content in prose |
+| Quotation, comment | `> quoted` |
+| Emphasis | `**bold**` |
 
-ページ番号は `(p.12)` の形で残す。原本と突き合わせる人が必ず要る。
+Keep page numbers as `(p.12)`. Someone will need to check the transcript
+against the original.
 
-## 長い PDF
+## Long documents
 
-20 ページを超えるものは複数セッションに分かれる。`task.md` を作って範囲を追う。
+Anything past 20 pages spans sessions. Track the ranges in `task.md`.
 
 ```markdown
-# PDF変換タスク
+# PDF transcription
 
-## 進捗
-- [x] p1-20: 概要とユースケース
-- [ ] p21-40: データモデル（次回ここから）
-- [ ] p41-60: 画面仕様
+## Progress
+- [x] p1-20: overview and use cases
+- [ ] p21-40: data model (resume here)
+- [ ] p41-60: screen specifications
 ```
 
-セッションをまたぐので、「次回ここから」を残すことがそのまま引き継ぎになる。
+Because the work crosses sessions, "resume here" is the handover.
 
-## 完了時のチェック
+## Before calling it done
 
-- [ ] 表の列が揃っているか
-- [ ] 見出し階層が原本と対応しているか
-- [ ] 図が説明されているか
-- [ ] ページ番号が追えるか
-- [ ] 推測で書いた箇所が無いか
+- [ ] Table columns line up
+- [ ] Heading levels match the original
+- [ ] Figures are described
+- [ ] Page numbers are traceable
+- [ ] Nothing was written from inference

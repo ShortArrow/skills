@@ -1,6 +1,6 @@
 ---
 name: request-push
-description: Obtain explicit, classifier-recognized confirmation before pushing to a remote, via AskUserQuestion. Use whenever a push is pending or wanted, or when a push was blocked by the auto-approval classifier (e.g. push requires confirmation; triggers like "push", "pushして", "push 申請", "push approval", push denied).
+description: Obtain confirmation the auto-approval classifier recognises before pushing to a remote, by asking through AskUserQuestion. Use whenever a push is wanted or pending, and whenever one has already been denied — a casual "ok" in chat does not count as approval, so a direct git push is refused.
 ---
 
 A push to a remote requires explicit confirmation. A casual "ok" / "yes" /

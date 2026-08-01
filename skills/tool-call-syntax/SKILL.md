@@ -1,17 +1,19 @@
 ---
 name: tool-call-syntax
-description: ツール呼び出し (function call) のタグ構文を壊さないためのチェックリスト。`court` や素の `<invoke>` など存在しないタグで囲むと harness がパースできず "malformed" / "could not be parsed" になり、ツールが一切実行されない (副作用ゼロでユーザに気付かれにくい)。連続して同じ失敗を繰り返した時、ツール結果が返ってこない時、"malformed tool call" を見た時に参照する。
+description: Checklist for not breaking the XML syntax of a tool call. Wrapping a call in a tag that does not exist makes the harness fail to parse it, and nothing runs at all — no output, no file written, so the failure is invisible from the outside and looks like the agent silently stalling. Consult after seeing "malformed tool call" or "could not be parsed", when a tool result never arrives, or when the same failure repeats across turns.
 ---
 
 # Tool Call Syntax
 
-AI エージェント自身が **ツール呼び出しの XML タグを書き間違える** と、harness が parse に失敗して `Your tool call was malformed and could not be parsed` を返す。このとき **ツールは一切実行されない**。出力やファイル変更などの副作用が無いため、ユーザからは「無言で固まった」「同じ質問を繰り返してくる」ように見え、原因に気付きにくい。
+When the agent itself mistypes the XML around a tool call, the harness
+answers `Your tool call was malformed and could not be parsed` and **runs
+nothing**. There is no output and no side effect, so from the user's side
+it looks like the agent went quiet or started repeating itself. The agent
+believes it ran the tool, which is what makes the loop hard to leave.
 
-このスキルはその失敗パターンと正しい構文をまとめたもの。
+## What actually happened
 
-## 実際に起きた失敗
-
-ツール呼び出しを `court` という存在しないタグで囲んでいた:
+A call was wrapped in a tag called `court`, which does not exist:
 
 ```
 court
@@ -21,17 +23,21 @@ court
 court
 ```
 
-`court` も素の `<invoke>` も harness の文法ではない。結果、数ターン連続で「malformed」になり、ユーザに毎回「状況は？」と聞かせる事態になった。本人 (AI) は実行したつもりでいるため、ループから抜けにくい。
+Neither `court` nor a bare `<invoke>` is part of the harness grammar.
+Several turns in a row came back malformed, and the user was asked "how
+does it look now?" each time.
 
-## 正しい構文
+## The syntax
 
-ツール呼び出しは `antml:function_calls` ブロックの中に `antml:invoke` で書く。パラメータは `antml:parameter`。
+A call goes inside an `antml:function_calls` block as an `antml:invoke`,
+with arguments as `antml:parameter`.
 
-- ブロック開始/終了: `antml:function_calls`
-- 各呼び出し: `antml:invoke`（`name` 属性に正確なツール名）
-- 各引数: `antml:parameter`（`name` 属性に引数名）
+- Block: `antml:function_calls`
+- Each call: `antml:invoke`, with the exact tool name in `name`
+- Each argument: `antml:parameter`, with the argument name in `name`
 
-正しい構造の見本 (下記は山括弧を全角 ＜＞ にして無害化してある。実際の呼び出しでは半角 `<>` を使う):
+Shape (angle brackets below are full-width ＜＞ to keep this inert; real
+calls use `<>`):
 
 ```
 ＜antml:function_calls＞
@@ -42,26 +48,38 @@ court
 ＜/antml:function_calls＞
 ```
 
-**素の `<invoke>` / `<function_calls>` / `<parameter>` は無効**。必ず `antml:` 接頭辞が付く。`court` のような独自タグで囲むのは論外。
+**Bare `<invoke>`, `<function_calls>` and `<parameter>` are invalid.** The
+`antml:` prefix is always required, and inventing a wrapper such as
+`court` is not a variation on the grammar.
 
-## チェックリスト (呼び出し前に自問)
+## Before calling
 
-1. 開きタグは `antml:function_calls` か？ `court` や `function_calls`（接頭辞なし）になっていないか
-2. 各ツールは `antml:invoke name="正確なツール名"` で始まっているか
-3. 引数は `antml:parameter name="引数名"` か
-4. 閉じタグの接頭辞も `antml:` で揃っているか
-5. **地の文 (ユーザ向けテキスト) にタグ名を書こうとしていないか** — 説明したいだけなら、実際のタグ構文を地の文に綴らない。誤って起動 or 誤記の原因になる
+1. Is the opening tag `antml:function_calls` — not `court`, not
+   `function_calls` without the prefix?
+2. Does each call start with `antml:invoke name="<exact tool name>"`?
+3. Is every argument an `antml:parameter name="<argument name>"`?
+4. Do the closing tags carry the `antml:` prefix too?
+5. **Are you about to spell a tag in prose?** Describing the syntax to a
+   user in ordinary text risks both a stray invocation and a typo. Keep it
+   in a code block.
 
-## 同じ失敗を繰り返さないための復旧手順
+## Recovering without repeating it
 
-`malformed` / `could not be parsed` を見たら、リトライ前に **必ず原因を1つ特定する**。同じ文面でリトライすると同じ失敗を繰り返す (実際に複数ターン浪費した)。
+On `malformed` or `could not be parsed`, **identify one cause before
+retrying**. Re-sending the same text reproduces the same failure — that
+is how several turns were lost.
 
-1. 直前の呼び出しの **開きタグ名** を最初に疑う（`court` 等の異物が最有力）
-2. タグの `antml:` 接頭辞の有無を確認
-3. それでも不明なら、ツールを1つだけ・最小引数で呼んで切り分ける
-4. 原因が掴めるまでユーザに同じ質問を投げ続けない（ユーザは「壊れている」としか分からない）
+1. Suspect the opening tag name first. A foreign wrapper is the most
+   likely culprit.
+2. Check the `antml:` prefix on every tag.
+3. If still unclear, call a single tool with minimal arguments to isolate
+   it.
+4. Do not keep asking the user the same question. They can only see that
+   something is broken.
 
-## 注意
+## Notes
 
-- このファイル自体、説明のために壊れたタグ (`court` 等) を **コードブロック内** に書いている。コードブロックの外（地の文や実際の呼び出し）では絶対に使わない。
-- 「実行したのに結果が来ない」と感じたら、まず自分の構文を疑う。外部要因 (ツール側の障害) より自分の誤記の方が圧倒的に多い。
+- This file writes broken tags **inside code blocks** for illustration.
+  Never outside one, in prose or in an actual call.
+- If a tool seems to have run without returning anything, suspect your own
+  syntax first. Your typo is far more likely than a fault in the tool.
