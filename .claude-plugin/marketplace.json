@@ -43,7 +43,8 @@
         "./skills/grill-me",
         "./skills/tool-call-syntax",
         "./skills/codex",
-        "./skills/find-skills"
+        "./skills/find-skills",
+        "./skills/adopt-dependency"
       ]
     }
   ]

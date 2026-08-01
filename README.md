@@ -19,7 +19,7 @@ Then install whichever set applies.
 |---|---|
 | `screenshot-skills` | any-screenshot, windows-screenshot, avalonia-screenshot, flaui-screenshot |
 | `writing-skills` | clean-docs, pdf-transcribe, request-push |
-| `engineering-skills` | csharp-architect, tui-debug, grill-me, tool-call-syntax, codex, find-skills |
+| `engineering-skills` | csharp-architect, tui-debug, grill-me, tool-call-syntax, codex, find-skills, adopt-dependency |
 
 ## Skills
 
@@ -52,8 +52,10 @@ principally that nothing may be written which the page does not show.
 `tui-debug` reconstructs a terminal UI from redirected output, for when
 there is no display to look at. `grill-me` resolves only the ambiguity
 that would change the implementation. `find-skills` searches the public
-registry before you write a skill that already exists. `tool-call-syntax`
-and `codex` are small operational notes.
+registry before you write a skill that already exists, and
+`adopt-dependency` covers deciding whether to take on what you find —
+including what to do when an installer refuses something.
+`tool-call-syntax` and `codex` are small operational notes.
 
 ## Layout
 

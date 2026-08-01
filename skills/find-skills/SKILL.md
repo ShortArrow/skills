@@ -54,7 +54,8 @@ simply run something.
 
 "Read it before installing" is not sufficient mitigation on its own.
 Catching a subtle instruction buried in prose is unreliable, and the
-burden returns on every update.
+burden returns on every update. `adopt-dependency` covers what does
+establish provenance, and what only looks like it.
 
 So widen the search only when no vendor collection covers the task, and
 then treat the result as untrusted third-party code:
