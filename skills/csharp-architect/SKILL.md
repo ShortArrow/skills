@@ -1,19 +1,16 @@
 ---
 name: csharp-architect
 description: |
-  C# software development with MVVM, Clean Architecture, TDD, CQRS, and DDD.
-  Use for: linter warnings, build errors, refactoring, feature implementation, code review.
-  Triggers: C#, .NET, MVVM, Clean Architecture, DDD, CQRS, TDD, リファクタリング, コードレビュー
+  C# development under MVVM, Clean Architecture, TDD, CQRS and DDD. Use when resolving a linter warning or a build error, refactoring, implementing a feature, or reviewing code — anywhere the question is which layer something belongs in and which way the dependency runs.
+  Triggers: C#, .NET, MVVM, Clean Architecture, DDD, CQRS, TDD, refactoring, code review
 allowed-tools: Read, Edit, Write, Bash, Grep, Glob, Task
 ---
 
-# C# Architect Skill
+# C# Architect
 
-MVVM × Clean Architecture × TDD × CQRS × DDD に基づくC#ソフトウェア開発スキル。
+## Core principles
 
-## Core Principles
-
-### Clean Architecture Layers
+### Clean Architecture layers
 
 ```
 ┌─────────────────────────────────────────┐
@@ -27,113 +24,99 @@ MVVM × Clean Architecture × TDD × CQRS × DDD に基づくC#ソフトウェ�
 └─────────────────────────────────────────┘
 ```
 
-**依存関係の方向**: 外側 → 内側（Domain は何にも依存しない）
+**Dependencies run outward to inward.** Domain depends on nothing.
 
-### MVVM Guidelines
+### MVVM
 
-- **View**: XAML/Razor のみ、コードビハインドは最小限
-- **ViewModel**: `INotifyPropertyChanged`, `ICommand` 実装
-- **Model**: Domain 層のエンティティを使用
+- **View** — XAML or Razor only. Code-behind kept to a minimum.
+- **ViewModel** — implements `INotifyPropertyChanged` and `ICommand`.
+- **Model** — the Domain layer's entities.
 
-### CQRS Guidelines
+### CQRS
 
-- **Command**: 状態を変更、戻り値なし or ID のみ
-- **Query**: 状態を変更しない、DTOを返す
-- **Handler**: 単一責任、1ハンドラー1操作
+- **Command** — changes state. Returns nothing, or an identifier.
+- **Query** — changes nothing. Returns a DTO.
+- **Handler** — one responsibility, one operation each.
 
-### DDD Guidelines
+### DDD
 
-- **Entity**: 一意の識別子を持つ
-- **Value Object**: 不変、等価性は値で判断
-- **Aggregate Root**: トランザクション境界
-- **Domain Service**: エンティティに属さないビジネスロジック
-- **Repository**: Aggregate Root 単位でのみ定義
+- **Entity** — has a unique identifier.
+- **Value Object** — immutable, equal by value.
+- **Aggregate Root** — the transaction boundary.
+- **Domain Service** — business logic belonging to no single entity.
+- **Repository** — defined per aggregate root, never below it.
 
-### TDD Workflow
+### TDD
 
-1. **Red**: 失敗するテストを書く
-2. **Green**: 最小限のコードでテストを通す
-3. **Refactor**: コードを改善（テストは緑のまま）
+1. **Red** — write a failing test.
+2. **Green** — the least code that passes it.
+3. **Refactor** — improve, keeping the tests green.
 
-## Task-Specific Instructions
+## By task
 
-### Linter Warning Resolution
+### Resolving a linter warning
 
-1. 警告メッセージを正確に読む
-2. 根本原因を特定（表面的な修正を避ける）
-3. アーキテクチャ原則に従って修正
-4. 修正後、関連するテストを実行
+1. Read the message exactly.
+2. Find the cause, not the symptom.
+3. Fix in line with the architecture, not around it.
+4. Run the affected tests.
 
-**よくある警告と対応**:
-- `CA1062`: null チェック追加 or nullable 参照型を使用
-- `CA1822`: インスタンス状態を使わないなら static に
-- `CS8618`: nullable 参照型を有効化、または初期化を保証
+Common ones:
 
-### Build Error Resolution
+- `CA1062` — add the null check, or adopt nullable reference types
+- `CA1822` — make it static if it touches no instance state
+- `CS8618` — enable nullable reference types, or guarantee initialisation
 
-1. エラーメッセージ全体を読む
-2. 依存関係の問題か、コードの問題かを判別
-3. 依存関係 → NuGet/プロジェクト参照を確認
-4. コード → 型、名前空間、アクセス修飾子を確認
-5. 修正後、クリーンビルドで確認
+### Resolving a build error
+
+1. Read the whole message.
+2. Decide whether it is a dependency problem or a code problem.
+3. Dependency — check the NuGet and project references.
+4. Code — check types, namespaces, access modifiers.
+5. Confirm with a clean build.
 
 ### Refactoring
 
-**実施前チェックリスト**:
-- [ ] 既存テストがすべて通る
-- [ ] リファクタリングの目的が明確
-- [ ] 小さなステップで進める
+Before:
 
-**よく行うリファクタリング**:
-- Extract Method/Class
-- Move to appropriate layer
-- Introduce Value Object
-- Replace conditional with polymorphism
+- [ ] Every existing test passes
+- [ ] The purpose is clear
+- [ ] The steps are small
 
-**実施後**:
-- すべてのテストを実行
-- 新しい警告がないか確認
+The usual moves: extract method or class, move to the layer it belongs
+in, introduce a value object, replace a conditional with polymorphism.
 
-### Feature Implementation
+After: run every test, and check no new warning appeared.
 
-1. **要件を明確化**: 何を実現するか
-2. **影響範囲を特定**: 変更が必要なレイヤー
-3. **テストを先に書く** (TDD)
-4. **Domain から実装**: 内側のレイヤーから外側へ
-5. **インテグレーションテスト追加**
+### Implementing a feature
 
-**実装順序**:
+1. **Clarify the requirement** — what is to be true afterwards.
+2. **Locate the impact** — which layers change.
+3. **Write the test first.**
+4. **Start at the Domain** and work outward.
+5. **Add an integration test.**
+
+Order:
+
 ```
-Domain Entity/VO → Domain Service → Repository Interface
+Domain Entity/VO → Domain Service → Repository interface
 → Application Command/Query → Handler
 → Infrastructure Repository → ViewModel → View
 ```
 
-### Code Review
+### Reviewing code
 
-**レビュー観点**:
+1. **Architecture** — do the dependencies run the right way, and is each
+   piece in the layer it belongs to?
+2. **DDD** — is the domain logic in the Domain layer, and are the
+   aggregate boundaries right?
+3. **CQRS** — are commands and queries separated, and does each handler do
+   one thing?
+4. **Tests** — is the coverage enough, and does each test name state its
+   intent?
+5. **Code** — does it follow SOLID, and is the naming clear?
 
-1. **アーキテクチャ準拠**
-   - レイヤー間の依存関係は正しいか
-   - 適切なレイヤーに配置されているか
-
-2. **DDD 準拠**
-   - ドメインロジックが Domain 層にあるか
-   - Aggregate の境界は適切か
-
-3. **CQRS 準拠**
-   - Command と Query が分離されているか
-   - Handler は単一責任か
-
-4. **テスト品質**
-   - 十分なカバレッジか
-   - テスト名は意図を表しているか
-
-5. **コード品質**
-   - SOLID 原則に従っているか
-   - 命名は明確か
-
-## File Naming Conventions
+## File naming
 
 ```
 Domain/
@@ -157,20 +140,17 @@ Presentation/
   Views/             {Name}View.xaml
 ```
 
-## Common Patterns Reference
+## Further reading
 
-詳細なパターンと実装例は以下を参照:
-- [architecture.md](./architecture.md) - レイヤー詳細設計
-- [patterns.md](./patterns.md) - 実装パターン集
-- [examples.md](./examples.md) - コード例
+- [architecture.md](./architecture.md) — the layers in detail
+- [patterns.md](./patterns.md) — implementation patterns
+- [examples.md](./examples.md) — code
 
-## Quality Checklist
+## Before calling it done
 
-実装完了時に確認:
-
-- [ ] すべてのテストが通る
-- [ ] 新しい警告がない
-- [ ] ビルドが成功する
-- [ ] 依存関係の方向が正しい
-- [ ] 命名規則に従っている
-- [ ] 適切なレイヤーに配置されている
+- [ ] Every test passes
+- [ ] No new warnings
+- [ ] The build succeeds
+- [ ] Dependencies run the right way
+- [ ] Naming follows the conventions
+- [ ] Everything sits in the layer it belongs to

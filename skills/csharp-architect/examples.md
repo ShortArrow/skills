@@ -2,7 +2,8 @@
 
 ## Complete Feature: Order Management
 
-この例では、注文管理機能を MVVM × Clean Architecture × TDD × CQRS × DDD で実装します。
+An order-management feature worked through MVVM, Clean Architecture, TDD,
+CQRS and DDD together.
 
 ### Domain Layer
 

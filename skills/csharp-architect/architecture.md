@@ -4,11 +4,11 @@
 
 ### Domain Layer
 
-最も内側のレイヤー。ビジネスロジックの中核。
+The innermost layer, and the core of the business logic.
 
-**依存**: なし（純粋なC#のみ）
+**Depends on** nothing. Plain C# only.
 
-**含むもの**:
+**Holds:**
 - Entities
 - Value Objects
 - Domain Services
@@ -17,19 +17,19 @@
 - Specifications
 
 ```csharp
-// Domain Layer には以下を含めない
-// ❌ フレームワーク依存 (EF Core attributes, etc.)
-// ❌ インフラ関連 (HttpClient, File I/O, etc.)
-// ❌ プレゼンテーション関連 (ViewModel, etc.)
+// The Domain layer must not contain
+// - framework coupling (EF Core attributes and the like)
+// - infrastructure (HttpClient, file I/O)
+// - presentation (ViewModels)
 ```
 
 ### Application Layer
 
-ユースケースを実装。Domain をオーケストレーション。
+Implements the use cases, orchestrating the Domain.
 
-**依存**: Domain Layer のみ
+**Depends on** the Domain layer only.
 
-**含むもの**:
+**Holds:**
 - Commands / Queries (CQRS)
 - Handlers
 - DTOs
@@ -38,54 +38,54 @@
 - Mappers
 
 ```csharp
-// Application Layer の責務
-// ✅ ユースケースの実装
-// ✅ トランザクション制御
-// ✅ 認可チェック
-// ❌ ビジネスルール（Domain に委譲）
-// ❌ インフラ詳細
+// The Application layer is responsible for
+// + implementing use cases
+// + transaction control
+// + authorisation checks
+// - business rules — those belong to the Domain
+// - infrastructure detail
 ```
 
 ### Infrastructure Layer
 
-外部システムとの連携を実装。
+Implements everything that reaches outside the process.
 
-**依存**: Domain Layer, Application Layer
+**Depends on** the Domain and Application layers.
 
-**含むもの**:
-- Repository 実装
-- External Service 実装
+**Holds:**
+- Repository implementations
+- External service implementations
 - Database Context
-- Message Queue 実装
-- File System 操作
+- Message queue implementations
+- File system access
 
 ```csharp
-// Infrastructure の実装
-// ✅ Repository Interface の実装
-// ✅ 外部 API クライアント
-// ✅ データベースアクセス
-// ❌ ビジネスロジック
+// Infrastructure supplies
+// + implementations of the repository interfaces
+// + external API clients
+// + database access
+// - business logic
 ```
 
 ### Presentation Layer
 
-ユーザーインターフェース。MVVM パターン。
+The user interface, under MVVM.
 
-**依存**: Application Layer
+**Depends on** the Application layer.
 
-**含むもの**:
+**Holds:**
 - Views (XAML/Razor)
 - ViewModels
 - Converters
 - Behaviors
 
 ```csharp
-// Presentation の責務
-// ✅ UI ロジック
-// ✅ 入力バリデーション（UI レベル）
-// ✅ 画面遷移
-// ❌ ビジネスロジック
-// ❌ データアクセス
+// Presentation is responsible for
+// + UI logic
+// + input validation at the UI level
+// + navigation
+// - business logic
+// - data access
 ```
 
 ## Project Structure
@@ -98,7 +98,7 @@ Solution/
 │   │   ├── ValueObjects/
 │   │   ├── Services/
 │   │   ├── Events/
-│   │   ├── Repositories/          # Interfaces only
+│   │   ├── Repositories/          # interfaces only
 │   │   └── Specifications/
 │   │
 │   ├── Application/
@@ -108,14 +108,14 @@ Solution/
 │   │   ├── DTOs/
 │   │   ├── Validators/
 │   │   ├── Mappers/
-│   │   └── Interfaces/            # Application service interfaces
+│   │   └── Interfaces/            # application service interfaces
 │   │
 │   ├── Infrastructure/
 │   │   ├── Persistence/
 │   │   │   ├── DbContext.cs
 │   │   │   ├── Configurations/    # EF Core configurations
-│   │   │   └── Repositories/      # Repository implementations
-│   │   ├── Services/              # External service implementations
+│   │   │   └── Repositories/      # repository implementations
+│   │   ├── Services/              # external service implementations
 │   │   └── DependencyInjection.cs
 │   │
 │   └── Presentation/
@@ -179,7 +179,7 @@ public static class DependencyInjection
 ### Logging
 
 ```csharp
-// Application Layer で ILogger を使用
+// ILogger is used from the Application layer
 public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, Guid>
 {
     private readonly ILogger<CreateOrderHandler> _logger;
@@ -195,7 +195,7 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, Guid>
 ### Validation
 
 ```csharp
-// FluentValidation in Application Layer
+// FluentValidation, in the Application layer
 public class CreateOrderCommandValidator : AbstractValidator<CreateOrderCommand>
 {
     public CreateOrderCommandValidator()
@@ -226,5 +226,5 @@ public class EntityNotFoundException : DomainException
         : base($"{entity} with id '{id}' was not found.") { }
 }
 
-// Application Layer で catch して適切に処理
+// Caught and handled in the Application layer
 ```

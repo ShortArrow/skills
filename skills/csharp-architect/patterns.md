@@ -330,124 +330,128 @@ public class AsyncRelayCommand : ICommand
 }
 ```
 
-### ViewModel ↔ View 通信パターン比較
+### ViewModel ↔ View communication
 
-| 名称 | 種別 | 主な用途 | VM→View | View→VM | 典型例 | 注意点 |
+| Mechanism | Kind | Mainly for | VM→View | View→VM | Typical | Watch for |
 |------|------|----------|---------|---------|--------|--------|
-| **INotifyPropertyChanged** | インターフェイス | 1プロパティの変更通知（Binding更新） | ✅（状態通知） | — | Text/IsEnabled/Visible相当 | 命令系（Close/ShowDialog等）には不向き |
-| **INotifyCollectionChanged** (ObservableCollection) | インターフェイス/実装 | コレクションの追加/削除/並び替え通知 | ✅（Items更新） | — | ListBox Items / DataGrid Rows | 要素自体の変更は要素側INPCも必要になりがち |
-| **ICommand** | インターフェイス | 操作の起点（ボタン等） | △（CanExecuteで有効/無効） | ✅ | Button Command / MenuItem Command | 非同期や例外処理は自前実装だと面倒 |
-| **ReactiveCommand** | クラス（ReactiveUI） | ICommand強化（非同期・例外・状態ストリーム） | ✅（IsExecuting等で状態反映しやすい） | ✅ | `SaveCommand = ReactiveCommand.CreateFromTask(...)` | ReactiveUI前提。学習コストあり |
-| **Interaction** (ReactiveUI等) | クラス/パターン | VM→Viewへ「UI処理依頼」（Dialog/Picker/Close） | ✅（命令系） | —（戻り値は返せる） | Confirmダイアログ、OpenFile、通知 | View側でハンドラ登録が必要。多用すると流れが散る |
-| **MessageBus / Messenger** | パターン/仕組み | 疎結合イベント（画面/VM跨ぎ） | ✅ | ✅ | "保存完了"を全体へ通知、ナビ要求 | 追跡が難しくなりがち。乱用注意 |
-| **AttachedProperty** | Avaloniaの仕組み | View都合の機能をBinding可能に（Focus/Scroll等） | ✅（VMの状態でViewが動く） | — | `IsFocused`、`ScrollToEnd` | 実装コスト高め。UI依存が入りやすい |
-| **Behavior** (Interactivity) | パターン | Viewイベント→Command、UI操作の切り出し | ✅/✅（両方向に組める） | ✅ | EventTrigger→Command、フォーカス移動 | パッケージ依存＆デバッグがやや大変 |
+| **INotifyPropertyChanged** | Interface | Notifying one property changed, so a binding updates | Yes, as state | — | Text, IsEnabled, Visible | Wrong fit for commands such as Close or ShowDialog |
+| **INotifyCollectionChanged** (ObservableCollection) | Interface / implementation | Add, remove and reorder in a collection | Yes, Items updates | — | ListBox Items, DataGrid Rows | A change *within* an element usually needs INPC on the element too |
+| **ICommand** | Interface | Where an action starts — a button | Partly, through CanExecute | Yes | Button Command, MenuItem Command | Async work and exceptions are tedious to hand-roll |
+| **ReactiveCommand** | Class (ReactiveUI) | ICommand with async, exceptions and a state stream | Yes — IsExecuting and friends make state easy to surface | Yes | `SaveCommand = ReactiveCommand.CreateFromTask(...)` | Commits you to ReactiveUI, and it has to be learned |
+| **Interaction** (ReactiveUI and others) | Class / pattern | Asking the View to do something — dialog, picker, close | Yes, as a command | — (can return a value) | Confirm dialog, OpenFile, notification | Needs a handler registered on the View; used freely, the flow scatters |
+| **MessageBus / Messenger** | Pattern | Loosely coupled events across views or view models | Yes | Yes | Announcing "saved" broadly, navigation requests | Becomes hard to trace. Do not reach for it first |
+| **AttachedProperty** | Avalonia mechanism | Making a View-side capability bindable — focus, scroll | Yes; the View reacts to VM state | — | `IsFocused`, `ScrollToEnd` | Costly to implement, and invites UI coupling |
+| **Behavior** (Interactivity) | Pattern | View event → command; lifting UI manipulation out | Both directions | Yes | EventTrigger → Command, moving focus | Adds a package dependency and is harder to debug |
 
-**選定ガイドライン**:
-- 状態の同期 → `INotifyPropertyChanged` + `ObservableCollection`
-- ユーザー操作の受付 → `ICommand` (シンプル) / `ReactiveCommand` (高機能)
-- VMからView への命令 → `Interaction` / `MessageBus`
-- View固有の振る舞い → `AttachedProperty` / `Behavior`
+**Choosing:**
 
-### Avalonia / MVVM 連携・通知・入力検証 まとめ
+- Keeping state in sync → `INotifyPropertyChanged` with `ObservableCollection`
+- Accepting user action → `ICommand` when simple, `ReactiveCommand` when not
+- Commanding the View from the VM → `Interaction`, or `MessageBus`
+- Behaviour belonging to the View → `AttachedProperty` or `Behavior`
 
-| 名称 | 種別 | 主な用途 | VM→View | View→VM | 典型例 | 注意点 |
+### Avalonia: the same, plus input validation
+
+The rows above repeat here so validation can be compared against them in
+one place.
+
+| Mechanism | Kind | Mainly for | VM→View | View→VM | Typical | Watch for |
 |------|------|----------|---------|---------|--------|--------|
-| **INotifyPropertyChanged** | インターフェイス | プロパティ変更通知（Binding更新） | ✅ | — | Text/IsEnabled/Visible相当 | 命令系（Close/ShowDialog等）には不向き |
-| **INotifyCollectionChanged** (ObservableCollection) | インターフェイス/実装 | コレクション変更通知 | ✅ | — | ListBox Items / DataGrid Rows | 要素の中身変更は要素側INPCも必要になりがち |
-| **ICommand** | インターフェイス | 操作実行（ボタン等） | △（CanExecute） | ✅ | Button / MenuItem | 非同期・例外・多重実行制御は自前だと面倒 |
-| **ReactiveCommand** | クラス（ReactiveUI） | ICommand強化（非同期・状態・例外） | ✅ | ✅ | Create / CreateFromTask | ReactiveUI前提。流儀に寄る |
-| **Interaction** (ReactiveUI等) | クラス/パターン | VM→ViewへUI処理依頼（Dialog等） | ✅ | —（戻り値は返せる） | Confirm/OpenFile/Close | View側ハンドラ必須。散らかりやすい |
-| **MessageBus / Messenger** | パターン/仕組み | 疎結合通知（画面/VM跨ぎ） | ✅ | ✅ | 保存完了通知、ナビ要求 | 受信箇所が追いにくい。乱用注意 |
-| **AttachedProperty** | Avalonia機構 | UI都合の機能をBinding化 | ✅ | — | Focus/Scroll/Selection制御 | 実装コスト高め、UI依存が入りやすい |
-| **Behavior** (Interactivity) | パターン | Viewイベント→Command、UI操作の分離 | ✅/✅ | ✅ | EventTrigger→Command | パッケージ依存・デバッグ難しめ |
-| **INotifyDataErrorInfo** | インターフェイス | 入力バリデーション（プロパティ単位のエラー通知） | ✅（Errorsで反映） | — | TextBoxの入力エラー表示 | 実装がやや手間。非同期検証もやるなら設計要 |
-| **DataAnnotations** (`System.ComponentModel.DataAnnotations`) | 属性 + 検証API | 必須/範囲/正規表現など宣言的検証 | ✅（INotifyDataErrorInfo等と連携して表示） | — | `[Required]`, `[Range]` | "属性だけ"ではUIに自動反映されないので、橋渡しが必要 |
-| **ValidationRules** (Avalonia) | 仕組み/ルール | Bindingの検証（変換・条件チェック） | ✅（Validation.Errorsで反映） | ✅（入力→検証） | `TextBox` の Binding に検証 | ルールがView寄りになりがち（VM外で検証が散る） |
-| **Exceptionベース検証**（変換/更新時例外） | パターン | パース失敗などを例外で弾く | ✅（エラーとして扱える） | ✅ | 数値入力のparse失敗 | 例外をロジックに使いすぎると追いづらい |
+| **INotifyPropertyChanged** | Interface | Property change, so a binding updates | Yes | — | Text, IsEnabled, Visible | Wrong fit for Close or ShowDialog |
+| **INotifyCollectionChanged** (ObservableCollection) | Interface / implementation | Collection changes | Yes | — | ListBox Items, DataGrid Rows | A change within an element needs INPC on the element |
+| **ICommand** | Interface | Running an action — a button | Partly, CanExecute | Yes | Button, MenuItem | Async, exceptions and re-entry are tedious to hand-roll |
+| **ReactiveCommand** | Class (ReactiveUI) | ICommand with async, state and exceptions | Yes | Yes | Create, CreateFromTask | Commits you to ReactiveUI's way of doing things |
+| **Interaction** (ReactiveUI and others) | Class / pattern | Asking the View for UI work — a dialog | Yes | — (can return a value) | Confirm, OpenFile, Close | Requires a View-side handler; scatters easily |
+| **MessageBus / Messenger** | Pattern | Loosely coupled notification across views or VMs | Yes | Yes | "Saved", navigation requests | The receiving end is hard to find. Do not overuse |
+| **AttachedProperty** | Avalonia mechanism | Making a UI capability bindable | Yes | — | Focus, scroll, selection | Costly, and invites UI coupling |
+| **Behavior** (Interactivity) | Pattern | View event → command; separating UI manipulation | Both directions | Yes | EventTrigger → Command | Package dependency, harder to debug |
+| **INotifyDataErrorInfo** | Interface | Validation, reported per property | Yes, through Errors | — | Showing an invalid TextBox | Some work to implement; async validation needs designing |
+| **DataAnnotations** (`System.ComponentModel.DataAnnotations`) | Attributes plus a validation API | Declarative required / range / regex | Yes, once wired to INotifyDataErrorInfo | — | `[Required]`, `[Range]` | Attributes alone do not reach the UI — something has to bridge them |
+| **ValidationRules** (Avalonia) | Mechanism | Validating a binding, including conversion | Yes, through Validation.Errors | Yes, input → validation | Validation on a `TextBox` binding | Rules drift toward the View, scattering validation outside the VM |
+| **Exception-based validation** (thrown on convert or update) | Pattern | Rejecting a parse failure by throwing | Yes, surfaced as an error | Yes | A number that will not parse | Exceptions used as logic get hard to follow |
 
-### 層間インタラクション表（Avalonia / MVVM + Clean Architecture）
+### Between the layers
 
-| From → To | 役割/目的 | 推奨インタラクション | データ形 | 依存の向き | 例 | 注意点 |
+| From → To | Purpose | Use | Data | Dependency | Example | Watch for |
 |-----------|-----------|----------------------|----------|------------|-----|--------|
-| **View → VM** | ユーザー操作の入力 | **Command**（ICommand/ReactiveCommand） | パラメータ/入力DTO | View → VM | Save/Cancel/検索 | Viewにロジックを置かない |
-| **View → VM** | 入力の反映 | **TwoWay Binding** + **INPC** | プリミティブ/VM用モデル | View ↔ VM | TextBox.Text ↔ Name | 入力整形はVM側に寄せることが多い |
-| **View → VM** | イベントをCommand化 | **Behavior/Trigger** | EventArgs→CommandParam | View → VM | KeyDownで確定 | 乱用するとXAMLが複雑化 |
-| **VM → View** | 状態通知（表示更新） | **INotifyPropertyChanged** | 状態（IsBusy等） | VM → View | Busy/Progress/ErrorText | "状態"に落として通知する |
-| **VM → View** | UI命令（ダイアログ等） | **Interaction**（推奨）/ RequestCloseイベント | request/response | VM → View | Confirm/Picker/Close | UI依存をVMから追い出す |
-| **VM ↔ UseCase** | アプリ操作の実行 | **メソッド呼び出し（async）** / **IObservable** | Input/Output DTO | VM → UseCase | `await uc.Save(input)` | UIスレッド制御はVM側で吸収 |
-| **UseCase → VM** | 結果/失敗の返却 | **戻り値(Result\<T\>)** / 例外（方針次第） | Result/DTO | UseCase → VM | `Result<SaveOutput>` | 例外は"予期しない障害"に限定しがち |
-| **UseCase ↔ Domain** | ドメイン規則の実行 | **ドメインメソッド呼び出し** | Entity/VO | UseCase → Domain | `order.Pay(...)` | DomainはUI/Infraを知らない |
-| **Domain → UseCase** | ドメインイベント | **Domain Event（in-memory）** | Eventオブジェクト | Domain →（収集） | `OrderPaid` | 発火→収集→UseCaseが処理、が多い |
-| **UseCase ↔ Infra** | 永続化・外部I/O | **Port/Interface**（Repository/Gateway等） | Domain/DTO | UseCase → Port（実装はInfra） | `IOrderRepository` | 依存逆転：UseCaseがIFを定義する流儀が多い |
-| **Infra → UseCase/Domain** | 実装提供 | **DIで注入** | 実装クラス | Infra →（注入されるだけ） | DB/HTTP/FS | Infraは上位層を参照しない（参照すると泥沼） |
-| **VM ↔ VM** | 画面間連携 | **Navigator（専用IF）** / **MessageBus**（必要最小限） | Route/Message | VM →（専用IF推奨） | 画面遷移/タブ追加 | MessageBus乱用は追跡性が落ちる |
+| **View → VM** | User action | **Command** (ICommand / ReactiveCommand) | Parameter or input DTO | View → VM | Save, Cancel, search | Keep logic out of the View |
+| **View → VM** | Reflecting input | **TwoWay binding** with **INPC** | Primitive, or a VM-side model | View ↔ VM | TextBox.Text ↔ Name | Normalising input usually belongs in the VM |
+| **View → VM** | Turning an event into a command | **Behavior / Trigger** | EventArgs → CommandParameter | View → VM | Commit on KeyDown | Overuse complicates the XAML |
+| **VM → View** | State, so the display updates | **INotifyPropertyChanged** | State such as IsBusy | VM → View | Busy, progress, error text | Reduce it to *state* and notify that |
+| **VM → View** | UI command such as a dialog | **Interaction** (preferred), or a RequestClose event | Request / response | VM → View | Confirm, picker, close | Keeps UI coupling out of the VM |
+| **VM ↔ UseCase** | Running an application operation | **An async method call**, or **IObservable** | Input / output DTO | VM → UseCase | `await uc.Save(input)` | The VM absorbs UI-thread concerns |
+| **UseCase → VM** | Returning a result or a failure | **A return value, `Result<T>`** — or an exception, by policy | Result or DTO | UseCase → VM | `Result<SaveOutput>` | Exceptions tend to be reserved for the unforeseen |
+| **UseCase ↔ Domain** | Applying a domain rule | **A domain method call** | Entity or value object | UseCase → Domain | `order.Pay(...)` | The Domain knows nothing of UI or infrastructure |
+| **Domain → UseCase** | A domain event | **Domain event, in memory** | Event object | Domain → (collected) | `OrderPaid` | Usually raised, collected, then handled by a use case |
+| **UseCase ↔ Infra** | Persistence and external I/O | **A port** — repository, gateway | Domain object or DTO | UseCase → Port, implemented in Infra | `IOrderRepository` | Inverted: the use case commonly defines the interface |
+| **Infra → UseCase/Domain** | Supplying the implementation | **Injected** | Implementation class | Infra → (injected only) | DB, HTTP, filesystem | Infrastructure never references a layer above it |
+| **VM ↔ VM** | Between screens | **A navigator interface**, or **MessageBus** sparingly | Route or message | VM → (a dedicated interface, preferably) | Navigation, adding a tab | MessageBus overuse costs traceability |
 
-### 「どこに何を置くか」最短ガイド
+### Where things go
 
-| 層 | 責務 |
+| Layer | Responsibility |
 |----|------|
-| **View** | 見た目・イベントの橋渡し（Behavior/InteractionHandler） |
-| **VM** | UI状態（INPC）と操作（Command）。UseCase呼び出し、結果を状態に変換 |
-| **UseCase** | アプリの手順（トランザクション、権限、ワークフロー、ポート呼び出し） |
-| **Domain** | 業務ルール（Entity/VO/Domain Service/Domain Event） |
-| **Infra** | DB/HTTP/FS/OS/外部ライブラリ実装（Repository等） |
+| **View** | Appearance, and bridging events (Behavior, interaction handlers) |
+| **VM** | UI state (INPC) and actions (Command). Calls the use case, turns the result into state |
+| **UseCase** | The application's procedure — transactions, permissions, workflow, port calls |
+| **Domain** | Business rules — entities, value objects, domain services, domain events |
+| **Infra** | DB, HTTP, filesystem, OS, third-party libraries — repositories and the like |
 
-### 実装パターンの"型"（Avalonia + Clean）
+### The shape each layer takes
 
-| 層 | 実装パターン |
+| Layer | Shape |
 |----|-------------|
-| **View** | Interactionのハンドラだけ持つ（Dialog/Picker/Close） |
-| **VM** | ReactiveCommand（or ICommand）→ `await UseCase.Execute()` → INPCで状態更新 |
-| **UseCase** | IRepository 等の Port を使ってDomainを進め、`Result<T>`で戻す |
-| **Domain** | 純粋ロジック、例外は"不変条件違反"などに限定 |
-| **Infra** | Port実装、失敗はInfra例外→UseCaseでResultに変換（方針統一） |
+| **View** | Holds interaction handlers and nothing else — dialog, picker, close |
+| **VM** | ReactiveCommand (or ICommand) → `await UseCase.Execute()` → update state through INPC |
+| **UseCase** | Drives the Domain through ports such as `IRepository`, returns `Result<T>` |
+| **Domain** | Pure logic; exceptions reserved for broken invariants |
+| **Infra** | Implements ports; failures become Infra exceptions, converted to a Result in the use case — consistently, one way or the other |
 
 ## TDD Patterns
 
-### ハードウェア/OS依存の抽象化
+### Abstracting hardware and the OS
 
-| 依存対象 | 抽象化 | パッケージ/名前空間 | テスト時の差し替え | 典型的な用途 | 注意点 |
+| Dependency | Abstraction | Package | Substitute in tests | Typical use | Watch for |
 |----------|--------|-------------------|-------------------|--------------|--------|
-| **現在時刻** | `TimeProvider` | .NET 8+ 標準 | `FakeTimeProvider` | 日時判定、有効期限、タイムアウト | .NET 8未満は自前`IClock`が多い |
-| **現在時刻** | `IClock` (NodaTime) | NodaTime | `FakeClock` | 日時計算、タイムゾーン処理 | NodaTime流儀に寄せるなら強力 |
-| **スケジューラ** | `IScheduler` | System.Reactive | `TestScheduler` | Timer、Delay、Interval、非同期ストリーム | `AdvanceTo`/`AdvanceBy`で時間制御 |
-| **ファイルシステム** | `IFileSystem` | System.IO.Abstractions | `MockFileSystem` | ファイル読み書き、ディレクトリ操作 | 実FS使うE2Eも別途必要になりがち |
-| **環境変数** | `IEnvironment` | 自前 or ライブラリ | Mock/Fake | `GetEnvironmentVariable`、`MachineName` | 標準がないので自前定義が多い |
-| **コンソールI/O** | `IConsole` | 自前 or Spectre.Console等 | `TestConsole` | CLI入出力、プログレス表示 | Spectre.ConsoleはTestConsole提供 |
-| **HTTP通信** | `IHttpClientFactory` | Microsoft.Extensions.Http | `MockHttpMessageHandler` | 外部API呼び出し | `HttpClient`直接newは避ける |
-| **乱数** | `Random` (seed固定) / 自前`IRandom` | 標準 / 自前 | seed固定 or Mock | ランダム生成、シャッフル | .NET 6+ `Random.Shared`は注入困難 |
-| **Guid生成** | `IGuidGenerator` | 自前 | 固定値返すFake | ID生成 | 標準がないので自前定義 |
-| **日付のみ** | `DateOnly`/`TimeOnly` + `TimeProvider` | .NET 6+ | `FakeTimeProvider` | 日付比較、営業日計算 | `DateTime.Now`直接参照を避ける |
-| **クリップボード** | `IClipboard` | TextCopy | `MockClipboard` | テキストのコピー/ペースト | クロスプラットフォーム対応。DI対応 |
-| **クリップボード** | `IClipboard` (Avalonia) | Avalonia.Input.Platform | 自前ラッパー必要 | Avalonia UI内でのコピペ | 11.1.4+で`NotClientImplementable`、直接モック不可 |
-| **クリップボード** | `IClipboard` (MAUI) | Microsoft.Maui.ApplicationModel | Mock/Fake | MAUIアプリのコピペ | MAUI環境専用 |
+| **Current time** | `TimeProvider` | .NET 8+, built in | `FakeTimeProvider` | Date comparisons, expiry, timeouts | Before .NET 8, usually a hand-written `IClock` |
+| **Current time** | `IClock` (NodaTime) | NodaTime | `FakeClock` | Date arithmetic, time zones | Powerful if you adopt NodaTime's model wholesale |
+| **Scheduler** | `IScheduler` | System.Reactive | `TestScheduler` | Timer, Delay, Interval, async streams | `AdvanceTo` / `AdvanceBy` control time |
+| **Filesystem** | `IFileSystem` | System.IO.Abstractions | `MockFileSystem` | Reading, writing, directories | An end-to-end test against a real filesystem is usually still needed |
+| **Environment variables** | `IEnvironment` | Hand-written, or a library | Mock or fake | `GetEnvironmentVariable`, `MachineName` | No standard exists, so most define their own |
+| **Console I/O** | `IConsole` | Hand-written, or Spectre.Console | `TestConsole` | CLI input and output, progress | Spectre.Console ships a TestConsole |
+| **HTTP** | `IHttpClientFactory` | Microsoft.Extensions.Http | `MockHttpMessageHandler` | Calling an external API | Avoid constructing `HttpClient` directly |
+| **Randomness** | `Random` with a fixed seed, or a hand-written `IRandom` | Built in, or hand-written | Fixed seed, or a mock | Generation, shuffling | .NET 6+ `Random.Shared` is hard to inject |
+| **Guid generation** | `IGuidGenerator` | Hand-written | A fake returning a fixed value | Identifiers | No standard exists |
+| **Date without time** | `DateOnly` / `TimeOnly` with `TimeProvider` | .NET 6+ | `FakeTimeProvider` | Date comparison, business-day arithmetic | Avoid reaching for `DateTime.Now` |
+| **Clipboard** | `IClipboard` | TextCopy | `MockClipboard` | Copy and paste | Cross-platform, and DI-friendly |
+| **Clipboard** | `IClipboard` (Avalonia) | Avalonia.Input.Platform | Needs your own wrapper | Copy and paste inside Avalonia | `NotClientImplementable` since 11.1.4 — cannot be mocked directly |
+| **Clipboard** | `IClipboard` (MAUI) | Microsoft.Maui.ApplicationModel | Mock or fake | Copy and paste in MAUI | MAUI only |
 
-### 抽象化の設計指針
+### Designing an abstraction
 
-| 方針 | 説明 |
+| Principle | |
 |------|------|
-| **薄いラッパーに留める** | 抽象化は最小限のメソッドのみ。機能を増やしすぎない |
-| **静的メソッド回避** | `DateTime.Now`、`File.ReadAllText`等の静的呼び出しを避け、注入可能にする |
-| **Infraに実装配置** | 本番用実装（RealFileSystem等）はInfra層に置く |
-| **Fakeはテストプロジェクトに** | `FakeTimeProvider`等はテストプロジェクト or 共通テストユーティリティに |
-| **E2Eは実物で** | 単体テストはFake、E2E/統合テストでは実際のFS/HTTP等を使う |
+| **Keep the wrapper thin** | Only the methods you need. Resist growing it |
+| **Avoid static calls** | `DateTime.Now`, `File.ReadAllText` and the like cannot be injected — wrap them |
+| **Implementations go in Infra** | The production implementation, `RealFileSystem` and so on |
+| **Fakes go in the test project** | `FakeTimeProvider` and friends, in the tests or a shared test utility |
+| **End-to-end uses the real thing** | Fakes for unit tests; a real filesystem and real HTTP for integration and end-to-end |
 
-### プラットフォーム固有の注意事項
+### Platform-specific notes
 
 **Avalonia `IClipboard` (11.1.4+)**
 
-`[NotClientImplementable]`属性が付与され、ユーザーコードでの実装が禁止された。テスト時に直接モックできないため、自前でラッパーを定義する：
+Marked `[NotClientImplementable]`, so user code may no longer implement it. It cannot be mocked directly in a test, which means defining your own wrapper:
 
 ```csharp
-// 自前の抽象化（Application/Domain層に定義）
+// Your own abstraction, declared in Application or Domain
 public interface IClipboardService
 {
     Task SetTextAsync(string? text);
     Task<string?> GetTextAsync();
 }
 
-// 本番用実装（Infra層）
+// Production implementation, in Infra
 public class AvaloniaClipboardService : IClipboardService
 {
     private readonly IClipboard _clipboard;
@@ -459,7 +463,7 @@ public class AvaloniaClipboardService : IClipboardService
     public Task<string?> GetTextAsync() => _clipboard.GetTextAsync();
 }
 
-// テスト用Fake
+// Fake, for tests
 public class FakeClipboardService : IClipboardService
 {
     public string? Text { get; private set; }
