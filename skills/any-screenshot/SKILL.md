@@ -1,8 +1,7 @@
 ---
 name: any-screenshot
 description: |
-  Choose a capture method before capturing anything. The right one depends on the target — web page, Avalonia window, running app, TUI, desktop, or a desktop over SSH/RDP — and a wrong choice returns a black or malformed image without raising.
-  Triggers: screenshot, capture the screen, check the UI, black screenshot, スクリーンショット, スクショ, 画面を撮って, 見た目確認, 画面が真っ黒
+  Choose a capture method before capturing anything. The right one depends on the target — web page, Avalonia window, running app, TUI, desktop, or a desktop over SSH/RDP — and a wrong choice returns a black or malformed image without raising. Start here whenever a screenshot is wanted and the method is not already settled; the capture itself belongs to windows-screenshot, avalonia-screenshot or flaui-screenshot.
 allowed-tools: Read
 ---
 

@@ -1,8 +1,7 @@
 ---
 name: windows-screenshot
 description: |
-  Capture a Windows desktop or window from PowerShell — by PID, whole screen, or over SSH/RDP. A session with no window station returns a black PNG with exit code 0; minimized and DWM-cloaked windows capture as blank and are refused by default.
-  Triggers: Windows screenshot, capture the desktop, capture a window by PID, see the screen remotely, デスクトップを撮って, PIDのウィンドウを撮って, リモートで画面を見たい, 画面が真っ黒
+  Capture a Windows desktop or window from PowerShell — by PID, whole screen, or over SSH/RDP. A session with no window station returns a black PNG with exit code 0; minimized and DWM-cloaked windows capture as blank and are refused by default. Use for a whole window, without disturbing it. Not for a single element or for capturing after acting on the app (flaui-screenshot), nor for an Avalonia window that need not be running (avalonia-screenshot).
 allowed-tools: Bash, Read
 ---
 

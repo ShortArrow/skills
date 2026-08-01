@@ -1,8 +1,7 @@
 ---
 name: flaui-screenshot
 description: |
-  Capture a window or a single element of a running app through FlaUI (UI Automation), and assert on the resulting Bitmap's pixels. Capture.Element copies a screen region, so an occluded window needs SetForeground() first; elements are found by AutomationId, not Avalonia's x:Name.
-  Triggers: FlaUI, UI Automation, screenshot of an element, capture during a UI test, 要素のスクリーンショット, UIテストで画面を撮る, 描画されているか検証したい
+  Capture a window or a single element of a running app through FlaUI (UI Automation), and assert on the resulting Bitmap's pixels. Capture.Element copies a screen region, so an occluded window needs SetForeground() first; elements are found by AutomationId, not Avalonia's x:Name. Use when the capture must follow an interaction, or must be one control. Not for a whole idle window (windows-screenshot).
 allowed-tools: Bash, Read, Glob, Grep
 ---
 

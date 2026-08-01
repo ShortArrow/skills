@@ -1,8 +1,7 @@
 ---
 name: avalonia-screenshot
 description: |
-  Render an Avalonia window to PNG without starting the application, using RenderTargetBitmap and a design-time ViewModel for any screen state. Capturing before layout completes gives an empty image, and native-handle controls throw when drawn off-screen.
-  Triggers: Avalonia screenshot, check an AXAML layout, design preview, AXAML の見た目確認, デザインプレビュー, ウィンドウのレイアウト確認
+  Render an Avalonia window to PNG without starting the application, using RenderTargetBitmap and a design-time ViewModel for any screen state. Capturing before layout completes gives an empty image, and native-handle controls throw when drawn off-screen. Use when iterating on AXAML. Not for capturing an application that is already running (flaui-screenshot or windows-screenshot).
 allowed-tools: Bash, Read, Glob, Grep
 ---
 
