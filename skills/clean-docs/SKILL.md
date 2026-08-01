@@ -13,20 +13,25 @@ too. That is the whole of this skill.
 
 ## Discipline 1: conversation labels stay in the conversation
 
-Findings organised as H1/H2/H3 and M1–M4 while working through an audit
-are useful in the conversation and meaningless outside it. A PR body that
-says
+A label is conversation-local when its definition exists nowhere but the
+conversation. Severity codes coined while triaging, names given to options
+while comparing them, positional references, a nickname for a task — each
+works while both parties hold the context, and none survives losing it.
+
+**The test is not the shape of the label. It is whether a reader holding
+only the artifact can find out what it refers to.** A PR body saying
 
 > This PR fixes all three (the audit's H1-H3): ...
 
-names nothing. H1–H3 are defined in no document, so the reader has no way
-to reach them.
+names nothing, because H1–H3 is defined in no document. It fails
+identically as "fixes the two we discussed", "applies option B", or
+"resolves the pagination thing" — the shorthand differs, the defect does
+not.
 
 ### Rules
 
-1. **Expand a conversation label at the moment it enters an artifact.**
-   H1/M2, "option A", "the three from earlier", "that problem" — in the
-   artifact, write plainly which file, and what about it.
+1. **Expand the label at the moment it enters the artifact**, not later in
+   review. What replaces it is plain text: which file, and what about it.
 2. **Check before submitting that the artifact stands alone.** Reading only
    this artifact, can someone tell (a) what changed, (b) why, and (c) what
    is left? If it needs the conversation log or your memory, rewrite it.
