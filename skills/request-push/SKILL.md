@@ -3,10 +3,10 @@ name: request-push
 description: Obtain confirmation the auto-approval classifier recognises before pushing to a remote, by asking through AskUserQuestion. Use whenever a push is wanted or pending, and whenever one has already been denied — a casual "ok" in chat does not count as approval, so a direct git push is refused.
 ---
 
-A push to a remote requires explicit confirmation. A casual "ok" / "yes" /
-"いいよ" in chat does NOT satisfy the auto-approval classifier, so a direct
-`git push` gets denied. The reliable way to get a recognized approval is to ask
-through **AskUserQuestion** and act on the selected option.
+A push to a remote requires explicit confirmation. A casual "ok" or "yes" in
+chat — in any language — does NOT satisfy the auto-approval classifier, so a
+direct `git push` gets denied. The reliable way to get a recognized approval is
+to ask through **AskUserQuestion** and act on the selected option.
 
 **Localize:** phrase the question and the option labels in whatever language the
 user is communicating in. The labels below are English examples — translate them
