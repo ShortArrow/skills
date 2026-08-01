@@ -1,9 +1,8 @@
 ---
 name: any-screenshot
 description: |
-  Gate for choosing a screen capture method. Branch here before capturing anything. The right method depends on the target — a web page, an Avalonia window, a running application, a TUI, a whole desktop, or a desktop reached over SSH or RDP — and the wrong choice yields a black or malformed image.
-  Most of these failures do not raise. They exit 0 and leave an image with nothing in it, so the point of this skill is to stop you proceeding as though you captured something. The capture itself belongs to windows-screenshot, avalonia-screenshot or flaui-screenshot.
-  Triggers: screenshot, screen capture, take a screenshot, check the UI, black screenshot, スクリーンショット, スクショ, 画面を撮って, UI確認, 見た目確認, デザイン確認, 画面が真っ黒
+  Choose a capture method before capturing anything. The right one depends on the target — web page, Avalonia window, running app, TUI, desktop, or a desktop over SSH/RDP — and a wrong choice returns a black or malformed image without raising.
+  Triggers: screenshot, capture the screen, check the UI, black screenshot, スクリーンショット, スクショ, 画面を撮って, 見た目確認, 画面が真っ黒
 allowed-tools: Read
 ---
 

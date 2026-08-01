@@ -1,9 +1,8 @@
 ---
 name: windows-screenshot
 description: |
-  Capture Windows desktops and windows from PowerShell. Three routes: a process's windows by PID, the whole screen, and the screen as seen from an SSH or RDP session.
-  An SSH session, and an RDP session that is currently disconnected, have no window station; GDI capture there returns a fully black PNG without raising. Minimized and DWM-cloaked windows produce an equally empty image, so both are refused by default.
-  Triggers: Windows screenshot, capture the desktop, capture a window by PID, see the screen remotely, black screenshot, Windows のスクリーンショット, デスクトップを撮って, PIDのウィンドウを撮って, リモートで画面を見たい, 画面が真っ黒
+  Capture a Windows desktop or window from PowerShell — by PID, whole screen, or over SSH/RDP. A session with no window station returns a black PNG with exit code 0; minimized and DWM-cloaked windows capture as blank and are refused by default.
+  Triggers: Windows screenshot, capture the desktop, capture a window by PID, see the screen remotely, デスクトップを撮って, PIDのウィンドウを撮って, リモートで画面を見たい, 画面が真っ黒
 allowed-tools: Bash, Read
 ---
 

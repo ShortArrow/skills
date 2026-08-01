@@ -1,9 +1,8 @@
 ---
 name: avalonia-screenshot
 description: |
-  Render an Avalonia window to a PNG without starting the application. RenderTargetBitmap.Render(window) is the core; injecting a design-time ViewModel reproduces any screen state on demand.
-  This is what makes an edit-capture-check loop on AXAML practical. Capturing before layout completes yields an empty or malformed image, and controls that own a native handle throw when drawn off-screen.
-  Triggers: Avalonia screenshot, check an AXAML layout, design preview, render a window without running the app, Avalonia のスクリーンショット, AXAML の見た目確認, デザインプレビュー, ウィンドウのレイアウト確認
+  Render an Avalonia window to PNG without starting the application, using RenderTargetBitmap and a design-time ViewModel for any screen state. Capturing before layout completes gives an empty image, and native-handle controls throw when drawn off-screen.
+  Triggers: Avalonia screenshot, check an AXAML layout, design preview, AXAML の見た目確認, デザインプレビュー, ウィンドウのレイアウト確認
 allowed-tools: Bash, Read, Glob, Grep
 ---
 
