@@ -1,0 +1,49 @@
+{
+  "name": "shortarrow-skills",
+  "owner": {
+    "name": "ShortArrow",
+    "url": "https://github.com/ShortArrow"
+  },
+  "metadata": {
+    "description": "Personal Agent Skills",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "screenshot-skills",
+      "description": "Choosing and performing screen capture: a routing gate plus per-target methods for Windows desktops and windows, Avalonia rendering, and UI Automation",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/any-screenshot",
+        "./skills/windows-screenshot",
+        "./skills/avalonia-screenshot",
+        "./skills/flaui-screenshot"
+      ]
+    },
+    {
+      "name": "writing-skills",
+      "description": "Producing durable artifacts: self-contained documents, faithful PDF transcription, and push requests",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/clean-docs",
+        "./skills/pdf-transcribe",
+        "./skills/request-push"
+      ]
+    },
+    {
+      "name": "engineering-skills",
+      "description": "Working on code: C# architecture guidance, TUI inspection without a display, resolving ambiguity before implementing, and tool-call syntax",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/csharp-architect",
+        "./skills/tui-debug",
+        "./skills/grill-me",
+        "./skills/tool-call-syntax",
+        "./skills/codex"
+      ]
+    }
+  ]
+}
