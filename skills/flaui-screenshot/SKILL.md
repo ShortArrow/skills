@@ -1,19 +1,22 @@
 ---
 name: flaui-screenshot
 description: |
-  実行中の Win32 / WPF / Avalonia デスクトップアプリを FlaUI (UI Automation) で掴み、ウィンドウや要素単位でキャプチャする。撮った Bitmap のピクセルを直接検査すれば、描画されているかを自動テストで判定できる。
-  Capture.Element は画面領域コピーなので SetForeground() で前面に出さないと隠れたウィンドウを撮れない。要素の同定は AutomationId が基準で、Avalonia の x:Name は UIA に出ない。
-  Triggers: FlaUI, UI Automation, 要素のスクリーンショット, UIテストで画面を撮る, 描画されているか検証したい
+  Drive a running Win32, WPF or Avalonia application through FlaUI (UI Automation) and capture a window or an individual element. Reading pixels off the resulting Bitmap lets an automated test assert that something was actually drawn.
+  Capture.Element copies a screen region, so an occluded window cannot be photographed without SetForeground() first. Elements are identified by AutomationId; Avalonia's x:Name does not surface in UI Automation.
+  Triggers: FlaUI, UI Automation, screenshot of an element, capture during a UI test, assert that something rendered, 要素のスクリーンショット, UIテストで画面を撮る, 描画されているか検証したい
 allowed-tools: Bash, Read, Glob, Grep
 ---
 
 # FlaUI Screenshot
 
-手法の選択は `any-screenshot` が担う。ここは UI Automation でアプリを掴んでから撮る経路。
+`any-screenshot` decides which method applies. This is the route that
+takes hold of an application first.
 
-**要素単位で撮れるのが他手法との差**。ウィンドウ全体しか撮れない `windows-screenshot` と違い、ボタン 1 個やパネル 1 枚を切り出せる。アプリを操作してから撮ることもできる。
+**Element-level capture is what distinguishes it.** Where
+`windows-screenshot` can only take a whole window, this can cut out a
+single button or panel — and can act on the application before capturing.
 
-## 撮る
+## Capturing
 
 ```csharp
 window.SetForeground();
@@ -21,22 +24,29 @@ using var capture = Capture.Element(window);
 Bitmap bitmap = capture.Bitmap;
 ```
 
-`Capture.Element` は **UIA で得た矩形を画面からコピーする**方式。`windows-screenshot` の `PrintWindow` と違い、**隠れているウィンドウは撮れない**。`SetForeground()` が必須で、実際に前へ出たかまで確認する。
+`Capture.Element` **copies a screen region** described by the rectangle
+UI Automation reports. Unlike `PrintWindow` in `windows-screenshot`, it
+**cannot photograph an occluded window**. `SetForeground()` is required,
+and it is worth confirming the window really came forward.
 
 ```csharp
 window.SetForeground();
 WaitUntil(() => window.Properties.IsOffscreen.ValueOrDefault == false, TimeSpan.FromSeconds(2));
 ```
 
-サブウィンドウを開くとそれが最前面を奪うので、親ウィンドウを撮る前には毎回戻す必要がある。
+Opening a child window steals the foreground, so the parent has to be
+restored before every capture of it.
 
-## 撮った画像を検証に使う
+## Using the image as an assertion
 
-`capture.Bitmap` は `System.Drawing.Bitmap` なので、そのままピクセルを読める。「描画されているか」を人間の目に頼らず判定できる。
+`capture.Bitmap` is a `System.Drawing.Bitmap`, so its pixels can be read
+directly. That turns "did this render" into something a test can decide
+without a human looking.
 
 ```csharp
-// ビデオ領域だけを間引き走査し、青系ピクセルの有無で描画を判定する。
-// 走査範囲を絞るのは、ウィンドウ枠やステータス表のテーマ色を拾わないため。
+// Sample the video region only, and treat any bluish pixel as evidence of
+// rendering. The region is narrowed so the window chrome and the status
+// table's theme colour are never in frame.
 for (int y = top; y < bottom; y += 8)
     for (int x = left; x < right; x += 8)
     {
@@ -45,9 +55,11 @@ for (int y = top; y < bottom; y += 8)
     }
 ```
 
-**走査範囲を絞るのが要点。** ウィンドウ全体を見ると、枠やアクセントカラーが期待色と一致して偽陽性になる。
+**Narrowing the region is the point.** Scanning the whole window picks up
+frame and accent colours that match the expected hue and reports a false
+positive.
 
-## アプリを掴む
+## Taking hold of the application
 
 ```csharp
 var automation = new UIA3Automation();
@@ -55,48 +67,59 @@ var process = Process.Start(psi);
 var app = Application.Attach(process.Id);
 ```
 
-`Application.Launch` ではなく `Process.Start` してから `Attach` すると、起動時の環境や作業ディレクトリを制御しやすい。
+`Process.Start` followed by `Attach`, rather than `Application.Launch`,
+keeps the environment and working directory under your control.
 
-**ウィンドウの同定は `AutomationId` で行う。** タイトルは重複する（スプラッシュがアプリ名だけを出すなど）ため同定キーにならない。
+**Identify windows by `AutomationId`.** Titles collide — a splash screen
+often shows nothing but the application name — so a title is not an
+identity.
 
 ```csharp
 foreach (var window in app.GetAllTopLevelWindows(automation))
 {
     string? id;
-    try { id = window.AutomationId; } catch { continue; }   // ← 必須
+    try { id = window.AutomationId; } catch { continue; }   // required
     if (id == "MainWindowRoot") return window;
 }
 ```
 
-**`AutomationId` の読み取りは例外を投げることがある。** 一部のトップレベルウィンドウ（スプラッシュ、プログラム生成ダイアログ）はこのプロパティを提供せず、ガードせずに列挙すると落ちる。
+**Reading `AutomationId` can throw.** Some top-level windows — splash
+screens, programmatically constructed dialogs — do not provide the
+property, and an unguarded enumeration falls over on them.
 
-ウィンドウ自身を同定できない場合は、内部の既知要素から辿る。
+Where a window cannot be identified on its own, reach it through an
+element known to be inside it.
 
 ```csharp
 window.FindFirstDescendant(cf => cf.ByAutomationId(childId)) is not null
 ```
 
-## 要素を探す
+## Finding elements
 
 ```csharp
 window.FindFirstDescendant(cf => cf.ByAutomationId("HomeButton"))?.AsButton();
-window.FindFirstDescendant(cf => cf.ByName("接続"))?.AsButton();
+window.FindFirstDescendant(cf => cf.ByName("Connect"))?.AsButton();
 ```
 
-**Avalonia の `x:Name` は UIA の Name に出ない。** `AutomationId` が振られていない要素は、表示テキスト（Content）が最も安定した検索キーになる。逆に言えば、撮りたい要素には `AutomationId` を付けておくのが先。
+**Avalonia's `x:Name` does not surface as the UIA `Name` property.** For
+elements without an `AutomationId`, the displayed text is the most stable
+key — which really means: set an `AutomationId` on anything you intend to
+capture.
 
-見つからないときは列挙して確かめる。
+When something cannot be found, enumerate and look.
 
 ```csharp
 foreach (var element in window.FindAllDescendants())
     entries.Add($"{element.ControlType}/{element.AutomationId}/'{element.Name}'");
 ```
 
-`ControlType` / `AutomationId` / `Name` はいずれも読み取りで例外を投げ得るので、個別に try で包む。
+`ControlType`, `AutomationId` and `Name` can each throw on read, so wrap
+them individually.
 
-## 組み込み方
+## Wiring it up
 
-UI テストプロジェクトに、アプリのライフサイクルを持つフィクスチャを 1 つ置く。
+Put one fixture in the UI test project and give it the application's
+lifecycle.
 
 ```csharp
 public sealed class AppFixture : IDisposable
@@ -104,15 +127,23 @@ public sealed class AppFixture : IDisposable
     public UIA3Automation Automation { get; }
     public Application App { get; private set; }
     public Window MainWindow { get; private set; }
-    // 起動 → Attach → MainWindow を AutomationId で待つ
-    // 前面化ヘルパ、要素取得ヘルパ、正常終了つき再起動 をここに集約する
+    // launch → attach → wait for MainWindow by AutomationId
+    // foreground helper, element helpers, graceful restart
 }
 ```
 
-テスト間でアプリを 1 個に保つのが要点。単一インスタンス mutex を持つアプリでは 2 個起動できず、起動し直すテスト（設定の保存・復元など）は「正常終了 → 再起動」をフィクスチャ側の操作として用意する必要がある。
+Keeping exactly one instance alive across tests is the constraint that
+shapes it. An application holding a single-instance mutex cannot be
+started twice, so any test that needs a fresh start — settings being
+saved and restored, for instance — needs "close cleanly, then relaunch"
+offered by the fixture rather than a second process.
 
-実行ファイルの場所は環境変数で上書きできるようにしておくと、Sandbox や CI で配置が変わっても通る。
+Letting an environment variable override the executable's location keeps
+it working when the layout differs, under a sandbox or on CI.
 
-## Avalonia なら先に検討すること
+## Consider Avalonia's own route first
 
-対象が Avalonia でアプリの起動が不要なら、`avalonia-screenshot` の画面外レンダリングの方が速く確実。前面化も要らず、デスクトップの状態を乱さない。FlaUI が要るのは、**実際に動いているアプリを操作した結果**を撮りたい場合。
+If the target is Avalonia and the application need not be running,
+`avalonia-screenshot` is faster and more certain: no foreground juggling,
+and the desktop is left undisturbed. FlaUI is for capturing **the result
+of acting on a live application**.

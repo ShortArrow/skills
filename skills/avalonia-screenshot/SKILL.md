@@ -1,19 +1,23 @@
 ---
 name: avalonia-screenshot
 description: |
-  Avalonia アプリのウィンドウを、アプリ本体を起動せずに PNG へ描き出す。RenderTargetBitmap.Render(window) が核で、デザイン時 ViewModel を差し込めば任意の画面状態を再現できる。
-  AXAML を直して撮って確認するループを回すための手法。レイアウト完了を待たずに撮ると空や崩れた画像になり、ネイティブハンドルを持つコントロールは画面外で例外を投げる。
-  Triggers: Avalonia のスクリーンショット, AXAML の見た目確認, デザインプレビュー, ウィンドウのレイアウト確認
+  Render an Avalonia window to a PNG without starting the application. RenderTargetBitmap.Render(window) is the core; injecting a design-time ViewModel reproduces any screen state on demand.
+  This is what makes an edit-capture-check loop on AXAML practical. Capturing before layout completes yields an empty or malformed image, and controls that own a native handle throw when drawn off-screen.
+  Triggers: Avalonia screenshot, check an AXAML layout, design preview, render a window without running the app, Avalonia のスクリーンショット, AXAML の見た目確認, デザインプレビュー, ウィンドウのレイアウト確認
 allowed-tools: Bash, Read, Glob, Grep
 ---
 
 # Avalonia Screenshot
 
-手法の選択は `any-screenshot` が担う。ここは Avalonia 固有の描き出し。
+`any-screenshot` decides which method applies. This is the Avalonia
+render.
 
-**アプリを起動しない。** ウィンドウを画面外に置いて `Show()` し、`RenderTargetBitmap` に描画して閉じる。実行中のアプリを操作して目的の画面に辿り着く必要がないので、状態の再現が確実で速い。
+**The application is never started.** A window is placed off-screen,
+shown, drawn into a `RenderTargetBitmap` and closed. Nothing has to be
+clicked through to reach the screen in question, which makes the state
+exact and the loop fast.
 
-## 核心
+## The core
 
 ```csharp
 var bitmap = new RenderTargetBitmap(new PixelSize(w, h), new Vector(96, 96));
@@ -22,7 +26,10 @@ using var stream = File.Open(path, FileMode.Create, FileAccess.Write);
 bitmap.Save(stream);
 ```
 
-`Avalonia.Headless` パッケージではなく、**実ウィンドウを画面外に配置する**方式。GPU バックエンドやテーマがそのまま効くので、実際の見た目と一致する。
+This is **a real window positioned off-screen**, not the
+`Avalonia.Headless` package. The GPU backend and the themes apply exactly
+as they do in the running application, so the image matches what a user
+would see.
 
 ```csharp
 window.WindowStartupLocation = WindowStartupLocation.Manual;
@@ -30,11 +37,13 @@ window.Position = new PixelPoint(-2000, -2000);
 window.Show();
 ```
 
-すべて `Dispatcher.UIThread` 上で行う。
+All of it runs on `Dispatcher.UIThread`.
 
-## 崩れる 3 つの原因
+## Three ways the image comes out wrong
 
-**レイアウト未完了。** `Show()` 直後に撮ると空か崩れた画像になる。`LayoutUpdated` を待ち、さらに Render 優先度でディスパッチャを一巡させる。
+**Layout has not finished.** Capturing straight after `Show()` gives an
+empty or half-arranged image. Wait for `LayoutUpdated`, then let the
+dispatcher drain at render priority.
 
 ```csharp
 await window.WaitForLayoutAsync(TimeSpan.FromSeconds(2));
@@ -42,9 +51,13 @@ await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Render);
 await Task.Delay(200);
 ```
 
-`WaitForLayoutAsync` は `LayoutUpdated` を一度だけ拾ってタイムアウト付きで待つ拡張メソッドとして書く。待ち切れなくても撮る（警告を出す）方が、無言で止まるより扱いやすい。
+Write `WaitForLayoutAsync` as an extension that hooks `LayoutUpdated`
+once and races it against a timeout. Capturing anyway when the wait
+expires — with a warning — is easier to live with than stalling silently.
 
-**ネイティブハンドルを持つコントロール。** ビデオ表示など native window を作る要素は画面外描画で失敗する。論理ツリーと視覚ツリーの両方から探して、同寸法の `Border` に差し替える。
+**Controls that own a native handle.** Anything creating a native window,
+video surfaces in particular, fails when drawn off-screen. Find them
+through both trees and swap in a `Border` of the same size.
 
 ```csharp
 window.GetLogicalDescendants().OfType<NativeVideoView>()
@@ -52,30 +65,37 @@ window.GetLogicalDescendants().OfType<NativeVideoView>()
   .Distinct()
 ```
 
-**ハングするウィンドウ。** 1 枚ごとにタイムアウトを掛け、超えたらスキップして次へ進む。全体が巻き添えで死なないようにする。
+**A window that hangs.** Put a timeout on each capture and skip past the
+ones that exceed it, so a single bad window does not take the run down.
 
-## 画面状態の作り分け
+## Producing different screen states
 
-デザイン時 ViewModel を `DataContext` に差し込む。同じウィンドウの「記録中 / 停止中」「オンライン / オフライン」などを、アプリを操作せずに撮り分けられる。
+Inject a design-time ViewModel as the `DataContext`. Recording against
+stopped, online against offline, and so on can then be captured from the
+same window without driving the application.
 
-**適用の順序が効く。**
+**The order of application matters.**
 
-| 対象 | タイミング | 理由 |
+| What | When | Why |
 |---|---|---|
-| `DataContext` の差し替え | `Show()` **前** | `INotifyPropertyChanged` 未実装の ViewModel でも反映される |
-| タブ選択などの操作 | `Show()` **後** | ビジュアルツリーが構築されていないと要素を辿れない |
+| Replacing `DataContext` | **Before** `Show()` | Applies even for a ViewModel that does not implement `INotifyPropertyChanged` |
+| Selecting a tab, and similar | **After** `Show()` | The visual tree does not exist until then |
 
-タブは `GetVisualDescendants().OfType<TabControl>()` で掴み、ヘッダー文字列で照合して `SelectedIndex` を設定する。
+Reach a tab through `GetVisualDescendants().OfType<TabControl>()`, match
+on the header text, and set `SelectedIndex`.
 
-## 組み込み方
+## Wiring it up
 
-撮影専用のコンソールプロジェクトを 1 つ足し、アプリの View と ViewModel を参照させる。ウィンドウ生成をラムダで列挙しておけば、`--only <名前>` で対象を絞れる。
+Add one console project for capturing and let it reference the
+application's views and view models. Listing window construction as
+lambdas allows `--only <name>` to narrow what runs.
 
 ```
 src/screenshot/
-├── Program.cs           Avalonia の初期化と引数解析
-├── ScreenshotRunner.cs  上記の描画・待機・保存
-└── ScreenshotTarget.cs  ウィンドウ名 → 生成ラムダ の対応表
+├── Program.cs           Avalonia initialisation and argument parsing
+├── ScreenshotRunner.cs  the rendering, waiting and saving above
+└── ScreenshotTarget.cs  window name → construction lambda
 ```
 
-出力先はリポジトリ内の `docs/screenshots/` にすると、レビューで差分が見える。
+Writing output to `docs/screenshots/` inside the repository makes the
+difference visible in review.
