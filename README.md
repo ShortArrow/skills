@@ -62,9 +62,53 @@ skills/<name>/scripts/          anything it executes
 .claude-plugin/marketplace.json plugin grouping
 ```
 
-`SKILL.md` needs YAML frontmatter with `name` and `description`. The
-description decides whether the skill is selected, so it states the
-trigger conditions rather than summarising the body.
+`SKILL.md` needs YAML frontmatter with `name` and `description`.
+
+## What a description is for
+
+**The description is loaded into every session; the body is read only
+when the skill fires.** `claude plugin details <name>` reports the split.
+
+```
+component            always-on  on-invoke
+any-screenshot            ~150       ~960
+windows-screenshot        ~170      ~1.1k
+```
+
+Three things follow.
+
+**Detail belongs in the body.** It costs nothing until the skill is
+actually used, so there is no reason to compress it. The description is
+the part paid for continuously, and it only has to be enough to decide.
+
+**Selection is a judgement, not a match.** The model reads the
+description and decides whether it applies. Listing synonyms of words
+already present buys nothing, and listing them in a second language buys
+nothing either — the skills Anthropic ships are English-only and are used
+in every language. A description that says the same thing twice is paid
+for twice, every session.
+
+**Spend the tokens on boundaries instead.** Where several skills answer
+to the same word — four here respond to "screenshot" — the description is
+the only place that distinction can be drawn before one of them fires.
+Say what the skill is *not* for and which sibling owns that case.
+
+## Other marketplaces
+
+Third-party collections are added the same way rather than copied in.
+Vendoring them would mean carrying their licences and their release
+cadence.
+
+```
+claude plugin marketplace add anthropics/skills
+```
+
+- [anthropics/skills](https://github.com/anthropics/skills)
+- [openai/skills](https://github.com/openai/skills)
+- [github/awesome-copilot](https://github.com/github/awesome-copilot/tree/main/skills)
+- [microsoftDocs/skills](https://github.com/MicrosoftDocs/Agent-Skills/tree/main/skills)
+- [cloudflare/skills](https://github.com/cloudflare/skills)
+- [android/skills](https://github.com/android/skills)
 
 ## License
 
