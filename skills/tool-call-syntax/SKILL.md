@@ -11,9 +11,7 @@ nothing**. There is no output and no side effect, so from the user's side
 it looks like the agent went quiet or started repeating itself. The agent
 believes it ran the tool, which is what makes the loop hard to leave.
 
-## What actually happened
-
-A call was wrapped in a tag called `court`, which does not exist:
+The characteristic form of the mistake is an invented wrapper:
 
 ```
 court
@@ -23,9 +21,9 @@ court
 court
 ```
 
-Neither `court` nor a bare `<invoke>` is part of the harness grammar.
-Several turns in a row came back malformed, and the user was asked "how
-does it look now?" each time.
+Neither `court` nor a bare `<invoke>` is part of the grammar. Nothing
+about the response distinguishes this from a working call, so it repeats
+until the wrapper itself is suspected.
 
 ## The syntax
 
@@ -66,8 +64,8 @@ calls use `<>`):
 ## Recovering without repeating it
 
 On `malformed` or `could not be parsed`, **identify one cause before
-retrying**. Re-sending the same text reproduces the same failure — that
-is how several turns were lost.
+retrying**. Re-sending the same text reproduces the same failure exactly,
+so a retry without a hypothesis costs a turn and learns nothing.
 
 1. Suspect the opening tag name first. A foreign wrapper is the most
    likely culprit.

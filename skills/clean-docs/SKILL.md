@@ -13,17 +13,14 @@ too. That is the whole of this skill.
 
 ## Discipline 1: conversation labels stay in the conversation
 
-### What actually happened
-
-During a project-wide audit the findings were organised in conversation as
-H1/H2/H3 and M1–M4, and those labels went straight into a PR body:
+Findings organised as H1/H2/H3 and M1–M4 while working through an audit
+are useful in the conversation and meaningless outside it. A PR body that
+says
 
 > This PR fixes all three (the audit's H1-H3): ...
 
-H1–H3 are defined in no document. They exist only in the conversation log.
-The user's response: *it isn't in any document either, and putting it in
-the PR makes it unreadable later — stop using abbreviations in places they
-don't belong.*
+names nothing. H1–H3 are defined in no document, so the reader has no way
+to reach them.
 
 ### Rules
 
