@@ -103,12 +103,21 @@ cadence.
 claude plugin marketplace add anthropics/skills
 ```
 
-- [anthropics/skills](https://github.com/anthropics/skills)
-- [openai/skills](https://github.com/openai/skills)
-- [github/awesome-copilot](https://github.com/github/awesome-copilot/tree/main/skills)
-- [microsoftDocs/skills](https://github.com/MicrosoftDocs/Agent-Skills/tree/main/skills)
-- [cloudflare/skills](https://github.com/cloudflare/skills)
-- [android/skills](https://github.com/android/skills)
+| Repository | Covers |
+|---|---|
+| [anthropics/skills](https://github.com/anthropics/skills) | Document formats, artifact building, skill creation |
+| [openai/skills](https://github.com/openai/skills) | Catalogue for Codex |
+| [google/skills](https://github.com/google/skills) | Google products and technologies |
+| [microsoft/skills](https://github.com/microsoft/skills) | Grounding coding agents in Microsoft SDKs |
+| [NVIDIA/skills](https://github.com/NVIDIA/skills) | Physical AI, robotics, simulation, CUDA, RAG |
+| [amd/skills](https://github.com/amd/skills) | AMD's optimised software stack |
+| [cloudflare/skills](https://github.com/cloudflare/skills) | Building on Cloudflare |
+| [android/skills](https://github.com/android/skills) | Android development |
+| [MicrosoftDocs/Agent-Skills](https://github.com/MicrosoftDocs/Agent-Skills/tree/main/skills) | Microsoft documentation |
+| [github/awesome-copilot](https://github.com/github/awesome-copilot/tree/main/skills) | Community collection |
+
+Each costs always-on tokens for every skill it installs, so install the
+plugin that matches the work rather than the whole catalogue.
 
 ## License
 
