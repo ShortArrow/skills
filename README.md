@@ -18,7 +18,7 @@ Then install whichever set applies.
 | Plugin | Skills |
 |---|---|
 | `screenshot-skills` | any-screenshot, windows-screenshot, avalonia-screenshot, flaui-screenshot |
-| `writing-skills` | clean-docs, pdf-transcribe, request-push |
+| `writing-skills` | clean-docs, unmachine-prose, pdf-transcribe, request-push |
 | `engineering-skills` | csharp-architect, tui-debug, grill-me, tool-call-syntax, codex, find-skills, adopt-dependency |
 
 ## Skills
@@ -42,9 +42,12 @@ three that can capture a single element or act before capturing.
 
 `clean-docs` is about documents that outlive the conversation that
 produced them, and about direction of dependency between them: a README
-should not lean on a changelog. `pdf-transcribe` governs transcription —
-principally that nothing may be written which the page does not show.
-`request-push` asks before publishing.
+should not lean on a changelog. `unmachine-prose` is about the sentences
+themselves — the participial trailers, triplets and significance
+inflation that fill space once the content has run out.
+`pdf-transcribe` governs transcription — principally that nothing may be
+written which the page does not show. `request-push` asks before
+publishing.
 
 ### Engineering
 

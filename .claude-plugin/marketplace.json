@@ -28,6 +28,7 @@
       "strict": false,
       "skills": [
         "./skills/clean-docs",
+        "./skills/unmachine-prose",
         "./skills/pdf-transcribe",
         "./skills/request-push"
       ]
