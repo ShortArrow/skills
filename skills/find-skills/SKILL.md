@@ -1,42 +1,76 @@
 ---
 name: find-skills
-description: Search the published skill registry before writing a skill or working through a specialised task by hand. `npx skills find <query>` returns matches across every public collection ranked by installs, and `npx skills use` prints one without installing it. Use when a task looks like something someone will already have solved — a file format, a framework's conventions, a vendor's tooling — and before starting to author a new skill.
+description: Find an existing skill before writing one or working through a specialised task by hand. Search the vendor-official collections by owner first — the open registry is open publication, and a skill is code that runs with the agent's full permissions, so install count is popularity rather than review. Use when a task looks like something a vendor will already have solved: a file format, a framework's conventions, a toolchain.
 allowed-tools: Bash, Read, WebFetch
 ---
 
 # Find Skills
 
-Installed skills are already in context; their descriptions are loaded
-into every session. This is for the ones that are **not** installed.
+Installed skills are already in context; their descriptions load into
+every session. This is for the ones that are **not** installed.
 
-## Search
+## Search a known owner first
+
+`--owner` scopes the search to one GitHub owner. Only one takes effect
+per call, so query the owners the task suggests.
 
 ```
-npx skills find pdf
+npx skills find pdf --owner anthropics
 npx skills find playwright --owner microsoft
 ```
 
-Results are ranked by install count and carry a skills.sh link:
+Collections published by the vendor whose product is involved:
+
+| Owner | Covers |
+|---|---|
+| `anthropics` | Document formats, artifact building, skill creation |
+| `openai` | Codex |
+| `google` | Google products |
+| `microsoft` | Microsoft SDKs |
+| `MicrosoftDocs` | Microsoft documentation |
+| `NVIDIA` | Physical AI, robotics, simulation, CUDA, RAG |
+| `amd` | AMD's software stack |
+| `cloudflare` | Cloudflare |
+| `android` | Android |
+| `vercel-labs` | React, Next.js, deployment |
+| `remotion-dev` | Remotion |
+| `github` | awesome-copilot, a community collection |
+
+This buys accountability, not correctness. A named vendor can be held to
+a security process; it does not make the skill right for the job.
+
+## Why not search everything
+
+An unscoped `npx skills find` returns the whole registry, which is open
+publication — anyone may publish, and nothing is reviewed. The results
+carry install counts, and **an install count measures popularity, not
+scrutiny**.
+
+**A skill is code that runs with the agent's full permissions.** Adding
+one is closer to `npm install` than to reading documentation: `SKILL.md`
+is instruction the agent follows, and `scripts/` is executed. A skill
+from an unknown author can direct the agent to read credentials, or
+simply run something.
+
+"Read it before installing" is not sufficient mitigation on its own.
+Catching a subtle instruction buried in prose is unreliable, and the
+burden returns on every update.
+
+So widen the search only when no vendor collection covers the task, and
+then treat the result as untrusted third-party code:
+
+- Read `SKILL.md` in full, and everything under `scripts/`
+- Prefer an owner you can identify — a company, a project you know
+- If you would not run their `npm` package without looking, do not install
+  their skill without looking either
 
 ```
-anthropics/skills@pdf 169.7K installs
-└ https://skills.sh/anthropics/skills/pdf
+npx skills use <owner>/<repo>@<skill>
 ```
 
-It runs without a TTY and exits 0, so the output can be read directly.
-
-## Read before installing
-
-**A skill runs with the agent's full permissions.** Install count is
-popularity, not review. Read `SKILL.md` first — and anything under
-`scripts/`, which is where a skill can execute rather than instruct.
-
-```
-npx skills use anthropics/skills@pdf
-```
-
-`use` resolves the source the same way `add` does, writes to a temporary
-directory and prints only the generated prompt. Nothing is installed.
+`use` resolves the source the way `add` does, writes to a temporary
+directory and prints only the generated prompt. Nothing is installed, so
+this reads a skill without adopting it.
 
 ## Install
 
@@ -44,11 +78,11 @@ directory and prints only the generated prompt. Nothing is installed.
 npx skills add anthropics/skills --skill pdf
 ```
 
-`--skill` takes one entry rather than the collection, and the name it
-matches is the one the skill declares, not its directory.
+`--skill` takes one entry rather than the collection, and matches the name
+the skill declares, not its directory.
 
-For a collection carrying `.claude-plugin/marketplace.json`, Claude Code
-can take it directly instead:
+Where a collection carries `.claude-plugin/marketplace.json`, Claude Code
+can take it directly:
 
 ```
 claude plugin marketplace add anthropics/skills
@@ -57,18 +91,17 @@ claude plugin install document-skills@anthropic-agent-skills
 
 ## When to look
 
-- **Before authoring a skill.** The problem is rarely new. Adopting an
-  existing one and narrowing it beats starting from nothing.
+- **Before authoring a skill.** The problem is rarely new.
 - **Before a specialised task by hand.** File formats, a framework's
-  conventions, a vendor's toolchain — all well covered.
+  conventions, a vendor's toolchain.
 - **Not for something already installed.** Those descriptions are in
   context; searching for them wastes a call.
 
 ## What installing costs
 
-Every installed skill's description is loaded into **every session**,
-whether or not it fires. `claude plugin details <name>` reports the
-split between that and the body, which is read only on use.
+Every installed skill's description loads into **every session**, whether
+or not it fires. `claude plugin details <name>` reports that against the
+body, which is read only on use.
 
-So install the skill, not the catalogue. A collection added whole for one
-useful entry charges for all of it, permanently.
+Install the skill, not the catalogue. A collection taken whole for one
+useful entry is charged for in full, permanently.
