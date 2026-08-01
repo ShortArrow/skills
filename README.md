@@ -103,21 +103,62 @@ cadence.
 claude plugin marketplace add anthropics/skills
 ```
 
+These carry `.claude-plugin/marketplace.json`, so `marketplace add` takes
+them directly.
+
 | Repository | Covers |
 |---|---|
 | [anthropics/skills](https://github.com/anthropics/skills) | Document formats, artifact building, skill creation |
-| [openai/skills](https://github.com/openai/skills) | Catalogue for Codex |
 | [google/skills](https://github.com/google/skills) | Google products and technologies |
 | [microsoft/skills](https://github.com/microsoft/skills) | Grounding coding agents in Microsoft SDKs |
 | [NVIDIA/skills](https://github.com/NVIDIA/skills) | Physical AI, robotics, simulation, CUDA, RAG |
 | [amd/skills](https://github.com/amd/skills) | AMD's optimised software stack |
 | [cloudflare/skills](https://github.com/cloudflare/skills) | Building on Cloudflare |
 | [android/skills](https://github.com/android/skills) | Android development |
-| [MicrosoftDocs/Agent-Skills](https://github.com/MicrosoftDocs/Agent-Skills/tree/main/skills) | Microsoft documentation |
-| [github/awesome-copilot](https://github.com/github/awesome-copilot/tree/main/skills) | Community collection |
+| [MicrosoftDocs/Agent-Skills](https://github.com/MicrosoftDocs/Agent-Skills) | Microsoft documentation |
 
-Each costs always-on tokens for every skill it installs, so install the
+Every installed skill costs always-on tokens in every session, so take the
 plugin that matches the work rather than the whole catalogue.
+
+## Collections that are not marketplaces
+
+These hold skills but declare no marketplace, so `marketplace add` will
+not resolve them. [vercel-labs/skills](https://github.com/vercel-labs/skills)
+installs from any git source into Claude Code, Codex, Cursor, OpenCode and
+some seventy other agents.
+
+```
+npx skills add openai/skills
+```
+
+| Repository | Covers |
+|---|---|
+| [openai/skills](https://github.com/openai/skills) | Catalogue for Codex |
+| [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) | React, Next.js and deployment practice |
+| [github/awesome-copilot](https://github.com/github/awesome-copilot/tree/main/skills) | Community collection |
+| [remotion-dev/skills](https://github.com/remotion-dev/skills) | Remotion — programmatic video in React |
+
+`--skill` takes one entry instead of the collection, which matters when
+the collection is large.
+
+```
+npx skills add https://github.com/vercel-labs/agent-skills --skill vercel-react-best-practices
+```
+
+The name it resolves is the one the skill declares, not its directory —
+above, `vercel-react-best-practices` lives in `skills/react-best-practices`.
+
+The same command reaches this repository, which is how to use these skills
+from an agent that has no plugin system.
+
+```
+npx skills add ShortArrow/skills
+```
+
+By default it writes to `.agents/skills/` in the current project and
+symlinks Claude Code at it; `--agent claude-code` writes to
+`.claude/skills/` instead. Either way it records what it took in
+`skills-lock.json`.
 
 ## License
 
