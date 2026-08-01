@@ -160,6 +160,23 @@ symlinks Claude Code at it; `--agent claude-code` writes to
 `.claude/skills/` instead. Either way it records what it took in
 `skills-lock.json`.
 
+## The format elsewhere
+
+`SKILL.md` is not specific to Claude Code. The same folder-with-a-manifest
+shape is being adopted across agents, which is why a skill written here
+runs under Codex or Gemini CLI without changing.
+
+| | |
+|---|---|
+| [agentskills.io](https://agentskills.io) | The specification |
+| [claude.com/skills](https://claude.com/skills) | Claude |
+| [docs.github.com — about agent skills](https://docs.github.com/en/copilot/concepts/agents/about-agent-skills) | GitHub Copilot |
+| [developers.openai.com — tools and skills](https://developers.openai.com/api/docs/guides/tools-skills) | OpenAI, from the API |
+| [developers.openai.com — skills in the API](https://developers.openai.com/cookbook/examples/skills_in_api) | The same, worked through |
+| [learn.chatgpt.com — build skills](https://learn.chatgpt.com/docs/build-skills) | ChatGPT |
+| [geminicli.com — skills](https://geminicli.com/docs/cli/skills/) | Gemini CLI |
+| [skills.sh](https://www.skills.sh/) | Directory of published skills |
+
 ## License
 
 MIT. See [LICENSE](LICENSE).
