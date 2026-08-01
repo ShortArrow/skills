@@ -42,7 +42,8 @@
         "./skills/tui-debug",
         "./skills/grill-me",
         "./skills/tool-call-syntax",
-        "./skills/codex"
+        "./skills/codex",
+        "./skills/find-skills"
       ]
     }
   ]
