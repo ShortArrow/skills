@@ -38,6 +38,11 @@ not.
    carrying them across.
 4. **PR bodies are where this leaks most.** They tend to be written from a
    summary of the conversation rather than from the commits.
+5. **Deixis fails the same test.** "on this machine", "in our setup",
+   "here" — the writer knows which one, and the artifact never says. A
+   measurement qualified this way cannot be judged by anyone else: they
+   cannot tell whether it would hold for them. Name the thing, or point at
+   a document that describes it.
 
 ## Discipline 2: dependency inversion for documents
 
