@@ -6,10 +6,9 @@ description: Discipline for writing durable artifacts — PR bodies, commits, CH
 # Self-Contained Artifacts
 
 A durable artifact is **read after this conversation has ceased to exist,
-by someone who never saw it**. Beyond that, a set of documents has an
-**architecture — layers, and a direction of dependency**. Clean
-architecture is not only for the implementation; the documentation has one
-too. That is the whole of this skill.
+by someone who never saw it**. And a set of documents has an architecture
+— layers, and a direction of dependency — as surely as the implementation
+does. That is the whole of this skill.
 
 ## Discipline 1: conversation labels stay in the conversation
 
@@ -72,8 +71,7 @@ PR < CHANGELOG < ADR. The layering is fractal.
   principles document or a source comment. That is a stable→volatile
   dependency, and a DIP violation.
 - **The pointer belongs to the concrete side.** An ADR or CHANGELOG naming
-  a specification section, a file path or a function is correct — the
-  volatile thing points at the stable one.
+  a specification section, a file path or a function is correct.
 - **Mutual links are forbidden.** Bidirectional means circular, and one of
   the two edges will always be stable depending on volatile.
 - **Apply it fractally.** The same holds inside the journals. References
