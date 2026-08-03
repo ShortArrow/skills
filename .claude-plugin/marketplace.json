@@ -35,12 +35,13 @@
     },
     {
       "name": "engineering-skills",
-      "description": "Working on code: C# architecture guidance, TUI inspection without a display, resolving ambiguity before implementing, and tool-call syntax",
+      "description": "Working on code: C# architecture guidance, TUI inspection without a display, isolated desktop test runs, resolving ambiguity before implementing, and tool-call syntax",
       "source": "./",
       "strict": false,
       "skills": [
         "./skills/csharp-architect",
         "./skills/tui-debug",
+        "./skills/windows-sandbox",
         "./skills/grill-me",
         "./skills/tool-call-syntax",
         "./skills/codex",
