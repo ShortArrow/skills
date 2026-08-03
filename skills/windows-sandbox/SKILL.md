@@ -16,7 +16,7 @@ need not agree on anything but the lock.
 
 | Purpose | File |
 |---|---|
-| Take the slot, from a runner in any language | the protocol under *One slot* |
+| Take the slot, from a runner in any language | *The protocol*, below |
 | Reference implementation of the protocol | `scripts/SandboxLock.ps1` |
 | Whole run — build, launch, collect, clean up | `scripts/Invoke-SandboxRun.ps1` |
 
@@ -39,10 +39,10 @@ sandbox to get it.
 
 ## One slot, shared by everyone
 
-Windows allows **one sandbox instance at a time**, machine-wide.
-Documented on the overview page and again in the FAQ, and the `wsb` CLI
-does not lift it. Every project on the machine competes for the same slot,
-which is where the damage comes from:
+Windows allows **one sandbox instance at a time**, machine-wide. The `wsb`
+CLI does not lift it: `wsb list` is plural in wording, and `wsb start`
+still needs the previous environment stopped. Every project on the machine
+competes for that one slot, which is where the damage comes from:
 
 - A runner that ends with "kill the sandbox processes" kills whichever
   project's sandbox is running, not necessarily its own
@@ -114,7 +114,7 @@ finally { Exit-SandboxLock $lock }
 | **The window is not always `WindowsSandboxClient`'s** | On the Store sandbox (`wsb.exe`, 0.8.x) it belongs to `WindowsSandboxRemoteSession`. A minimize routine written against the inbox version finds nothing and quietly leaves the window in front |
 | **`vmmem*` does not answer to `Stop-Process`** | It is a VM worker. Stop the environment with `wsb stop --id`; kill processes only as the fallback |
 | **`vmmemCmZygote` is not a sandbox** | It is the pre-warmed base. Killing it costs the next launch its fast start |
-| **Do not disable vGPU** | Observed: the automatic logon never completes and `LogonCommand` never runs. The docs describe `Disable` as a fall back to software rendering and recommend it for a white-square guest; that trade is not worth a run that silently does nothing |
+| **Do not disable vGPU** | The automatic logon does not complete and `LogonCommand` never runs, so the sandbox comes up and does nothing. Microsoft describes `Disable` as a fall back to software rendering and recommends it for a guest that renders as a white square — that trade buys a visible guest and loses the run |
 | **`ReadOnly` defaults to `false`** | An omitted `ReadOnly` gives the guest write access, and those writes land on the host disk and survive disposal. This is the one hole in "nothing persists" |
 | **A missing `HostFolder` fails the whole container** | Not the mapping — the start |
 | **`LogonCommand` takes exactly one command** | It runs after the folders are mounted, as `WDAGUtilityAccount` (an administrator in the guest), so point it at a `.cmd` mapped in from the host. A `.ps1` needs `-ExecutionPolicy Bypass` spelled out |
@@ -133,18 +133,18 @@ case-insensitive.
 
 ## Adding the sandbox to a new project
 
-Copy `scripts/` into the repository — around 250 lines, no dependencies
-beyond PowerShell and `wsb.exe` — and call it from the project's own
-runner. Then the runner works for a person, for CI, and for any agent,
-and it keeps working when this skill is uninstalled.
+Copy `scripts/` into the repository — two files, nothing outside
+PowerShell and `wsb.exe` — and call them from the project's own runner.
+Then the runner works for a person, for CI, and for any agent, and it
+keeps working when this skill is uninstalled.
 
 That copy will drift from this one, and mostly that is fine: the guest
 command, the mappings and the timeout are the project's business. Rule 1
 is the part that must not drift. Everything else is local.
 
 A repository that already has a working runner does not need the copy at
-all. Adding the twenty lines of rules 1 to 4 to it is enough to stop it
-colliding with the others.
+all. Applying rules 1 to 4 to it is enough to stop it colliding with the
+others.
 
 Keep in the project only what is about the project:
 
@@ -152,13 +152,3 @@ Keep in the project only what is about the project:
 - The mappings and the guest command
 - Which tests are sandbox-only. Pure unit tests do not take the keyboard
   and should stay on the host, where they run in seconds
-
-## Provenance
-
-The protocol comes from `BiosMonitorClassic` ADR-0012 and its
-`scripts/run-uitests-sandbox.ps1`, where it was validated over 12 UI
-tests at one to two minutes a run. Changed on extraction: the pre-flight
-check became a held lock, because a check alone races; liveness and
-shutdown go through the `wsb` CLI, because a windowless sandbox is
-invisible to a process-name check; and the runner takes the command as a
-parameter rather than hard-coding one project's `dotnet test`.
