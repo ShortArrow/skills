@@ -3,6 +3,11 @@
   Machine-wide mutual exclusion for the one Windows Sandbox instance.
 
 .DESCRIPTION
+  Copy this into the repository that uses it. What runners must share is
+  the lock file and the way it is opened -- an implementation in any
+  language that opens %ProgramData%\WindowsSandbox\runner.lock for write
+  with FILE_SHARE_READ cooperates with this one.
+
   Windows Sandbox runs one instance at a time, so every runner on the
   machine is competing for the same slot. The lock is an exclusively held
   file: the owning process keeps the handle open, and Windows closes it

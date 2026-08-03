@@ -4,6 +4,11 @@
   disturbing the desktop or another project's sandbox.
 
 .DESCRIPTION
+  Copy this and SandboxLock.ps1 into the repository that uses them. A test
+  runner that can only run where an agent's plugin cache is present is not
+  a test runner. What projects have to share is the lock protocol, not this
+  file, so copies are free to diverge everywhere else.
+
   The sandbox has its own active input desktop, which is why UI tests belong
   in it: SendInput reaches the guest application and never touches the host
   keyboard, mouse or foreground window.

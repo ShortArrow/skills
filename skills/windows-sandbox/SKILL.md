@@ -7,10 +7,18 @@ allowed-tools: PowerShell, Read, Write, Edit
 
 # Windows Sandbox as a test target
 
-| Purpose | Script |
+**Nothing here is a runtime dependency.** A project's test runner must
+work for a person and for CI, neither of which has this skill installed —
+and the installed copy lives under a hashed plugin cache path that no
+repository can reference anyway. What projects share is the lock protocol
+below. `scripts/` is a reference implementation to copy in, and copies
+need not agree on anything but the lock.
+
+| Purpose | File |
 |---|---|
-| Run a command in the sandbox and get the result back | `scripts/Invoke-SandboxRun.ps1` |
-| Share the slot from a runner you already have | `scripts/SandboxLock.ps1` |
+| Take the slot, from a runner in any language | the protocol under *One slot* |
+| Reference implementation of the protocol | `scripts/SandboxLock.ps1` |
+| Whole run — build, launch, collect, clean up | `scripts/Invoke-SandboxRun.ps1` |
 
 ## Why the sandbox, and not something lighter
 
@@ -41,23 +49,34 @@ which is where the damage comes from:
 - Checking "is one running?" and then launching is a race. Two runners
   both see zero, both launch, and both later believe the survivor is theirs
 
-The fix is a lock held across the **whole** span — pre-flight, launch,
-wait, clean-up — not just around the launch. `scripts/SandboxLock.ps1`
-is an exclusively opened file under `%ProgramData%\WindowsSandbox\`.
-Windows closes the handle when the owning process dies, so a killed
-runner does not leave the lock stuck, and a waiter can read who is ahead
-of it.
+### The protocol
+
+Four rules. A runner that follows them cooperates with every other runner
+on the machine, whatever it is written in.
+
+1. **The lock is `%ProgramData%\WindowsSandbox\runner.lock`**, held by
+   keeping the file open: created for **write**, sharing **read only**
+   (`FILE_SHARE_READ`; `FileShare.Read` in .NET, `O_EXLOCK`-equivalent
+   elsewhere). A second runner's create fails while the first holds it,
+   and Windows closes the handle when the owner dies, so a killed runner
+   leaves nothing stuck. Write one line into it — who you are, your PID,
+   the time — so a waiter can say who it is behind. Do not delete it on
+   release: the handle is the lock, the bytes are only a label
+2. **Hold it across the whole span** — pre-flight, launch, wait,
+   clean-up. Holding it only over the launch is the same race as no lock
+   at all, because the damage is done by the clean-up
+3. **Under the lock, a running sandbox is somebody else's**, hand-started
+   or left open for debugging. Refuse the run. Never terminate it
+4. **Clean up only what you started.** Rule 3 makes that "everything
+   alive now", since you began with none
 
 ```powershell
-. "$PSScriptRoot/SandboxLock.ps1"
+# Reference implementation, for a runner the project already has
+. "$PSScriptRoot/SandboxLock.ps1"     # copied into the repo, not referenced from the skill
 $lock = Enter-SandboxLock -Owner 'BiosMonitorClassic uitests'
 try     { <# launch, wait, clean up #> }
 finally { Exit-SandboxLock $lock }
 ```
-
-Under the lock, a sandbox that is already running belongs to someone
-outside the protocol — a hand-started one, or a run left open for
-debugging. **Refuse; never terminate it.** `Invoke-SandboxRun.ps1` does.
 
 ## The shape of a run
 
@@ -114,11 +133,23 @@ case-insensitive.
 
 ## Adding the sandbox to a new project
 
-The project supplies one command line and one result folder; everything
-above stays here. Keep in the project only what is about the project:
+Copy `scripts/` into the repository — around 250 lines, no dependencies
+beyond PowerShell and `wsb.exe` — and call it from the project's own
+runner. Then the runner works for a person, for CI, and for any agent,
+and it keeps working when this skill is uninstalled.
+
+That copy will drift from this one, and mostly that is fine: the guest
+command, the mappings and the timeout are the project's business. Rule 1
+is the part that must not drift. Everything else is local.
+
+A repository that already has a working runner does not need the copy at
+all. Adding the twenty lines of rules 1 to 4 to it is enough to stop it
+colliding with the others.
+
+Keep in the project only what is about the project:
 
 - The host-side build step
-- The `-Map` entries and the guest command
+- The mappings and the guest command
 - Which tests are sandbox-only. Pure unit tests do not take the keyboard
   and should stay on the host, where they run in seconds
 
