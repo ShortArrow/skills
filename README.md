@@ -41,8 +41,10 @@ three that can capture a single element or act before capturing.
 ### Writing
 
 `clean-docs` is about documents that outlive the conversation that
-produced them, and about direction of dependency between them: a README
-should not lean on a changelog. `unmachine-prose` is about the sentences
+produced them — including who they are addressed to, which slips most
+when a document is being fixed because someone called it wrong — and about
+direction of dependency between them: a README should not lean on a
+changelog. `unmachine-prose` is about the sentences
 themselves — the participial trailers, triplets and significance
 inflation that fill space once the content has run out.
 `pdf-transcribe` governs transcription — principally that nothing may be

@@ -1,6 +1,6 @@
 ---
 name: clean-docs
-description: Discipline for writing durable artifacts — PR bodies, commits, CHANGELOGs, ADRs, READMEs, PRDs, specifications, source code. (1) Never carry a label that only means something inside the conversation. (2) Documents obey the dependency inversion principle: a stable, abstract living document (README, PRD, principles, code) must not depend on a volatile, concrete journal (ADR, CHANGELOG, PR). No ADR numbers or section references pointing out of a living document, no mutual links, no former behaviour or history in the body, undecided items separated out, and an ADR that records reasoning rather than narrative. (3) Living documents belong together under the docs root. Use when writing a PR, a commit, a CHANGELOG, an ADR or an issue, when editing a README or PRD, when copying review or audit findings into an artifact, and whenever you are about to write "See ADR-NNNN".
+description: Discipline for writing durable artifacts — PR bodies, commits, CHANGELOGs, ADRs, READMEs, PRDs, specifications, source code. (1) Never carry a label that only means something inside the conversation. (2) The artifact answers the reader, not the reviewer: deleting a wrong sentence needs no replacement, a non-relationship is not worth explaining, and a document that vouches for itself is padding. (3) Documents obey the dependency inversion principle: a stable, abstract living document (README, PRD, principles, code) must not depend on a volatile, concrete journal (ADR, CHANGELOG, PR). No ADR numbers or section references pointing out of a living document, no mutual links, no former behaviour or history in the body, undecided items separated out, and an ADR that records reasoning rather than narrative. (4) Living documents belong together under the docs root. Use when writing a PR, a commit, a CHANGELOG, an ADR or an issue, when editing a README or PRD, when fixing something a reviewer called wrong, and whenever you are about to write "See ADR-NNNN".
 ---
 
 # Self-Contained Artifacts
@@ -44,7 +44,49 @@ not.
    cannot tell whether it would hold for them. Name the thing, or point at
    a document that describes it.
 
-## Discipline 2: dependency inversion for documents
+## Discipline 2: the artifact answers the reader, not the reviewer
+
+Most edits to an artifact are made because someone said it was wrong. That
+is exactly when the addressee slips, and the sentence that goes in answers
+the person who complained.
+
+An index page opened with "the tool pages say what is installed, these say
+why". Counted, the claim held for three of eight pages. Deleting it was
+right. What replaced it was not:
+
+> They are not the other half of the tool pages. Those are readmes kept
+> beside the configuration they document…
+
+No reader had assumed a pairing. The replacement answers a question only
+the reporter asked, in a document the reporter will never read again.
+
+### Rules
+
+1. **Removing a wrong sentence does not require writing a right one.**
+   Delete it and stop. What surrounds it usually already carries the point,
+   which is why the wrong sentence was removable.
+2. **Do not explain a relationship that does not exist.** "X is not Y"
+   earns its place only where a reader would otherwise assume it. Otherwise
+   it teaches them that somebody once did.
+3. **Do not let the document vouch for itself.** "the number above is not
+   something anyone has to remember to measure", "that check earned itself
+   immediately", "last green on 2026-07-16". These assert the quality of
+   the work in place of doing it, and a reader who doubts the number is not
+   reassured by a sentence claiming it is reliable.
+4. **Keep project housekeeping out.** Which files were kept, why a script's
+   default switch is what it is, what CI last did — decisions about the
+   project, not knowledge about its subject.
+5. **The author appearing as a character is the tell.** "two readers: the
+   person at the machine, and CI." The moment the writer is in the text,
+   the addressee has already moved.
+
+### The test
+
+For each sentence, **who is asking this?** If the only person who would ask
+is you or your reviewer, cut it. A reader arrives with a problem, not with
+a history of your edits.
+
+## Discipline 3: dependency inversion for documents
 
 ### The core
 
@@ -170,7 +212,7 @@ For the reference you are about to write:
 - The target is a journal (ADR, CHANGELOG, PR) and you are writing a living
   document → stable depending on volatile. Do not write it.
 
-## Discipline 3: living documents belong under the docs root
+## Discipline 4: living documents belong under the docs root
 
 - **Keep one entrance to the present.** Scattered living documents make it
   unclear which one is currently right, and versions drift apart as updates
