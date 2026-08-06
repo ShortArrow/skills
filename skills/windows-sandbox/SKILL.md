@@ -70,6 +70,9 @@ on the machine, whatever it is written in.
 4. **Clean up only what you started.** Rule 3 makes that "everything
    alive now", since you began with none
 
+A runner outside the protocol will not appear in the lock, only in the
+sandbox itself. `peer-sessions` names which session is holding it.
+
 ```powershell
 # Reference implementation, for a runner the project already has
 . "$PSScriptRoot/SandboxLock.ps1"     # copied into the repo, not referenced from the skill

@@ -19,7 +19,7 @@ Then install whichever set applies.
 |---|---|
 | `screenshot-skills` | any-screenshot, windows-screenshot, avalonia-screenshot, flaui-screenshot |
 | `writing-skills` | clean-docs, unmachine-prose, pdf-transcribe, request-approval |
-| `engineering-skills` | csharp-architect, tui-debug, windows-sandbox, grill-me, tool-call-syntax, codex, find-skills, adopt-dependency |
+| `engineering-skills` | csharp-architect, tui-debug, windows-sandbox, peer-sessions, grill-me, tool-call-syntax, codex, find-skills, adopt-dependency |
 
 ## Skills
 
@@ -59,7 +59,10 @@ destructive or outward-facing.
 there is no display to look at. `windows-sandbox` runs tests that would
 otherwise take over the keyboard inside Windows Sandbox, and arbitrates
 the machine's single sandbox slot between projects — without one, two
-runners tear each other's sandbox down. `grill-me` resolves only the ambiguity
+runners tear each other's sandbox down. `peer-sessions` reads what other
+sessions on the machine are working on, from the task store and transcripts
+they leave behind — courtesy information, since a session between two runs
+looks exactly like one that has stopped. `grill-me` resolves only the ambiguity
 that would change the implementation. `find-skills` searches the public
 registry before you write a skill that already exists, and
 `adopt-dependency` covers deciding whether to take on what you find —
