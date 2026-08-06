@@ -18,7 +18,7 @@ Then install whichever set applies.
 | Plugin | Skills |
 |---|---|
 | `screenshot-skills` | any-screenshot, windows-screenshot, avalonia-screenshot, flaui-screenshot |
-| `writing-skills` | clean-docs, unmachine-prose, pdf-transcribe, request-push |
+| `writing-skills` | clean-docs, unmachine-prose, pdf-transcribe, request-approval |
 | `engineering-skills` | csharp-architect, tui-debug, windows-sandbox, grill-me, tool-call-syntax, codex, find-skills, adopt-dependency |
 
 ## Skills
@@ -48,8 +48,9 @@ changelog. `unmachine-prose` is about the sentences
 themselves — the participial trailers, triplets and significance
 inflation that fill space once the content has run out.
 `pdf-transcribe` governs transcription — principally that nothing may be
-written which the page does not show. `request-push` asks before
-publishing.
+written which the page does not show. `request-approval` obtains a
+confirmation the auto-approval classifier accepts, for anything
+destructive or outward-facing.
 
 ### Engineering
 

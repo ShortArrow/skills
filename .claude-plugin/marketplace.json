@@ -23,14 +23,14 @@
     },
     {
       "name": "writing-skills",
-      "description": "Producing durable artifacts: self-contained documents, faithful PDF transcription, and push requests",
+      "description": "Producing durable artifacts: self-contained documents, faithful PDF transcription, and approval for actions that cannot be taken back",
       "source": "./",
       "strict": false,
       "skills": [
         "./skills/clean-docs",
         "./skills/unmachine-prose",
         "./skills/pdf-transcribe",
-        "./skills/request-push"
+        "./skills/request-approval"
       ]
     },
     {
