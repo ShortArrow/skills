@@ -19,6 +19,7 @@ Then install whichever set applies.
 |---|---|
 | `screenshot-skills` | any-screenshot, windows-screenshot, avalonia-screenshot, flaui-screenshot |
 | `writing-skills` | clean-docs, unmachine-prose, pdf-transcribe, i18n-parity, measured-claims, request-approval |
+| `product-skills` | new-combination |
 | `engineering-skills` | plan-delegate-verify, tdd-cycle, test-design, tidy-first, diagnose-first, csharp-architect, tui-debug, windows-sandbox, peer-sessions, grill-me, tool-call-syntax, codex, find-skills, adopt-dependency |
 
 ## Skills
@@ -57,6 +58,14 @@ with, since a document can carry two stale numbers that disagree and both
 be wrong. `request-approval` obtains a
 confirmation the auto-approval classifier accepts, for anything
 destructive or outward-facing.
+
+### Product
+
+`new-combination` is idea generation after 松本勝's disruptive-innovation
+framework — a need and a seed combined for the first time, judged by
+empathy times feasibility — and fires on the habits that produce weak
+ideas instead: variants of the existing, assets hunting for a use,
+features accumulated onto a surface that was supposed to get simpler.
 
 ### Engineering
 

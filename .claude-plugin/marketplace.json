@@ -56,6 +56,15 @@
         "./skills/find-skills",
         "./skills/adopt-dependency"
       ]
+    },
+    {
+      "name": "product-skills",
+      "description": "Framing what to build: idea generation as new combinations of needs and seeds, judged by empathy and feasibility",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/new-combination"
+      ]
     }
   ]
 }
