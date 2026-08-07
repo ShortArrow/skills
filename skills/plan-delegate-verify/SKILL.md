@@ -7,7 +7,7 @@ allowed-tools: Agent, Read, Bash, PowerShell, Edit, Write, TodoWrite
 
 # Plan, delegate, verify
 
-Three roles, and they are roles rather than models:
+Four roles, and they are roles rather than models:
 
 | Role | Owns |
 |---|---|
