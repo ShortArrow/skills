@@ -1,7 +1,7 @@
 ---
 name: plan-delegate-verify
 description: |
-  Split multi-step work across model tiers: the session model writes the plan, subagents on a chosen model carry out the items, and the session model verifies the result against the plan it wrote. Use when about to plan an implementation, when a task decomposes into items that could run in parallel, or when work will be handed to subagents at all. Covers what the plan must contain for an implementer that never saw the conversation, why a subagent's "done" is not evidence, what changes when the plan is a test plan and the artefact is itself the pass mark, and when the overhead costs more than the work.
+  Split multi-step work across model tiers: the session model writes the plan, subagents on a chosen model carry out the items, and the session model verifies the result against the plan it wrote. Use when about to plan an implementation, when a task decomposes into items that could run in parallel, or when work will be handed to subagents at all. Covers delegating the fact-gathering without delegating the judgement, what the plan must contain for an implementer that never saw the conversation, why a subagent's "done" is not evidence, what changes when the plan is a test plan and the artefact is itself the pass mark, and when the overhead costs more than the work.
 allowed-tools: Agent, Read, Bash, PowerShell, Edit, Write, TodoWrite
 ---
 
@@ -11,6 +11,7 @@ Three roles, and they are roles rather than models:
 
 | Role | Owns |
 |---|---|
+| **Scout** | Facts, with citations. No judgement, no recommendation |
 | **Planner** | Decomposition, the order, and the check that decides each item is done |
 | **Implementer** | One item at a time, in a subagent, with no say over what done means |
 | **Verifier** | Whether the result meets the plan — not whether the diff looks reasonable |
@@ -27,6 +28,40 @@ Agent(prompt: "...", model: "opus")     # implementer
 
 The session model is planner and verifier. Set `model` on the Agent call
 to place the implementer.
+
+## Gathering the facts is delegable; deciding from them is not
+
+Writing a plan takes an inventory first — the public surface, the tests
+that already exist, the values the specification fixes, where the
+boundaries are declared. Reading twenty files to find six facts spends the
+planner's context on material it will not use again, and the planner needs
+the conclusion, not the file dumps. Send scouts.
+
+What a scout returns is **what exists, with citations**: path and line,
+the actual value, the actual name. What it must not return is a
+recommendation. An agent that comes back with "these three cases should be
+tested" has written the part of the plan the planner exists to write, and
+the planner will find it hard not to accept a list that already looks
+finished.
+
+Two things worth asking for that a scout will not volunteer:
+
+- **What it looked for and did not find.** Absence is a fact the plan needs
+  — no test covers this path, the specification fixes no value here — and
+  it never appears in a report of what was found.
+- **Where it was unsure.** A scout that guessed rather than read has
+  produced a fact indistinguishable from the others.
+
+Split scouts by **question**, not by directory. Three agents each asking
+something different — what the wire format fixes, what the existing tests
+already assert, what the error paths are — miss different things. Three
+agents each given a third of the tree miss the same thing three times.
+
+This does not turn exploration into a delegable step. **Enumeration
+delegates; orientation does not.** When the shape is already known — list
+every call site, find each declared constant — a scout returns it faster
+and cheaper. When the question is still what the shape *is*, reading it
+yourself is what produces the plan.
 
 ## The plan is an artifact, not a conversation
 
@@ -107,8 +142,8 @@ are the reason the phase exists.
 - **The work is one edit.** Planning it, spawning an agent and verifying
   the result costs more than making the change.
 - **The task is exploratory.** A plan written before the shape is known
-  will be wrong, and the implementer will follow it anyway. Explore first,
-  in the session, then plan.
+  will be wrong, and the implementer will follow it anyway. Orient first —
+  yourself, not through a scout — then plan.
 - **The items are not separable.** Two agents editing the same file in
   parallel produce a merge, not progress. Either sequence them or give
   them worktrees.
