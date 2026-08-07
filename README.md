@@ -19,7 +19,7 @@ Then install whichever set applies.
 |---|---|
 | `screenshot-skills` | any-screenshot, windows-screenshot, avalonia-screenshot, flaui-screenshot |
 | `writing-skills` | clean-docs, unmachine-prose, pdf-transcribe, i18n-parity, request-approval |
-| `engineering-skills` | plan-delegate-verify, tdd-cycle, tidy-first, diagnose-first, csharp-architect, tui-debug, windows-sandbox, peer-sessions, grill-me, tool-call-syntax, codex, find-skills, adopt-dependency |
+| `engineering-skills` | plan-delegate-verify, tdd-cycle, test-design, tidy-first, diagnose-first, csharp-architect, tui-debug, windows-sandbox, peer-sessions, grill-me, tool-call-syntax, codex, find-skills, adopt-dependency |
 
 ## Skills
 
@@ -64,7 +64,9 @@ conversation, and why a subagent reporting success is not evidence.
 `tdd-cycle` is Red-Green-Refactor as the working procedure, written to
 fire at the moments that replace it — verifying by running and looking,
 fixing a bug before reproducing it, editing untested code bare.
-`tidy-first` keeps structural and behavioural change in separate
+`test-design` is where the cases come from — classes and boundaries out
+of the specification, not a mirror of the implementation, which passes by
+construction. `tidy-first` keeps structural and behavioural change in separate
 commits, and fires on the "while I'm here" cleanup — the urge is right,
 the seat in this diff is wrong.
 `diagnose-first` holds the line between correlation and cause — the

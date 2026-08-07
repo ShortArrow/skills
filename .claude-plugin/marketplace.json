@@ -42,6 +42,7 @@
       "skills": [
         "./skills/plan-delegate-verify",
         "./skills/tdd-cycle",
+        "./skills/test-design",
         "./skills/tidy-first",
         "./skills/diagnose-first",
         "./skills/csharp-architect",
