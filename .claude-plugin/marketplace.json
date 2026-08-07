@@ -23,7 +23,7 @@
     },
     {
       "name": "writing-skills",
-      "description": "Producing durable artifacts: self-contained documents, faithful PDF transcription, translations kept in step, and approval for actions that cannot be taken back",
+      "description": "Producing durable artifacts: self-contained documents, faithful PDF transcription, translations kept in step, numbers that carry their measurement, and approval for actions that cannot be taken back",
       "source": "./",
       "strict": false,
       "skills": [
@@ -31,6 +31,7 @@
         "./skills/unmachine-prose",
         "./skills/pdf-transcribe",
         "./skills/i18n-parity",
+        "./skills/measured-claims",
         "./skills/request-approval"
       ]
     },

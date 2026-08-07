@@ -18,7 +18,7 @@ Then install whichever set applies.
 | Plugin | Skills |
 |---|---|
 | `screenshot-skills` | any-screenshot, windows-screenshot, avalonia-screenshot, flaui-screenshot |
-| `writing-skills` | clean-docs, unmachine-prose, pdf-transcribe, i18n-parity, request-approval |
+| `writing-skills` | clean-docs, unmachine-prose, pdf-transcribe, i18n-parity, measured-claims, request-approval |
 | `engineering-skills` | plan-delegate-verify, tdd-cycle, test-design, tidy-first, diagnose-first, csharp-architect, tui-debug, windows-sandbox, peer-sessions, grill-me, tool-call-syntax, codex, find-skills, adopt-dependency |
 
 ## Skills
@@ -51,7 +51,10 @@ inflation that fill space once the content has run out.
 written which the page does not show. `i18n-parity` keeps a
 multilingual site's pages in step — the failure that renders perfectly is a
 page edited in one language only — and covers the exception that expires by
-itself rather than becoming a permanent hole. `request-approval` obtains a
+itself rather than becoming a permanent hole. `measured-claims` keeps numbers attached
+to their measurement — method, date, spread, and what the figure moves
+with, since a document can carry two stale numbers that disagree and both
+be wrong. `request-approval` obtains a
 confirmation the auto-approval classifier accepts, for anything
 destructive or outward-facing.
 
