@@ -19,7 +19,7 @@ Then install whichever set applies.
 |---|---|
 | `screenshot-skills` | any-screenshot, windows-screenshot, avalonia-screenshot, flaui-screenshot |
 | `writing-skills` | clean-docs, unmachine-prose, pdf-transcribe, i18n-parity, request-approval |
-| `engineering-skills` | plan-delegate-verify, tdd-cycle, tidy-first, csharp-architect, tui-debug, windows-sandbox, peer-sessions, grill-me, tool-call-syntax, codex, find-skills, adopt-dependency |
+| `engineering-skills` | plan-delegate-verify, tdd-cycle, tidy-first, diagnose-first, csharp-architect, tui-debug, windows-sandbox, peer-sessions, grill-me, tool-call-syntax, codex, find-skills, adopt-dependency |
 
 ## Skills
 
@@ -67,6 +67,9 @@ fixing a bug before reproducing it, editing untested code bare.
 `tidy-first` keeps structural and behavioural change in separate
 commits, and fires on the "while I'm here" cleanup — the urge is right,
 the seat in this diff is wrong.
+`diagnose-first` holds the line between correlation and cause — the
+base rate, the denominator, the refutation decided before acting, and the
+pass mark an intermittent fault needs before any fix gets credit.
 `csharp-architect` covers layering and testability in C#.
 `tui-debug` reconstructs a terminal UI from redirected output, for when
 there is no display to look at. `windows-sandbox` runs tests that would
