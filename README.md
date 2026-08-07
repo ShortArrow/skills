@@ -18,7 +18,7 @@ Then install whichever set applies.
 | Plugin | Skills |
 |---|---|
 | `screenshot-skills` | any-screenshot, windows-screenshot, avalonia-screenshot, flaui-screenshot |
-| `writing-skills` | clean-docs, unmachine-prose, pdf-transcribe, request-approval |
+| `writing-skills` | clean-docs, unmachine-prose, pdf-transcribe, i18n-parity, request-approval |
 | `engineering-skills` | csharp-architect, tui-debug, windows-sandbox, peer-sessions, grill-me, tool-call-syntax, codex, find-skills, adopt-dependency |
 
 ## Skills
@@ -48,7 +48,10 @@ changelog. `unmachine-prose` is about the sentences
 themselves — the participial trailers, triplets and significance
 inflation that fill space once the content has run out.
 `pdf-transcribe` governs transcription — principally that nothing may be
-written which the page does not show. `request-approval` obtains a
+written which the page does not show. `i18n-parity` keeps a
+multilingual site's pages in step — the failure that renders perfectly is a
+page edited in one language only — and covers the exception that expires by
+itself rather than becoming a permanent hole. `request-approval` obtains a
 confirmation the auto-approval classifier accepts, for anything
 destructive or outward-facing.
 
