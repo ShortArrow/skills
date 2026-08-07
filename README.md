@@ -19,7 +19,7 @@ Then install whichever set applies.
 |---|---|
 | `screenshot-skills` | any-screenshot, windows-screenshot, avalonia-screenshot, flaui-screenshot |
 | `writing-skills` | clean-docs, unmachine-prose, pdf-transcribe, i18n-parity, request-approval |
-| `engineering-skills` | plan-delegate-verify, tdd-cycle, csharp-architect, tui-debug, windows-sandbox, peer-sessions, grill-me, tool-call-syntax, codex, find-skills, adopt-dependency |
+| `engineering-skills` | plan-delegate-verify, tdd-cycle, tidy-first, csharp-architect, tui-debug, windows-sandbox, peer-sessions, grill-me, tool-call-syntax, codex, find-skills, adopt-dependency |
 
 ## Skills
 
@@ -64,6 +64,9 @@ conversation, and why a subagent reporting success is not evidence.
 `tdd-cycle` is Red-Green-Refactor as the working procedure, written to
 fire at the moments that replace it — verifying by running and looking,
 fixing a bug before reproducing it, editing untested code bare.
+`tidy-first` keeps structural and behavioural change in separate
+commits, and fires on the "while I'm here" cleanup — the urge is right,
+the seat in this diff is wrong.
 `csharp-architect` covers layering and testability in C#.
 `tui-debug` reconstructs a terminal UI from redirected output, for when
 there is no display to look at. `windows-sandbox` runs tests that would

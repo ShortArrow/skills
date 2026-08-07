@@ -42,6 +42,7 @@
       "skills": [
         "./skills/plan-delegate-verify",
         "./skills/tdd-cycle",
+        "./skills/tidy-first",
         "./skills/csharp-architect",
         "./skills/tui-debug",
         "./skills/windows-sandbox",
