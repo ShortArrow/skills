@@ -1,7 +1,7 @@
 ---
 name: plan-delegate-verify
 description: |
-  Split multi-step work across model tiers: the session model writes the plan, subagents on a chosen model carry out the items, and the session model verifies the result against the plan it wrote. Use when about to plan an implementation, when a task decomposes into items that could run in parallel, or when work will be handed to subagents at all. Covers what the plan must contain for an implementer that never saw the conversation, why a subagent's "done" is not evidence, and when the overhead costs more than the work.
+  Split multi-step work across model tiers: the session model writes the plan, subagents on a chosen model carry out the items, and the session model verifies the result against the plan it wrote. Use when about to plan an implementation, when a task decomposes into items that could run in parallel, or when work will be handed to subagents at all. Covers what the plan must contain for an implementer that never saw the conversation, why a subagent's "done" is not evidence, what changes when the plan is a test plan and the artefact is itself the pass mark, and when the overhead costs more than the work.
 allowed-tools: Agent, Read, Bash, PowerShell, Edit, Write, TodoWrite
 ---
 
@@ -65,6 +65,32 @@ Two things a verifier looks for that a reviewer of the diff does not:
   contain. This is the common failure and it leaves no trace in the diff.
 - **What was widened.** An implementer that fixed something adjacent has
   told you the plan was wrong, or has done something nobody checked.
+
+## When the plan is a test plan
+
+The rule that the implementer has no say over what done means gets tighter,
+not looser, because now the artefact **is** the criterion.
+
+- **The planner owns the assertions. The subagent owns the mechanics.**
+  What must be true — the inputs, the expected values, the wire strings,
+  the counts — is written into the plan. The subagent writes the harness,
+  the fixtures and the plumbing around it. An agent that supplies both the
+  test and its expected value is deciding its own pass mark, and it will
+  decide generously.
+- **Say where each expected value came from.** From the specification, or
+  from running the code as it is today. The second is a characterisation
+  test and is legitimate when pinning existing behaviour is the intent —
+  and useless when correctness was the intent, because it records the bug.
+  The plan marks which of the two each case is; nothing downstream can
+  recover it.
+- **Verify that each test can fail.** Passing tests are not evidence: a
+  test that asserts nothing passes too. See it red before the fix, or break
+  the subject and confirm the test notices. This is the only check that
+  distinguishes a test from a decoration, and it is the one a subagent
+  reporting "12 passed" has not done.
+- **Count the cases against the plan.** A case list makes the missing-item
+  check mechanical: nine declared, six written, reported as done is the
+  ordinary outcome without it.
 
 ## Run the checks yourself
 
