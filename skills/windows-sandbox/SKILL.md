@@ -123,6 +123,7 @@ finally { Exit-SandboxLock $lock }
 | **`LogonCommand` takes exactly one command** | It runs after the folders are mounted, as `WDAGUtilityAccount` (an administrator in the guest), so point it at a `.cmd` mapped in from the host. A `.ps1` needs `-ExecutionPolicy Bypass` spelled out |
 | **A guest `.cmd` needs CRLF and ASCII** | `cmd.exe` will not run a script with bare LF |
 | **`MemoryInMB` under 2048 is silently raised** | Default 4096 |
+| **A Feature on Demand can never be enabled in the guest** | `NetFx3` and its kind arrive `DisabledWithPayloadRemoved`, and the guest's default update service is WSUS with a null URL — so DISM, `Enable-WindowsOptionalFeature` and any caller of them all end at `0x80072ee6`, whatever the state of `wuauserv`. Nothing installed in the guest fixes it; the payload has nowhere to come from. A package that depends on one needs a real VM, not a sandbox — see `hyperv-clean-vm` |
 | **`0x80072746` on the client is cosmetic** | The connection display fails; the guest still runs `LogonCommand` to completion and the results still come back. What it costs is the guest's own shutdown, which is why the host kills by ID afterwards |
 
 Error codes when a sandbox will not start: `ERROR_FILE_NOT_FOUND` is the
