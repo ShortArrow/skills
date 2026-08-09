@@ -18,6 +18,7 @@ skill that owns the method.
 | Single element, or acting first | UI Automation | `flaui-screenshot` |
 | Whole desktop | GDI capture | `windows-screenshot` |
 | Desktop over SSH or RDP | Scheduled task | `windows-screenshot` |
+| Guest of a running Hyper-V VM | WMI thumbnail | `hyperv-screenshot` |
 | TUI application | **Do not capture** | `tui-debug` |
 
 ## The property they share
@@ -27,7 +28,7 @@ nothing in it. Confirming the result is therefore part of taking it.
 
 | Symptom | Cause |
 |---|---|
-| Black or single colour | No window station — an SSH session, or a disconnected RDP session. Minimized window. DWM-cloaked window. |
+| Black or single colour | No window station — an SSH session, or a disconnected RDP session. Minimized window. DWM-cloaked window. A Hyper-V guest whose display has slept. |
 | Empty or malformed | Captured before layout finished (Avalonia) |
 | Wrong thing in frame | Copied a screen region and caught whatever was in front |
 
