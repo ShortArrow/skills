@@ -127,9 +127,12 @@ layers, this is the familiar table:
 
 The order is fractal: records have their own gradient (commit < PR <
 CHANGELOG < ADR), and the theorems apply across every level of it, not
-only at the two-layer boundary. (A risk register is neither kind: it
-*threatens* artifacts rather than deriving from them — a constraint,
-out of scope here.)
+only at the two-layer boundary. The axiom classifies by obligation,
+not by the edge's name: a risk register *threatens* rather than
+derives, but it must keep following the artifacts it threatens — a
+risk retires when the design that carried it changes — so it sits on
+the volatile side and holds the pointer. A "risks" section inside a
+requirement or a design is that pointer written backwards.
 
 ### Theorems
 
