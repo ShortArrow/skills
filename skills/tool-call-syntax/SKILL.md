@@ -1,6 +1,6 @@
 ---
 name: tool-call-syntax
-description: The syntax of a tool call, and how to recover when one fails to parse. A call wrapped in a tag the grammar does not define runs nothing at all — no output, no file written — so the failure is invisible from outside and reads as the agent stalling or repeating itself. Consult after "malformed tool call" or "could not be parsed", when a tool result never arrives, and when the same failure repeats across turns.
+description: Every tool call uses exactly three tag names, each with the antml: prefix — antml:function_calls wrapping antml:invoke wrapping antml:parameter. Any other opening tag is not a variant spelling: the harness parses nothing, runs nothing, and answers as though the call was never made, so the mistake repeats invisibly and the user sees only silence. Consult before writing a call when unsure of the shape, after "malformed tool call" or "could not be parsed", when a tool result never arrives, and when the same failure repeats across turns.
 ---
 
 # Tool Call Syntax
