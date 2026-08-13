@@ -1,6 +1,6 @@
 ---
 name: unmachine-prose
-description: Write technical documentation that does not read as machine-generated. The tells are mostly structural, they differ between English and Japanese, and they are recognised when several stack in one passage rather than from any single word. Use when writing a README, an ADR, a commit message, a design document, a note or a PR body, and when revising prose that reads as generic despite being correct.
+description: Write technical documentation that does not read as machine-generated. The tells are mostly structural, they differ between English and Japanese, and they are recognised when several stack in one passage rather than from any single word. Use when writing a README, an ADR, a commit message, a design document, a note or a PR body, and when revising prose that reads as generic despite being correct. Also fires when writing or reviewing a bilingual documentation pair, and when delegating any such writing — the language-specific checklists must travel inside the delegation prompt, or they will not be applied.
 allowed-tools: Read, Edit, Write, Grep, Glob
 ---
 
@@ -238,6 +238,27 @@ says nothing. `This helps when the working set exceeds RAM` does.
 が入っているとき。禁止を守っただけでは足りない。
 
 ---
+
+## 二言語ペアを書くとき
+
+二言語のドキュメントペアで最も多い事故は、片方の言語で書いてから
+もう片方へ訳すこと。上の「英語で書いてから訳している」は、ペア執筆では
+例外ではなく既定の手順になりやすい — 「両言語に同じ編集を」という
+作業指示そのものが翻訳を招く。
+
+- **各言語版は、共有した事実の列から別々に書く。** 訳してよいのは用語
+  だけ。語順・比喩・構文が原文から乗ってきたら、それは訳した証拠。
+- **検査は言語ごとに、その言語のリストで行う。** ペアの片側だけ検査して
+  もう片側を「同じ内容だから」で通さない。日本語を英語のリストで検査
+  しても何も出ない。
+- **執筆を委譲するなら、チェックリストを指示文に載せる。** サブエージェント
+  や同僚はこのスキルを読んでいない。指示は「両言語に同じ編集を」ではなく
+  「同じ事実を、各言語の慣習で書く」とし、対象言語の検査項目を添える。
+
+実例。二言語 README をペアで書いた結果、日本語側に「チェックアウトの中で
+しか動かない」「プロトコルを話す」「読んでいる場所によって違う」が残り、
+レビューの指摘まで誰も気づかなかった。どれも英語草稿が透けた訳文で、
+日本語として読み直していれば書かない形をしている。
 
 ## 自分の草稿を検査する
 
