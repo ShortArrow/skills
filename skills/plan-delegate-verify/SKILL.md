@@ -23,11 +23,14 @@ never does the typing.
 Default assignment, overridable per call:
 
 ```
+Agent(prompt: "...", model: "opus")     # scout
 Agent(prompt: "...", model: "opus")     # implementer
 ```
 
-The session model is planner and verifier. Set `model` on the Agent call
-to place the implementer.
+The session model is planner and verifier and does neither the reading
+nor the typing. Scouts and implementers default to `opus`; set `model`
+on the Agent call to move either. Without it the subagent inherits the
+session model, which spends the judgement tier on enumeration.
 
 ## Gathering the facts is delegable; deciding from them is not
 
