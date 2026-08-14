@@ -1,6 +1,6 @@
 ---
 name: clean-docs
-description: Discipline for writing durable artifacts — PR bodies, commits, CHANGELOGs, ADRs, READMEs, PRDs, specifications, source code. (1) Never carry a label that only means something inside the conversation. (2) The artifact answers the reader, not the reviewer: deleting a wrong sentence needs no replacement, a non-relationship is not worth explaining, and a document that vouches for itself is padding. (3) Derivation orders documents — what is derived is more volatile than its source; a specification derivation (use case, requirement, design, test plan) must keep following its source, a record derivation (ADR, CHANGELOG, PR, test run) freezes at its moment — so references run more-derived to less-derived only: no ADR numbers pointing out of a living document, no mutual links, no former behaviour in the body, undecided items separated out, and an ADR that records reasoning rather than narrative. (4) Living documents belong together under the docs root. Use when writing a PR, a commit, a CHANGELOG, an ADR or an issue, when editing a README or PRD, when fixing something a reviewer called wrong, and whenever you are about to write "See ADR-NNNN".
+description: Discipline for writing durable artifacts — PR bodies, commits, CHANGELOGs, ADRs, READMEs, PRDs, specifications, source code. (1) Never carry a label that only means something inside the conversation. (2) The artifact answers the reader, not the reviewer: deleting a wrong sentence needs no replacement, a non-relationship is not worth explaining, and a document that vouches for itself is padding. (3) Derivation orders documents — what is derived is more volatile than its source; a specification derivation (use case, requirement, design, test plan) must keep following its source, a record derivation (ADR, CHANGELOG, PR, test run) freezes at its moment — so references run more-derived to less-derived only: no ADR numbers pointing out of a living document, no mutual links, no former behaviour in the body, undecided items separated out, and an ADR that records reasoning rather than narrative. (4) Living documents belong together under the docs root. (5) Each question has one home, split by tense and unit — present-tense answers to a living document at its derivation level, past-tense to a record at its unit; the commit's why in a sentence or two naming the decision behind it by title, the decision's reasoning and its why-not written once, in the ADR. Use when writing a PR, a commit, a CHANGELOG, an ADR or an issue, when editing a README or PRD, when fixing something a reviewer called wrong, when unsure where a why, a why-not or a history note belongs, and whenever you are about to write "See ADR-NNNN".
 ---
 
 # Self-Contained Artifacts
@@ -158,6 +158,55 @@ requirement or a design is that pointer written backwards.
    decided yet", "later", "provisional" in specification prose break
    the body's promise of being the settled present. Separate into a
    TODO, or promote into a roadmap — itself a living document.
+
+### Where each question lives
+
+The question word alone does not pick the document; its tense does.
+Answered in the present, the question describes how things are, and
+the answer belongs to a living document at its derivation level.
+Answered in the past, it is true of a moment, and the answer belongs
+to a record at its unit.
+
+Present tense, to the living layer:
+
+| Question | Asked in full | Home |
+|---|---|---|
+| what | What it is and does | Domain model and specification; the interface contract in its docstring |
+| who, whose | Who is responsible, and whose it is | Boundary and responsibility design |
+| when | When it applies | Use case — the trigger and the conditions |
+| where | Where it runs | Infrastructure configuration |
+| how | How it works | The implementation body; how to operate it, the runbook |
+| which | Which one is in use | Design and lockfile show the outcome; the reason behind the choice goes to the ADR, below |
+| whatever (holds) | Whatever happens, what still holds | Invariants — the type, the domain model's constraints, the docstring's contract |
+| whatever (open) | Whatever it happens to do | Behaviour left open, named as unspecified in the specification, so nobody builds on the accident |
+| what-if | What could go wrong | Risk register |
+| what-next | What is undecided | TODO or roadmap (theorem 5) |
+
+Past tense, to the record layer:
+
+| Question | Asked in full | Home |
+|---|---|---|
+| what-changed | What changed | Commit; PR at branch scope; CHANGELOG at release scope |
+| why (change) | Why it changed | The commit message |
+| why (decision), why-not | Why it is this way, why not the alternatives | ADR |
+| how-much | How much, how fast | A measurement record that names its method and date |
+| when-did | When it happened | Every record carries its date |
+
+Why splits by unit, and the units do not repeat each other. The
+commit message answers for its own diff — the pressure that produced
+this change, in a sentence or two. When a decision stands behind it,
+name the decision by its title, which grep can find in the ADR index;
+a bare ADR number is citation by path alone, and theorem 3 forbids
+that in a record that can never be edited. The ADR answers for the
+decision, across however many commits carry it out. A paragraph
+copied from one into the other must then be edited in both when
+either moves, which is the dependency the layering exists to forbid.
+
+Why-not has one home. A road not taken has no diff, so no commit can
+record it, and a living document that takes it in acquires history
+(theorem 4). It survives only in the ADR — which is the reason to
+write one when a rejected alternative looks like a simplification a
+future contributor will attempt.
 
 ### Code comments
 
