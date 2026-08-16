@@ -37,7 +37,7 @@
     },
     {
       "name": "engineering-skills",
-      "description": "Working on code: planning that hands work to subagents and verifies it, C# architecture guidance, library API contracts, assurance cases that tie claims to evidence, TUI inspection without a display, isolated desktop test runs, seeing what other sessions hold, resolving ambiguity before implementing, and tool-call syntax",
+      "description": "Working on code: planning that hands work to subagents and verifies it, C# architecture guidance, library API contracts, assurance cases that tie claims to evidence, harnesses that compile conventions into gates for AI coding sessions, TUI inspection without a display, isolated desktop test runs, seeing what other sessions hold, resolving ambiguity before implementing, and tool-call syntax",
       "source": "./",
       "strict": false,
       "skills": [
@@ -57,7 +57,8 @@
         "./skills/find-skills",
         "./skills/adopt-dependency",
         "./skills/library-design",
-        "./skills/assurance-case"
+        "./skills/assurance-case",
+        "./skills/agent-harness"
       ]
     },
     {
