@@ -1,7 +1,7 @@
 ---
 name: assurance-case
 description: |
-  Turning "it works" into a claim that can be supported: assurance = property × conditions × scope × acceptance criterion, held up by an argument resting on evidence, built in a fixed order — claim, assumptions, boundary, failure modes (FMEA/FTA/STPA), requirements, verification, evidence, residual risk. Tests come last and are counted against claims: a million cases that never touch R-27 are zero evidence for R-27. Use when asked to guarantee or "make sure" something works, when a performance or reliability figure is about to be promised without its conditions, when planning what to test for a nonfunctional requirement, and when reporting something as verified or reliable.
+  Turning "it works" into a claim that can be supported: assurance = property × conditions × scope × acceptance criterion, held up by an argument resting on evidence, built in a fixed order — claim, assumptions, boundary, failure modes (FMEA/FTA/STPA), requirements, verification, evidence, residual risk. Tests come last and are counted against claims: a million cases that never touch R-27 are zero evidence for R-27. The suite is the only home of every claim it can express; assurance prose holds just the remainder — hazards, out-of-scope, residual risk. Use when asked to guarantee or "make sure" something works, when a performance or reliability figure is about to be promised without its conditions, when planning what to test for a nonfunctional requirement, and when reporting something as verified or reliable.
 ---
 
 # Claim, Argument, Evidence
@@ -88,13 +88,33 @@ cover.
 
 Each requirement names its verification — unit test, integration
 test, static analysis, review, measurement, formal argument — and the
-map is kept as a traceability matrix, requirement by requirement.
+map is the traceability matrix: generated from test names and tags
+where a suite exists, requirement by requirement.
 
 The count that matters is coverage of claims, and volume does not
 substitute: a million test cases that never touch R-27 are zero
 evidence for R-27. What makes a body of tests strong is the chain
 that can be walked — claim → requirement → hazard → mitigation →
 verification → evidence — not its length.
+
+## The suite holds what it can express
+
+A test is already a claim in the assurance shape: premises in its
+setup, a criterion in its assertion, verified by machine on every run
+and following the implementation the way no prose can. So for any
+claim the suite can express, the suite is its only home — assumptions
+become fixture guards, acceptance criteria become assertions, and the
+requirement's identity travels as a test name or tag. The
+traceability matrix is generated from those tags; a hand-maintained
+matrix is the same knowledge kept twice, and the copies part ways at
+the first refactor.
+
+Prose earns its place only where the suite cannot reach: the hazard
+inventory (a test can cover a hazard, none records the list), the
+envelope's out-of-scope line (absence has no test), residual risk,
+and measurement records frozen with their method and date. An
+assurance document that restates green tests is ceremony; one that
+holds exactly this remainder is the case.
 
 ## Verification is not validation
 
@@ -127,7 +147,9 @@ Out of scope: OS crash, hardware failure, malicious kernel driver
 ```
 
 Context, assumptions and out-of-scope travel with the tree; a claim
-tree without them is the vague "it works" again, drawn prettier. And
+tree without them is the vague "it works" again, drawn prettier.
+Where a suite exists, the arrows are generated from its names and
+tags, not typed by hand. And
 stage 8 is written, not implied: what this case does not assure is
 part of the case.
 
