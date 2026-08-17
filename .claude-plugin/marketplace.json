@@ -11,14 +11,15 @@
   "plugins": [
     {
       "name": "screenshot-skills",
-      "description": "Choosing and performing screen capture: a routing gate plus per-target methods for Windows desktops and windows, Avalonia rendering, and UI Automation",
+      "description": "Choosing and performing screen capture: a routing gate plus per-target methods for Windows desktops and windows, Hyper-V guests, Avalonia rendering, and UI Automation",
       "source": "./",
       "strict": false,
       "skills": [
         "./skills/any-screenshot",
         "./skills/windows-screenshot",
         "./skills/avalonia-screenshot",
-        "./skills/flaui-screenshot"
+        "./skills/flaui-screenshot",
+        "./skills/hyperv-screenshot"
       ]
     },
     {
@@ -50,6 +51,7 @@
         "./skills/csharp-architect",
         "./skills/tui-debug",
         "./skills/windows-sandbox",
+        "./skills/hyperv-clean-vm",
         "./skills/peer-sessions",
         "./skills/grill-me",
         "./skills/tool-call-syntax",
