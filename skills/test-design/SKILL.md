@@ -1,7 +1,7 @@
 ---
 name: test-design
 description: |
-  Deriving test cases, triggered by the moments that produce weak ones: about to write a test list that is the happy path restated, about to derive tests by reading the implementation they are meant to check, about to pick a comfortable mid-range value where faults live at the edges, about to skip the error paths as unlikely, or about to equate a large test count with coverage. A test derived from the implementation passes by construction and encodes the bug beside the behaviour; coverage counts equivalence classes, not tests. Use when writing a test plan or list, when adding tests to existing code, and when a suite is all green and proves little.
+  Deriving test cases, triggered by the moments that produce weak ones: about to write a test list that is the happy path restated, about to derive tests by reading the implementation they are meant to check, about to pick a comfortable mid-range value where faults live at the edges, about to skip the error paths as unlikely, or about to equate a large test count with coverage. A test derived from the implementation passes by construction and encodes the bug beside the behaviour; coverage counts equivalence classes, not tests. Use when writing a test plan or list, when a use case or scenario is the specification in hand, when adding tests to existing code, and when a suite is all green and proves little.
 allowed-tools: Bash, PowerShell, Read, Grep, Glob
 ---
 
@@ -18,6 +18,7 @@ harness, the runner, the count — only executes that decision.
 | derive cases from the implementation | derive them from the specification, and let the implementation surprise you |
 | test with a comfortable value | test the last value inside and the first value outside each boundary |
 | skip error paths as unlikely | each failure mode is a class: invalid input, missing resource, denied, timeout, half-done |
+| test a feature by its main flow | read the alternate and exception flows off the use case; each is a class |
 | add a fifth test to a covered class | spend it on an uncovered class — the fifth buys runtime and no coverage |
 
 ## Attack the specification, not the implementation
@@ -69,6 +70,31 @@ folder that does not exist, input with the expected field missing. Each
 is an equivalence class with the same claim to a test as any input
 range. A suite that only proves the tool works when everything
 cooperates has tested the demo, not the tool.
+
+## Use cases enumerate the classes before there is code
+
+A use case is a specification already cut into classes: one main
+flow, each alternate flow, each exception flow, and the precondition
+under which each can be entered. Whoever wrote it did the enumeration
+this skill asks for — the alternate and exception flows are the error
+paths — so a suite that exercises the main flow has covered one class
+of the N the document lists.
+
+Read the flows off the use case and give each its test, then check
+the preconditions, because a flow is reachable only when its
+precondition can hold. A parity check for translated pages has a main
+flow (both languages edited and committed), an alternate flow (a
+one-sided edit declared as an exception), and two exception flows
+that only appear once the preconditions are written down: the tree is
+dirty, so staleness cannot be judged yet; the history was rewritten,
+so a declared commit no longer resolves. Both were hit on one site
+within a week. The happy path alone would have shown neither.
+
+Whether an exception flow can actually occur is not settled by how
+unlikely it feels. The operating envelope says what is out of scope
+and the hazard analysis says what remains; both live in
+`assurance-case`, and this skill takes the list they produce instead
+of pruning it by intuition.
 
 ## A test that can skip is a test that can lie
 
