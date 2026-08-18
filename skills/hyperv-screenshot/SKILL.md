@@ -89,16 +89,15 @@ use Enter or Space — either one dismisses the dialog you came to read.
 | **`ImageData` is longer than `w * h * 2`** | Four bytes longer, consistently. Copy per row for `h` rows and ignore the tail; a whole-buffer copy sized from `.Length` overruns the bitmap and takes down the CLR with `0x80131506` |
 | **`TargetSystem` takes the instance, not `[ref]`** | `[ref]$vm` fails the cast to `InstanceHandle`. This is the opposite of the WMI-era examples still in circulation |
 | **`Get-WmiObject` breaks under `sudo`** | The object comes back deserialized and `GetVirtualSystemThumbnailImage` is not on it. `Get-CimInstance` + `Invoke-CimMethod` survives the boundary |
-| **Elevation is required** | `root\virtualization\v2` refuses a non-elevated caller. Under `sudo` on Windows, pass a script file — an inline `-c` with a large here-string is where quoting dies |
+| **Access is checked by Hyper-V, not UAC** | `root\virtualization\v2` refuses a caller that is neither elevated nor in the local `Hyper-V Administrators` group. Join the group once (`Add-LocalGroupMember`, elevated) and **sign out and back in** — the token is cut at logon, so the same session keeps being refused. Until then, under `sudo` on Windows, pass a script file — an inline `-c` with a large here-string is where quoting dies |
 | **Black is ambiguous** | Slept display, or a guest that has genuinely painted black. Wake it and capture twice before believing the second one |
 | **The thumbnail is the console, not a session** | What an RDP user sees is a different desktop. A dialog on the console is invisible over RDP and vice versa |
 
 ## Where this sits
 
-`any-screenshot` branches by target and does not cover a VM guest. Add it
-there mentally: **guest of a running Hyper-V VM → this skill**. The
-host-side alternatives it lists all need the target on the host's own
-desktop, which a guest never is.
+`any-screenshot` branches by target and sends **guest of a running
+Hyper-V VM** here. The host-side alternatives it lists all need the
+target on the host's own desktop, which a guest never is.
 
 For a guest you can log into, RDP plus `windows-screenshot` inside gives
 a sharper image with real window handles. The thumbnail wins when there

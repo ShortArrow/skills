@@ -22,6 +22,26 @@ Windows Sandbox is lighter and should be tried first — see
 | Keep state between runs | Same |
 | Be inspected after the window closes | The instance is gone, and so is the evidence |
 
+## Once, on the host: Hyper-V Administrators
+
+Every host-side call in this skill — `Get-VM`, `Start-VM`,
+`Restore-VMSnapshot`, `Invoke-Command -VMName` — is checked against
+Hyper-V's own authorization, and a non-elevated token, even an
+administrator's, is refused with an error that names "the authorization
+policy". `sudo` on every call is one answer. The durable one is the local
+group made for this:
+
+```powershell
+sudo pwsh -c "Add-LocalGroupMember -Group 'Hyper-V Administrators' -Member $env:USERNAME"
+```
+
+**Then sign out and sign back in.** Group membership is written into the
+logon token, and the current session keeps the old token — the same
+command keeps failing with the same error until the account logs on
+again. `whoami /groups | findstr /i hyper-v` shows whether the token you
+are holding has it. After that, none of the `sudo` below is needed, and
+the quoting problems that come with `sudo pwsh -c` do not arise.
+
 ## Order of operations
 
 The order is the skill. Every step after the first is inside the guest,
@@ -46,7 +66,8 @@ against, and have to rebuild.
 ## Steps 1–3, from the host
 
 PowerShell Direct needs no network and no guest integration beyond the
-default services. It does need elevation, and it does need that password.
+default services. It does need Hyper-V access (the group above, or
+`sudo`), and it does need that password.
 
 ```powershell
 $p = ConvertTo-SecureString 'user' -AsPlainText -Force
@@ -83,11 +104,11 @@ the account turns out not to be an administrator after all.
 
 ## Using it afterwards
 
-Restoring is a host operation and still wants elevation. Everything after
-that is plain SSH.
+Restoring is a host operation, so it needs the group (or `sudo`).
+Everything after that is plain SSH.
 
 ```powershell
-sudo pwsh -c 'Restore-VMSnapshot -VMName "NAME" -Name "clean-sshd" -Confirm:$false; Start-VM -Name "NAME"'
+Restore-VMSnapshot -VMName 'NAME' -Name 'clean-sshd' -Confirm:$false; Start-VM -Name 'NAME'
 
 $o = @('-F','NUL','-o','StrictHostKeyChecking=no','-o','UserKnownHostsFile=NUL','-i',"$HOME\.ssh\id_ed25519")
 ssh @o User@172.28.x.x "hostname"
@@ -105,9 +126,9 @@ changed.
 | **The guest boots slower than the cmdlet returns** | `Start-VM` returns immediately. Retry the first connection in a loop; 10 attempts at 15 seconds covers a cold boot |
 | **`start /b` over SSH dies with the session** | A long job launched that way is killed when the SSH command returns. `schtasks /create ... /sc once /st 00:00 /rl highest /f` then `/run` survives; write the output to a file and poll it |
 | **Quoting collapses two levels deep** | `ssh` → `powershell -Command` → the script. Copy a `.ps1` with `scp` and run it with `-File`. Trying to inline it produces `Unexpected token` from a shell you are not looking at |
-| **`sudo pwsh -c` cannot take a script block** | Pass `-File <path>` instead. The error names ScriptBlock and does not mention the fix |
+| **`sudo pwsh -c` cannot take a script block** | Pass `-File <path>` instead. The error names ScriptBlock and does not mention the fix. Joining Hyper-V Administrators removes the `sudo` and the problem with it |
 | **Checkpoints chain** | A new one is a child of the current state, not of the VM. Restoring an ancestor keeps the descendants but they now branch. Name them so the intended entry point is obvious |
-| **`Get-VM` needs elevation** | Not just `Start-VM`. A non-elevated read fails with a permission error naming the authorization policy |
+| **`Get-VM` is refused too, not just `Start-VM`** | The error names the authorization policy: that is Hyper-V Administrators, not UAC. Membership added in this session does not count — the token was cut at logon, so it fails identically until you sign out and in |
 
 ## What to record
 
