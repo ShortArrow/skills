@@ -9,7 +9,8 @@ Prerequisite: the plugin cache must contain this skill — refresh the
 shortarrow-skills marketplace (`/plugin` → update, or restart the
 session after the marketplace re-syncs) before judging a failure.
 
-Run one scenario:
+`tests/run-firing-tests.sh adversarial-verify` runs every scenario
+below and reports the side each landed on. By hand, one scenario:
 
 ```powershell
 claude -p "<prompt>" --output-format json > out.json
