@@ -1,11 +1,23 @@
 ---
 name: codex
-description: Run a code review, an analysis, or a question about a codebase through the OpenAI Codex CLI. Use when asked to review code, analyse a whole codebase, explain an implementation, investigate a bug, suggest a refactor, or look into a problem that has resisted a direct approach — that is, when a second independent reading is worth more than continuing alone.
+description: Obtain a second Codex reading for a code review, codebase analysis, implementation question, bug investigation, or refactor. From another host, delegate the read-only analysis to the OpenAI Codex CLI. When already running in Codex, never launch a nested Codex CLI merely because this skill fired; analyse directly unless the user explicitly requested an independent second run.
 ---
 
 # Codex
 
-Delegates reading to the Codex CLI. The sandbox is read-only, so this
+First identify the host.
+
+## When the current host is Codex
+
+Do the requested read-only analysis in the current session. Do not launch
+`codex exec` recursively merely because this skill fired. If the user
+explicitly asks for an independent second reading, use a supported
+subagent or a separate Codex run only when the host policy authorizes it,
+then compare the two readings instead of silently merging them.
+
+## From Claude Code or another host
+
+Delegate reading to the Codex CLI. The sandbox is read-only, so this
 analyses and reports; it never edits.
 
 ```
@@ -35,7 +47,7 @@ codex exec --full-auto --sandbox read-only --cd /path/to/project \
   "Find out why the authentication path raises an error"
 ```
 
-## Procedure
+## Procedure from another host
 
 1. Take the request.
 2. Identify the project directory — Codex reads only what `--cd` points at.

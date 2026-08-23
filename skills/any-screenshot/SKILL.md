@@ -12,7 +12,7 @@ skill that owns the method.
 
 | Target | Method | Skill |
 |---|---|---|
-| Web page | Claude in Chrome, else Playwright | MCP browser tools / `page.screenshot()` |
+| Web page | Host browser control, else Playwright | Claude in Chrome, Codex browser skill, MCP browser tools, or `page.screenshot()` |
 | Avalonia window | Off-screen render | `avalonia-screenshot` |
 | Whole window of a running app | PrintWindow, by PID | `windows-screenshot` |
 | Single element, or acting first | UI Automation | `flaui-screenshot` |
@@ -68,6 +68,7 @@ reconstructing it is faster and exact. An image would need OCR. Use
 
 ## Web
 
-Claude in Chrome is the shortest path where it is available, and
-Playwright's `page.screenshot()` where it is not. Neither gets a skill of
-its own — the branch ends here, and neither hides a trap.
+Use the browser controller provided by the host: Claude in Chrome in
+Claude Code, or the browser-control skill in Codex. Where neither is
+available, use Playwright's `page.screenshot()`. The branch ends here;
+do not invoke a Windows desktop capture for browser content.

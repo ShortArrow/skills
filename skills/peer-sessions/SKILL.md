@@ -1,11 +1,23 @@
 ---
 name: peer-sessions
 description: |
-  Find out what other Claude Code sessions on this machine are working on, from the task store and transcripts they leave under ~/.claude — which repository, which branch, which task, and when they were last active. Use before taking a resource only one session can hold, when a shared runner refuses because something else has it, or when asked what else is running. What it gives is courtesy information: a session between two runs is indistinguishable from one that has stopped, so the decision to take a resource still belongs to that resource's own lock.
+  Find out what other coding-agent sessions on this machine are working on — which repository, branch, task, and last activity — using the current host's supported session interface. For Claude Code, read the task store and transcripts under ~/.claude; for Codex, use exposed task or thread coordination tools and never scrape private storage. Use before taking a singleton resource, when a shared runner refuses, or when asked what else is running. Peer state is courtesy information; the resource's own lock remains authoritative.
 allowed-tools: Bash, Read
 ---
 
 # Peer sessions
+
+Choose the route for the current host:
+
+| Host | Route |
+|---|---|
+| Claude Code | Run `scripts/peer-sessions.sh [minutes]` and use the files described below |
+| Codex | Use the host's task/thread listing and status tools. Prefer a compact wait/status snapshot when following progress. Do not inspect Codex's internal task database or transcripts by guessed filesystem path |
+
+If Codex exposes no task/thread coordination tool, say that peer state is
+not available from this session. Do not fall back to the Claude script.
+
+## Claude Code
 
 `scripts/peer-sessions.sh [minutes]` prints one row per session active in
 the window — last activity, working directory, branch, and the task it says
@@ -18,7 +30,7 @@ SEEN   CWD                            BRANCH               TASK
 20:15  dotfiles                       main                 -
 ```
 
-## Where the facts are
+### Where the facts are
 
 | What | Where | Cost |
 |---|---|---|
@@ -36,7 +48,7 @@ directory — `V:\pcie_soc_lan_dsub44` becomes `V--pcie-soc-lan-dsub44`, and
 separators, colons and underscores all arrive as the same dash. Read `cwd`
 from inside the file instead of reversing it.
 
-## What each one can establish
+### What each one can establish
 
 - **A task file says what the session intends.** `status: in_progress`
   names the one it is on. It does not say whether that work holds anything

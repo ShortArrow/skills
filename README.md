@@ -1,13 +1,13 @@
 # skills
 
-Personal [Agent Skills](https://agentskills.io) for Claude Code.
+Personal [Agent Skills](https://agentskills.io) for Claude Code and Codex.
 
 Each skill answers a question that comes up repeatedly and is easy to get
 wrong the first time — which capture method fits this target, what a
 document may not assume its reader knows, what a transcription is not
 allowed to invent.
 
-## Install
+## Install in Claude Code
 
 ```
 /plugin marketplace add ShortArrow/skills
@@ -21,6 +21,22 @@ Then install whichever set applies.
 | `writing-skills` | clean-docs, unmachine-prose, pdf-transcribe, i18n-parity, measured-claims, request-approval |
 | `product-skills` | new-combination |
 | `engineering-skills` | plan-delegate-verify, adversarial-verify, tdd-cycle, test-design, tidy-first, diagnose-first, csharp-architect, tui-debug, windows-sandbox, hyperv-clean-vm, peer-sessions, grill-me, tool-call-syntax, codex, find-skills, adopt-dependency, library-design, assurance-case, agent-harness |
+
+## Install in Codex
+
+Ask Codex's built-in skill installer to install the repository, or use the
+agent-neutral installer:
+
+```
+npx skills add ShortArrow/skills
+```
+
+The latter installs under `.agents/skills/`, one of the repository and
+user locations Codex scans. Select individual skills instead of the whole
+catalogue when only a few apply. Restart Codex if a new install does not
+appear. The installer and discovery locations were checked against the
+[official OpenAI documentation](https://learn.chatgpt.com/docs/build-skills)
+on 2026-08-23.
 
 ## Skills
 
@@ -55,9 +71,8 @@ page edited in one language only — and covers the exception that expires by
 itself rather than becoming a permanent hole. `measured-claims` keeps numbers attached
 to their measurement — method, date, spread, and what the figure moves
 with, since a document can carry two stale numbers that disagree and both
-be wrong. `request-approval` obtains a
-confirmation the auto-approval classifier accepts, for anything
-destructive or outward-facing.
+be wrong. `request-approval` obtains confirmation through the current
+host's approval path for anything destructive or outward-facing.
 
 ### Product
 
@@ -90,9 +105,9 @@ there is no display to look at. `windows-sandbox` runs tests that would
 otherwise take over the keyboard inside Windows Sandbox, and arbitrates
 the machine's single sandbox slot between projects — without one, two
 runners tear each other's sandbox down. `peer-sessions` reads what other
-sessions on the machine are working on, from the task store and transcripts
-they leave behind — courtesy information, since a session between two runs
-looks exactly like one that has stopped. `grill-me` resolves only the ambiguity
+sessions on the machine are working on through the host's supported
+session interface — courtesy information, since a session between two
+runs looks exactly like one that has stopped. `grill-me` resolves only the ambiguity
 that would change the implementation. `find-skills` searches the public
 registry before you write a skill that already exists, and
 `adopt-dependency` covers deciding whether to take on what you find —
@@ -111,8 +126,10 @@ skills/<name>/scripts/          anything it executes
 
 ## What a description is for
 
-**The description is loaded into every session; the body is read only
-when the skill fires.** `claude plugin details <name>` reports the split.
+**The host starts with each skill's name and description; the body is read
+only when the skill fires.** `claude plugin details <name>` reports the
+Claude Code split. Codex applies a discovery-context budget when many
+skills are installed, so descriptions must remain useful if shortened.
 
 ```
 component            always-on  on-invoke
@@ -162,8 +179,9 @@ them directly.
 | [android/skills](https://github.com/android/skills) | Android development |
 | [MicrosoftDocs/Agent-Skills](https://github.com/MicrosoftDocs/Agent-Skills) | Microsoft documentation |
 
-Every installed skill costs always-on tokens in every session, so take the
-plugin that matches the work rather than the whole catalogue.
+In Claude Code, every installed skill costs always-on tokens in every
+session, so take the plugin that matches the work rather than the whole
+catalogue.
 
 ## Collections that are not marketplaces
 
@@ -193,12 +211,9 @@ npx skills add https://github.com/vercel-labs/agent-skills --skill vercel-react-
 The name it resolves is the one the skill declares, not its directory —
 above, `vercel-react-best-practices` lives in `skills/react-best-practices`.
 
-The same command reaches this repository, which is how to use these skills
-from an agent that has no plugin system.
-
-```
-npx skills add ShortArrow/skills
-```
+The command shown under **Install in Codex** reaches this repository the
+same way, which is also how to use these skills from an agent that has no
+plugin system.
 
 By default it writes to `.agents/skills/` in the current project and
 symlinks Claude Code at it; `--agent claude-code` writes to
@@ -208,8 +223,10 @@ symlinks Claude Code at it; `--agent claude-code` writes to
 ## The format elsewhere
 
 `SKILL.md` is not specific to Claude Code. The same folder-with-a-manifest
-shape is being adopted across agents, which is why a skill written here
-runs under Codex or Gemini CLI without changing.
+shape is used across agents. Instructions that name tools or approval
+mechanisms are still host-specific: these skills retain Claude Code's
+existing paths and branch to Codex's native capabilities where they
+differ.
 
 | | |
 |---|---|
@@ -221,6 +238,16 @@ runs under Codex or Gemini CLI without changing.
 | [learn.chatgpt.com — build skills](https://learn.chatgpt.com/docs/build-skills) | ChatGPT |
 | [geminicli.com — skills](https://geminicli.com/docs/cli/skills/) | Gemini CLI |
 | [skills.sh](https://www.skills.sh/) | Directory of published skills |
+
+## Checks
+
+`tests/run-firing-tests.sh` remains the Claude Code behavioural runner.
+`tests/check-portability.ps1` checks every manifest and resource reference,
+the Claude marketplace membership, and the required Claude/Codex branches:
+
+```powershell
+pwsh -File tests/check-portability.ps1
+```
 
 ## License
 

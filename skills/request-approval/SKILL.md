@@ -1,16 +1,23 @@
 ---
 name: request-approval
 description: |
-  Obtain a confirmation the auto-approval classifier recognises, for an action it would otherwise refuse — pushing, rewriting history, amending, resetting, reverting, deleting files or models or images, stopping a remote service, anything destructive, irreversible or outward-facing. A casual "ok" or "yes" in chat, in any language, does not satisfy it, so the call is denied and the denial reads as a tool failure. Use whenever such an action is wanted or pending, and whenever one has already been refused.
+  Obtain confirmation through the current host's approval mechanism for an action it would otherwise refuse — pushing, rewriting history, amending, resetting, reverting, deleting files or models or images, stopping a remote service, anything destructive, irreversible or outward-facing. Ordinary chat agreement may not satisfy a runtime approval gate. Use whenever such an action is wanted or pending, and whenever one has already been refused.
 allowed-tools: AskUserQuestion, Bash, PowerShell, Read
 ---
 
 # Request Approval
 
-Approval has to arrive through **AskUserQuestion** and name what will
-actually happen. Agreement in the conversation does not carry: "yes,
-delete them" is not the signal the classifier reads, and the call is
-refused anyway.
+Approval has to arrive through the **current host's approval path** and
+name what will actually happen. Agreement in ordinary conversation may not
+be the signal the runtime gate reads.
+
+| Host | Approval path |
+|---|---|
+| Claude Code | Call `AskUserQuestion`; a casual "yes" in chat does not satisfy the classifier |
+| Codex | Use the approval request attached to the blocked or escalated tool call; include the exact action in its justification. Use a dedicated user-input tool when the runtime exposes one for that purpose |
+
+Do not simulate either path in prose. If the host exposes no approval
+mechanism for the action, stop and let the user perform it.
 
 **Localize.** Write the question and the option labels in whatever
 language the conversation is in. The examples here are English.
@@ -19,9 +26,11 @@ language the conversation is in. The examples here are English.
 
 1. **Establish exactly what the action would do**, read back from the
    system rather than from memory. What that means per family is below.
-2. **Call AskUserQuestion** with one question stating the targets and
-   their scale. Recommended option first, labels concrete — the branch,
-   the count, the size. Always offer a "don't" option.
+2. **Use the host approval path** with one question stating the targets
+   and their scale. In Claude Code, call `AskUserQuestion`: recommended
+   option first, labels concrete — the branch, the count, the size — and
+   always offer a "don't" option. In Codex, put the same facts in the
+   tool-call justification or dedicated approval prompt.
 3. **Act on the selection**, then report what changed: the ref update,
    the freed space, the number of commits rewritten.
 

@@ -1,11 +1,30 @@
 ---
 name: tool-call-syntax
-description: Every tool call uses exactly three tag names, each with the antml: prefix — antml:function_calls wrapping antml:invoke wrapping antml:parameter. Any other opening tag is not a variant spelling: the harness parses nothing, runs nothing, and answers as though the call was never made, so the mistake repeats invisibly and the user sees only silence. Consult before writing a call when unsure of the shape, after "malformed tool call" or "could not be parsed", when a tool result never arrives, and when the same failure repeats across turns.
+description: Recover from a malformed, missing, or silently ignored tool call by using the current host's native tool-call protocol. In Claude Code's XML harness that means exactly antml:function_calls, antml:invoke, and antml:parameter; in Codex, antml is invalid and the exposed structured tool interface owns the syntax. Consult before retrying a call that did not parse or never returned.
 ---
 
 # Tool Call Syntax
 
-## Write this
+First identify the host. **Do not translate one host's wire format into
+another.** Tool syntax is runtime protocol, not portable skill content.
+
+## Codex
+
+Use the structured tool interface exposed by the current Codex runtime.
+Choose the tool by its advertised name and pass an object matching its
+schema. Never print `antml` tags, XML wrappers, or a guessed JSON envelope
+into assistant prose; that text is not a Codex tool call.
+
+After a parse or schema failure:
+
+1. Re-read the exposed tool name and input schema.
+2. Send one minimal call with only required fields.
+3. If it returns, rebuild the real call from the schema instead of retrying
+   the failed text unchanged.
+
+## Claude Code
+
+### Write this
 
 Every call has this shape. Angle brackets are full-width ＜＞ here to keep
 the block inert; a real call uses `<>`.
@@ -29,7 +48,7 @@ The prefix is not optional and not decorative. Without it the tags mean
 nothing to the parser, and neither does any other wrapper around them.
 There is no second spelling to choose between: copy the shape above.
 
-## When a call does not parse
+### When a call does not parse
 
 The harness answers `Your tool call was malformed and could not be parsed`
 and **nothing runs**. No command executed, no file changed. The reply looks
@@ -52,7 +71,7 @@ If that returns, the syntax is sound and the fault was in the previous
 message's tags. Rebuild the real call from the shape — do not paste the
 failed one back in.
 
-## What actually goes wrong
+### What actually goes wrong
 
 Nearly always the block is opened with a name that is not
 `antml:function_calls`: a word invented on the spot, or the right word with
@@ -66,7 +85,7 @@ The rest, in order of how often they bite:
    character.
 3. An argument name invented rather than taken from the tool's schema.
 
-## Failing quietly is the real cost
+### Failing quietly is the real cost
 
 A parse failure produces no error the user can see — only silence where
 output should be, then the same broken message again. Repeated across
@@ -81,7 +100,7 @@ Two rules follow:
 - **Suspect your own syntax before the tool.** A tool that returns nothing
   is far more likely to have never been called than to be broken.
 
-## Writing about this syntax
+### Writing about Claude Code syntax
 
 Naming a tag in ordinary prose risks both a stray invocation and a typo
 that propagates. Keep every tag name inside a code block — including in

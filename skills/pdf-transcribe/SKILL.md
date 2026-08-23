@@ -1,19 +1,26 @@
 ---
 name: pdf-transcribe
-description: Discipline for transcribing a PDF into Markdown. Read the PDF directly with the Read tool's pages parameter and write only what the page shows — never infer a table, a relation or an entity that is not there. Use when asked to convert a PDF to Markdown or to document a specification, and especially for design documents, data models and forms, where one invented line misleads whoever implements from it.
+description: Discipline for transcribing a PDF into Markdown with the current host's PDF reader or PDF skill. Write only what the page shows — never infer a table, relation, or entity that is not there. Use when asked to convert a PDF to Markdown or document a specification, especially for design documents, data models, and forms where one invented line misleads whoever implements from it.
 ---
 
 # PDF to Markdown
 
-The Read tool opens PDFs directly. `pages` selects the range, up to 20
-pages per call, and is required for a PDF longer than 10 pages.
+Use the PDF capability native to the current host.
+
+- In Claude Code, the `Read` tool opens PDFs directly. `pages` selects the
+  range, up to 20 pages per call, and is required for a PDF longer than 10
+  pages.
+- In Codex, use the installed PDF skill or the runtime's PDF
+  extraction/rendering tools. Follow that skill's render-and-verify
+  procedure when visual layout affects the transcription.
 
 ```
 Read(file_path="spec.pdf", pages="1-5")
 ```
 
-**No conversion to images.** Neither poppler nor pdf2image is involved,
-so there is nothing to install.
+The example above is Claude Code syntax. Do not emit it as a Codex tool
+call. In Claude Code no conversion to images is needed. In Codex, render
+pages when its PDF workflow requires visual verification.
 
 ## What this skill governs
 

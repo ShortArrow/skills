@@ -20,7 +20,9 @@ Planner and verifier are the same session. That is the point: the tier
 trusted with judgement decides what to build and whether it was built, and
 never does the typing.
 
-Default assignment, overridable per call:
+## Host adapter
+
+In Claude Code, preserve the existing assignment, overridable per call:
 
 ```
 Agent(prompt: "...", model: "opus")     # scout
@@ -31,6 +33,13 @@ The session model is planner and verifier and does neither the reading
 nor the typing. Scouts and implementers default to `opus`; set `model`
 on the Agent call to move either. Without it the subagent inherits the
 session model, which spends the judgement tier on enumeration.
+
+In Codex, use the runtime's subagent tools only when the user or governing
+repository instructions explicitly authorize delegation. Prefer the
+inherited model unless the user asked for a particular model or tier. If
+subagents are unavailable or unauthorized, keep the same planner,
+implementer, and verifier responsibilities as separate phases in the
+current session; do not pretend a subagent ran.
 
 ## Gathering the facts is delegable; deciding from them is not
 
@@ -154,5 +163,8 @@ are the reason the phase exists.
 ## The user has to have asked
 
 Spawning subagents spends tokens at a rate the user did not choose by
-asking for the feature. Invoking this skill counts as asking; inferring it
-from the size of a task does not.
+asking for the feature. In Claude Code, only the user explicitly invoking
+this skill by name counts as asking; automatic activation from the
+description, or inference from the size of a task, does not. In Codex,
+follow the host's delegation policy as well: skill invocation cannot
+override a requirement for explicit user or repository authorization.

@@ -90,6 +90,10 @@ claude plugin marketplace add anthropics/skills
 claude plugin install document-skills@anthropic-agent-skills
 ```
 
+In Codex, use the built-in skill installer for a known curated skill or
+ask it to install a skill from the repository. For an agent-neutral local
+install, `npx skills add` writes to `.agents/skills/`, which Codex scans.
+
 ## When to look
 
 - **Before authoring a skill.** The problem is rarely new.
@@ -100,9 +104,11 @@ claude plugin install document-skills@anthropic-agent-skills
 
 ## What installing costs
 
-Every installed skill's description loads into **every session**, whether
-or not it fires. `claude plugin details <name>` reports that against the
-body, which is read only on use.
+Every installed skill competes for the host's initial discovery context,
+whether or not it fires. In Claude Code, `claude plugin details <name>`
+reports the always-on description against the body, which is read only on
+use. Codex also starts from names and descriptions and may shorten or omit
+entries when the installed set exceeds its discovery budget.
 
 Install the skill, not the catalogue. A collection taken whole for one
 useful entry is charged for in full, permanently.
