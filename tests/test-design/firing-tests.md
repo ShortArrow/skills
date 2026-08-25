@@ -56,3 +56,20 @@ Expected: no skill call. Nothing is being derived.
 > test-spec.md の TC 番号を 1 から連番に振り直して。
 
 Expected: no skill call. The cases are unchanged.
+
+## Recorded runs
+
+2026-08-26, claude-fable-5, `tests/run-firing-tests.sh test-design`
+(`claude -p --max-turns 6`, fresh sessions, attachment fixture):
+
+- S1, S2, S3: fired — `Skill(engineering-skills:test-design)` invoked
+  (202 s / 107 s / 62 s, $0.76 / $0.48 / $0.43 per session).
+  S1 wrote a specification with a lower size bound, the caller with no
+  role, a decision table with two-violation rules, the double send, and
+  TC-14 moved to an open question. S2 named every gap listed above.
+  S3 deleted the row as asked, kept the failure transitions, and offered
+  a TC for the state-machine guard as the alternative; the guard was
+  named, the row did not stay.
+- S4, S5: no Skill call.
+
+5/5 on the expected side. S3 passes on the strong signal only.
