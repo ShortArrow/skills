@@ -8,8 +8,9 @@
 # heading under "## Should fire" or "## Should not fire", with the prompt
 # in the "> " lines that follow — so the document is the only copy. Each
 # scenario runs in a fresh headless session inside a fresh git repository
-# holding tests/fixtures/leap, and passes when it fires on the expected
-# side: a Skill tool_use naming the skill counts as fired. Behavioural
+# holding a fixture — tests/fixtures/leap unless the document names
+# another in a "Fixture: `tests/fixtures/<name>`" line — and passes when
+# it fires on the expected side: a Skill tool_use naming the skill counts as fired. Behavioural
 # passes without a Skill call (the procedure followed, the action refused)
 # are not detected here; read the transcript for those.
 #
@@ -24,8 +25,9 @@ out=${2:-"${TMPDIR:-/tmp}/firing-tests/${skill}"}
 only=${3:-.}
 root=$(git -C "$(dirname "$0")" rev-parse --show-toplevel)
 doc="$root/tests/$skill/firing-tests.md"
-fixture="$root/tests/fixtures/leap"
 [ -f "$doc" ] || { echo "no $doc" >&2; exit 2; }
+fixture="$root/tests/fixtures/$(sed -n 's/^Fixture: `tests\/fixtures\/\([^`]*\)`.*/\1/p' "$doc" | head -1)"
+[ "$fixture" != "$root/tests/fixtures/" ] || fixture="$root/tests/fixtures/leap"
 mkdir -p "$out"
 
 # Nested launches refuse when CLAUDECODE is set by the parent session.
@@ -51,7 +53,7 @@ while IFS=$'\t' read -r id expect prompt; do
   [ -n "$prompt" ] || { echo "$id: no prompt parsed" >&2; exit 2; }
   [[ "$id" =~ $only ]] || continue
   work=$(mktemp -d "${out}/${id}.XXXX")
-  cp "$fixture"/*.py "$work"/
+  cp -r "$fixture"/. "$work"/
   git -C "$work" init -q
   for key in user.name user.email user.signingkey; do
     git -C "$work" config "$key" "$(git -C "$root" config "$key")"
