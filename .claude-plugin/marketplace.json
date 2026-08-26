@@ -59,6 +59,7 @@
         "./skills/find-skills",
         "./skills/adopt-dependency",
         "./skills/library-design",
+        "./skills/state-first",
         "./skills/assurance-case",
         "./skills/agent-harness"
       ]

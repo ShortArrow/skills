@@ -102,7 +102,9 @@ cover the rules where two conditions fail at once and the rule where a
 role restriction and a format restriction both apply. The same document
 can read as fully covered under all-conditions and a quarter covered
 under all-rules, and only the second number says anything about the
-combinations.
+combinations. When the rule count is the product of a flag set, the
+cheaper fix is upstream: `state-first` collapses the flags into the
+states that can occur, and the table shrinks to them.
 
 ## A table is a claim about the suite
 

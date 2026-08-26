@@ -20,7 +20,7 @@ Then install whichever set applies.
 | `screenshot-skills` | any-screenshot, windows-screenshot, avalonia-screenshot, flaui-screenshot, hyperv-screenshot |
 | `writing-skills` | clean-docs, unmachine-prose, pdf-transcribe, i18n-parity, measured-claims, request-approval |
 | `product-skills` | new-combination |
-| `engineering-skills` | plan-delegate-verify, adversarial-verify, tdd-cycle, test-design, tidy-first, diagnose-first, csharp-architect, tui-debug, windows-sandbox, hyperv-clean-vm, peer-sessions, grill-me, tool-call-syntax, codex, find-skills, adopt-dependency, library-design, assurance-case, agent-harness |
+| `engineering-skills` | plan-delegate-verify, adversarial-verify, tdd-cycle, test-design, tidy-first, diagnose-first, csharp-architect, tui-debug, windows-sandbox, hyperv-clean-vm, peer-sessions, grill-me, tool-call-syntax, codex, find-skills, adopt-dependency, library-design, state-first, assurance-case, agent-harness |
 
 ## Install in Codex
 
@@ -99,7 +99,10 @@ the seat in this diff is wrong.
 `diagnose-first` holds the line between correlation and cause — the
 base rate, the denominator, the refutation decided before acting, and the
 pass mark an intermittent fault needs before any fix gets credit.
-`csharp-architect` covers layering and testability in C#.
+`state-first` names the states before the operation, keeps a property
+apart from a state in a signature, and turns a flag set into one
+enumeration, so the case that "just came up" is a missing state and not
+a new branch. `csharp-architect` covers layering and testability in C#.
 `tui-debug` reconstructs a terminal UI from redirected output, for when
 there is no display to look at. `windows-sandbox` runs tests that would
 otherwise take over the keyboard inside Windows Sandbox, and arbitrates

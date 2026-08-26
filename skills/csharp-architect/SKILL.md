@@ -90,7 +90,8 @@ After: run every test, and check no new warning appeared.
 
 ### Implementing a feature
 
-1. **Clarify the requirement** — what is to be true afterwards.
+1. **Clarify the requirement** — what is to be true afterwards, from
+   each state it can start in (`state-first`).
 2. **Locate the impact** — which layers change.
 3. **Write the test first.**
 4. **Start at the Domain** and work outward.
