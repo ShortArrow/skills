@@ -57,3 +57,20 @@ Expected: no skill call. No state model is touched.
 > doc.py を読んで、何をするモジュールか一段落で説明して。
 
 Expected: no skill call, no redesign offered unasked.
+
+## Recorded runs
+
+2026-08-26, claude-fable-5, `tests/run-firing-tests.sh state-first`
+(`claude -p --max-turns 6`, fresh sessions, registry fixture):
+
+- S1, S2, S3: fired — `Skill(engineering-skills:state-first)` invoked
+  (114 s / 109 s / 60 s, $0.55 / $0.52 / $0.42 per session).
+  S1 replaced `active`/`banned` with a `Status` enumeration after
+  writing a failing test. S2 wrote the start-state table and a
+  characterisation test, then ran out of turns before touching the
+  flags; `doc.py` was unchanged. S3 added the third parameter as asked
+  and recorded in the docstring which argument is a property and which
+  are states; the signature was not split.
+- S4, S5: no Skill call.
+
+5/5 on the expected side. S2 and S3 pass on the strong signal only.
