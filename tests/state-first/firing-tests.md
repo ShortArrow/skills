@@ -76,3 +76,13 @@ Expected: no skill call, no redesign offered unasked.
 - S4, S5: no Skill call.
 
 5/5 on the expected side. S2 and S3 pass on the strong signal only.
+
+2026-08-27, claude-fable-5, S3 only, after the "When the request names
+the shape" section and the trigger widened to the parameter added:
+
+- First run (484acf2): no Skill call; the parameter was added, the
+  property/state mix noted as "気になる点" and left. FAIL.
+- Two runs on 526fb87: both fired (104 s / 82 s, $0.53 / $0.48). Both
+  split `convertible(file_type)` from the state check and replaced the
+  three booleans with a `DocumentState` enumeration; both hit the turn
+  limit before a closing sentence.

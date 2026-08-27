@@ -75,3 +75,9 @@ Expected: no skill call. The cases are unchanged.
 - S4, S5: no Skill call.
 
 5/5 on the expected side. S3 passes on the strong signal only.
+
+2026-08-27, claude-fable-5, S3 only, after the "When the request
+removes a class" section (484acf2): fired (44 s, $0.39); the row was
+deleted and the reply named the class now uncovered, the state
+machine's own guard, and two paths that reach it (double click before
+the disable lands, callers that bypass the View).
