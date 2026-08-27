@@ -1,7 +1,7 @@
 ---
 name: plan-delegate-verify
 description: |
-  Split multi-step work across model tiers: the session model writes the plan, subagents on a chosen model carry out the items, and the session model verifies the result against the plan it wrote. Use when about to plan an implementation, when a task decomposes into items that could run in parallel, or when work will be handed to subagents at all. Covers delegating the fact-gathering without delegating the judgement, what the plan must contain for an implementer that never saw the conversation, why a subagent's "done" is not evidence, what changes when the plan is a test plan and the artefact is itself the pass mark, and when the overhead costs more than the work.
+  Split multi-step work across model tiers: the session model writes the plan, subagents on a chosen model carry out the items, and the session model verifies the result against the plan it wrote. Use when about to plan an implementation, when a task decomposes into items that could run in parallel, or when work will be handed to subagents at all, and when a read or a run is about to put into the session's context a large output that is needed once. Covers keeping the planner's context for the plan and the evidence so the verdict is made on a session that has not filled up, delegating the fact-gathering without delegating the judgement, what the plan must contain for an implementer that never saw the conversation, why a subagent's "done" is not evidence, what changes when the plan is a test plan and the artefact is itself the pass mark, and when the overhead costs more than the work.
 allowed-tools: Agent, Read, Bash, PowerShell, Edit, Write, TodoWrite
 ---
 
@@ -19,6 +19,33 @@ Four roles, and they are roles rather than models:
 Planner and verifier are the same session. That is the point: the tier
 trusted with judgement decides what to build and whether it was built, and
 never does the typing.
+
+## What the split protects
+
+The session's context is the working memory of the judgement, and it
+only fills. Every file read whole, every test log, every benchmark
+dump stays in it until the session ends, and the verdict comes last,
+when the context is fullest. Conventions decay the same way
+(`agent-harness` builds gates because prose held at turn 1 slips by
+turn 200), and so does the reading of a diff. A planner that gathered
+its own facts verifies on a context that is mostly material it needed
+once.
+
+So the split protects two things, and the second holds even when every
+role runs on the same model: the judgement tier is not spent on typing,
+and the judgement's context is not spent on bulk. Whatever is large and
+needed once goes out to a subagent and comes back as a conclusion with
+citations, and what stays in the session is the plan, the evidence, and
+the verdict. That is why a scout returns facts and not file dumps, and
+why the verifier runs the checks itself instead of reading a transcript
+of them: both keep the session's context to what the verdict is made
+from.
+
+This is not a licence to delegate everything. Orientation still happens
+in the session, because a plan written on a scout's summary of an
+unknown shape is a plan for the summary; and spawning still needs the
+user to have asked. The rule is narrower: when the output is large and
+its use is once, the session should not be the place it lands.
 
 ## Host adapter
 
@@ -152,7 +179,9 @@ are the reason the phase exists.
 ## When not to do this
 
 - **The work is one edit.** Planning it, spawning an agent and verifying
-  the result costs more than making the change.
+  the result costs more than making the change. The exception is the one
+  edit that takes a long read to locate: the read is the bulk, and it
+  can go out even when the edit stays in.
 - **The task is exploratory.** A plan written before the shape is known
   will be wrong, and the implementer will follow it anyway. Orient first —
   yourself, not through a scout — then plan.
