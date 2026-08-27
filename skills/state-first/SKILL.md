@@ -104,6 +104,17 @@ impossible combination either. Information hiding is the same rule as
 the enumeration and the boundary type from the outside: the set of
 states a caller can produce is exactly the set the module admits.
 
+## When the request names the shape
+
+"Add an `is_locked` argument so locked documents cannot convert" asks
+for two things: an outcome, locked documents do not convert, and a
+shape, one more parameter. The outcome is the request; the shape is
+this skill's to decide. Deliver the outcome in the shape above, the
+property check apart from the state check, and say in one sentence
+what was done differently and why. Delivering the shape as asked and
+noting in a docstring which argument is a state is the branch added
+with a comment beside it.
+
 ## How this connects
 
 Working code is a state; not breaking is a structure that makes the

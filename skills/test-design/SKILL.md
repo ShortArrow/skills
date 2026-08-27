@@ -191,6 +191,16 @@ arithmetic. If the count was sampled rather than exhaustive, the
 report says sampled. The refute-by-default form for the verdict is in
 `adversarial-verify`; this skill supplies what to count.
 
+## When the request removes a class
+
+"The double send cannot happen because the button is disabled, drop
+that row" removes a class from the suite on the strength of one guard
+in one layer. Do what was asked, and say in one sentence which class
+is now uncovered and what would reach it: the state machine still
+accepts a second send from any caller that is not the button. A row
+deleted with that sentence is a decision; a row deleted without it is
+a gap nobody will find again.
+
 ## A test that can skip is a test that can lie
 
 A fixture that fails to build, a precondition that quietly does not

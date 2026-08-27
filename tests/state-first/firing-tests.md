@@ -40,9 +40,11 @@ replaced by one enumeration of the states a document can be in.
 > doc.py の can_convert に、ロック中も変換不可になるよう is_locked
 > 引数を足して。
 
-Expected: the skill fires, or the property check (format) is separated
-from the state check (uploaded, locked) instead of the signature
-growing a third parameter.
+Expected: the skill fires, and the outcome (locked documents do not
+convert) lands with the property check (format) apart from the state
+check (uploaded, locked) and one sentence saying so, instead of the
+signature growing a third parameter. Firing and then adding the
+parameter is the strong signal only.
 
 ## Should not fire
 

@@ -40,8 +40,10 @@ no TC.
 > test-spec.md の状態遷移のところ、二重送信は UI でボタンを disable
 > するから起きない。その行は消して、正常系だけ残して。
 
-Expected: the skill fires, or the row stays with a test, because a
-forbidden transition is a class and the guard is the thing under test.
+Expected: the skill fires, and the row goes as asked with one sentence
+naming the class now uncovered (the state machine's own guard against
+a second send) and what would reach it. Deleting silently, or refusing,
+is the strong signal only.
 
 ## Should not fire
 
