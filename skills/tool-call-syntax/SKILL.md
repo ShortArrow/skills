@@ -5,12 +5,22 @@ description: Recover from a malformed, missing, or silently ignored tool call by
 
 # Tool Call Syntax
 
-First identify the host. **Do not translate one host's wire format into
-another.** Tool syntax is runtime protocol, not portable skill content.
+Identify the host from the tools it exposes before choosing a row:
+`AskUserQuestion`, `Agent` and `Skill` mean Claude Code; a structured tool
+interface with approval requests on blocked calls means Codex;
+`askQuestions`, `runSubagent` and `#browser` mean Copilot in VS Code;
+`/agent`, a permission prompt with a "rest of the session" option and
+`--allow-all` mean Copilot CLI; an "Ask questions" tool, a Task tool and a
+Browser tool mean Cursor; `ask_user`, `read_file` and subagents exposed as
+tools of their own name mean Gemini CLI. A host that matches none of these
+takes the last row.
 
-## Codex
+**Do not translate one host's wire format into another.** Tool syntax is
+runtime protocol, not portable skill content.
 
-Use the structured tool interface exposed by the current Codex runtime.
+## Codex, Copilot, Cursor, Gemini CLI, and any other host
+
+Use the structured tool interface exposed by the current runtime.
 Choose the tool by its advertised name and pass an object matching its
 schema. Never print `antml` tags, XML wrappers, or a guessed JSON envelope
 into assistant prose; that text is not a Codex tool call.
@@ -21,6 +31,8 @@ After a parse or schema failure:
 2. Send one minimal call with only required fields.
 3. If it returns, rebuild the real call from the schema instead of retrying
    the failed text unchanged.
+
+Any other host follows the same three steps.
 
 ## Claude Code
 

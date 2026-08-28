@@ -49,6 +49,16 @@ its use is once, the session should not be the place it lands.
 
 ## Host adapter
 
+Identify the host from the tools it exposes before choosing a row:
+`AskUserQuestion`, `Agent` and `Skill` mean Claude Code; a structured tool
+interface with approval requests on blocked calls means Codex;
+`askQuestions`, `runSubagent` and `#browser` mean Copilot in VS Code;
+`/agent`, a permission prompt with a "rest of the session" option and
+`--allow-all` mean Copilot CLI; an "Ask questions" tool, a Task tool and a
+Browser tool mean Cursor; `ask_user`, `read_file` and subagents exposed as
+tools of their own name mean Gemini CLI. A host that matches none of these
+takes the last row.
+
 In Claude Code, preserve the existing assignment, overridable per call:
 
 ```
@@ -67,6 +77,14 @@ inherited model unless the user asked for a particular model or tier. If
 subagents are unavailable or unauthorized, keep the same planner,
 implementer, and verifier responsibilities as separate phases in the
 current session; do not pretend a subagent ran.
+
+| Host | Delegation |
+|---|---|
+| Copilot in VS Code | `runSubagent`. The model is the explicit parameter, else the agent's `.agent.md` `model`, else the main model. Put scouts and implementers on a cheaper model with that parameter |
+| Copilot CLI | The built-in Explore agent as scout and the Task agent as implementer, selected with `/agent` or by name in the prompt. A custom agent's `model` frontmatter picks the tier. Agent-to-agent delegation goes only through the `agent` tool alias in a custom agent's tools |
+| Cursor | The Task tool, with `/name` to force a particular subagent. The subagent's `model` frontmatter picks the tier, `inherit` by default |
+| Gemini CLI | Each subagent is a tool named after itself, and `@name` at the start of the prompt forces one. `model` in `.gemini/agents/*.md` picks the tier, default `inherit` |
+| Any other host | Run planner, implementer and verifier as three separate phases in the one session, and write each phase's output to a file the next phase reads. Do not pretend a subagent ran |
 
 ## Gathering the facts is delegable; deciding from them is not
 
@@ -196,4 +214,6 @@ asking for the feature. In Claude Code, only the user explicitly invoking
 this skill by name counts as asking; automatic activation from the
 description, or inference from the size of a task, does not. In Codex,
 follow the host's delegation policy as well: skill invocation cannot
-override a requirement for explicit user or repository authorization.
+override a requirement for explicit user or repository authorization. In
+Copilot, Cursor and Gemini CLI, and in any other host, the same rule holds,
+and the host's own delegation policy applies on top.

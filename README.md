@@ -1,6 +1,7 @@
 # skills
 
-Personal [Agent Skills](https://agentskills.io) for Claude Code and Codex.
+Personal [Agent Skills](https://agentskills.io) for Claude Code, Codex,
+GitHub Copilot, Cursor and Gemini CLI.
 
 Each skill answers a question that comes up repeatedly and is easy to get
 wrong the first time — which capture method fits this target, what a
@@ -37,6 +38,32 @@ catalogue when only a few apply. Restart Codex if a new install does not
 appear. The installer and discovery locations were checked against the
 [official OpenAI documentation](https://learn.chatgpt.com/docs/build-skills)
 on 2026-08-23.
+
+## Install anywhere
+
+```
+npx skills add ShortArrow/skills -g
+```
+
+`-g` writes to `~/.agents/skills/`, which Codex, Copilot (CLI, coding
+agent, VS Code), Cursor and Gemini CLI read as a user-level location.
+Without `-g` it writes the project's `.agents/skills/` instead.
+
+| Host | User directory | Project directory |
+|---|---|---|
+| Claude Code | `~/.claude/skills` | `.claude/skills` |
+| Codex | `~/.codex/skills`, `~/.agents/skills` | `.agents/skills` |
+| Copilot in VS Code | `~/.copilot/skills`, `~/.agents/skills`, and `~/.claude/skills` | `.github/skills`, `.claude/skills`, `.agents/skills` |
+| Copilot CLI | `~/.copilot/skills`, `~/.agents/skills` | `.github/skills`, `.claude/skills`, `.agents/skills`; `/add-dir` loads `.github/skills` |
+| Cursor | `~/.cursor/skills`, `~/.agents/skills`, `~/.claude/skills`, `~/.codex/skills` | `.agents/skills`, `.cursor/skills`, `.claude/skills`, `.codex/skills` |
+| Gemini CLI | `~/.gemini/skills`, `~/.agents/skills` (the alias wins ties) | `.gemini/skills`, `.agents/skills` |
+
+A skill whose procedure names a tool carries one row per host and an
+"Any other host" row, which is the rule
+[ADR 0002](docs/adr/0002-widen-host-branches-by-capability-table.md) sets
+out. The prose-only skills need nothing: they name no tool, so there is
+nothing for a host to differ about. The directories above were checked
+against official documentation on 2026-08-28.
 
 ## Skills
 
@@ -228,8 +255,8 @@ symlinks Claude Code at it; `--agent claude-code` writes to
 `SKILL.md` is not specific to Claude Code. The same folder-with-a-manifest
 shape is used across agents. Instructions that name tools or approval
 mechanisms are still host-specific: these skills retain Claude Code's
-existing paths and branch to Codex's native capabilities where they
-differ.
+existing paths and branch to each host's documented capability, with a
+last row for hosts that expose none.
 
 | | |
 |---|---|
@@ -246,7 +273,8 @@ differ.
 
 `tests/run-firing-tests.sh` remains the Claude Code behavioural runner.
 `tests/check-portability.ps1` checks every manifest and resource reference,
-the Claude marketplace membership, and the required Claude/Codex branches:
+the Claude marketplace membership, and the host rows every branching skill
+has to carry:
 
 ```powershell
 pwsh -File tests/check-portability.ps1

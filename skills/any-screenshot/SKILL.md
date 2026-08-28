@@ -12,7 +12,7 @@ skill that owns the method.
 
 | Target | Method | Skill |
 |---|---|---|
-| Web page | Host browser control, else Playwright | Claude in Chrome, Codex browser skill, MCP browser tools, or `page.screenshot()` |
+| Web page | Host browser control, else Playwright | Claude in Chrome, Codex browser skill, Copilot in VS Code `#browser` (`screenshotPage`), Cursor Browser tool, Gemini CLI `browser_agent`, MCP browser tools, or `page.screenshot()` |
 | Avalonia window | Off-screen render | `avalonia-screenshot` |
 | Whole window of a running app | PrintWindow, by PID | `windows-screenshot` |
 | Single element, or acting first | UI Automation | `flaui-screenshot` |
@@ -68,7 +68,27 @@ reconstructing it is faster and exact. An image would need OCR. Use
 
 ## Web
 
-Use the browser controller provided by the host: Claude in Chrome in
-Claude Code, or the browser-control skill in Codex. Where neither is
-available, use Playwright's `page.screenshot()`. The branch ends here;
-do not invoke a Windows desktop capture for browser content.
+Use the browser controller provided by the host.
+
+Identify the host from the tools it exposes before choosing a row:
+`AskUserQuestion`, `Agent` and `Skill` mean Claude Code; a structured tool
+interface with approval requests on blocked calls means Codex;
+`askQuestions`, `runSubagent` and `#browser` mean Copilot in VS Code;
+`/agent`, a permission prompt with a "rest of the session" option and
+`--allow-all` mean Copilot CLI; an "Ask questions" tool, a Task tool and a
+Browser tool mean Cursor; `ask_user`, `read_file` and subagents exposed as
+tools of their own name mean Gemini CLI. A host that matches none of these
+takes the last row.
+
+| Host | Browser controller |
+|---|---|
+| Claude Code | Claude in Chrome |
+| Codex | The Codex browser skill |
+| Copilot in VS Code | The `#browser` tool set: `openBrowserPage`, `navigatePage`, `readPage`, `screenshotPage`, `clickElement`, `typeInPage`, `runPlaywrightCode` |
+| Copilot CLI | No built-in browser tool. Add Playwright as an MCP server (`npx @playwright/mcp@latest`) |
+| Cursor | The Browser tool: Navigate, Click, Type, Scroll, Screenshot, Console Output, Network Traffic, with no setup |
+| Gemini CLI | The `browser_agent` subagent, which bundles chrome-devtools-mcp, is off by default, needs Chrome 144+ and shows a consent dialog on first use |
+| Any other host | Playwright's `page.screenshot()`. Where nothing can drive a browser, say so and stop. Never describe a page as though it had been captured, and never fall back to another host's browser skill. |
+
+The branch ends here; do not invoke a Windows desktop capture for browser
+content.

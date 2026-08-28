@@ -93,6 +93,9 @@ claude plugin install document-skills@anthropic-agent-skills
 In Codex, use the built-in skill installer for a known curated skill or
 ask it to install a skill from the repository. For an agent-neutral local
 install, `npx skills add` writes to `.agents/skills/`, which Codex scans.
+With `-g` it writes to `~/.agents/skills/`, which Codex, Copilot, Cursor
+and Gemini CLI all read; Claude Code reads `~/.claude/skills/` and the
+plugin cache instead.
 
 ## When to look
 

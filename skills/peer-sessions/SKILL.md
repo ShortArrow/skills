@@ -7,12 +7,24 @@ allowed-tools: Bash, Read
 
 # Peer sessions
 
-Choose the route for the current host:
+Identify the host from the tools it exposes before choosing a row:
+`AskUserQuestion`, `Agent` and `Skill` mean Claude Code; a structured tool
+interface with approval requests on blocked calls means Codex;
+`askQuestions`, `runSubagent` and `#browser` mean Copilot in VS Code;
+`/agent`, a permission prompt with a "rest of the session" option and
+`--allow-all` mean Copilot CLI; an "Ask questions" tool, a Task tool and a
+Browser tool mean Cursor; `ask_user`, `read_file` and subagents exposed as
+tools of their own name mean Gemini CLI. A host that matches none of these
+takes the last row.
 
 | Host | Route |
 |---|---|
 | Claude Code | Run `scripts/peer-sessions.sh [minutes]` and use the files described below |
 | Codex | Use the host's task/thread listing and status tools. Prefer a compact wait/status snapshot when following progress. Do not inspect Codex's internal task database or transcripts by guessed filesystem path |
+| Copilot | Peer session listing is not documented (checked 2026-08-28); use the row below |
+| Cursor | Peer session listing is not documented (checked 2026-08-28); use the row below |
+| Gemini CLI | Peer session listing is not documented (checked 2026-08-28); use the row below |
+| Any other host | Peer state is not available from this session. Take the resource's own lock as the only signal, and say so when asked what else is running. Do not run `scripts/peer-sessions.sh`, and do not read another host's storage |
 
 If Codex exposes no task/thread coordination tool, say that peer state is
 not available from this session. Do not fall back to the Claude script.

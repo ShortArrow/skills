@@ -42,7 +42,7 @@ foreach ($directory in Get-ChildItem -LiteralPath $skillsRoot -Directory) {
     }
 }
 
-$dualHostSkills = @(
+$hostBranchSkills = @(
     'any-screenshot',
     'codex',
     'grill-me',
@@ -53,9 +53,9 @@ $dualHostSkills = @(
     'tool-call-syntax'
 )
 
-foreach ($name in $dualHostSkills) {
+foreach ($name in $hostBranchSkills) {
     $content = Get-Content -Raw -LiteralPath (Join-Path $skillsRoot "$name\SKILL.md")
-    foreach ($hostName in @('Claude', 'Codex')) {
+    foreach ($hostName in @('Claude', 'Codex', 'Copilot', 'Cursor', 'Gemini CLI', 'Any other host')) {
         if ($content -notmatch [regex]::Escape($hostName)) {
             $failures.Add("${name}: missing $hostName host route")
         }
@@ -82,6 +82,44 @@ foreach ($entry in $claudeInvariants) {
     }
 }
 
+$codexInvariants = @(
+    @{ Skill = 'request-approval'; Text = 'Use the approval request attached to the blocked or escalated tool call' }
+    @{ Skill = 'plan-delegate-verify'; Text = 'do not pretend a subagent ran' }
+    @{ Skill = 'tool-call-syntax'; Text = 'Never print `antml` tags, XML wrappers, or a guessed JSON envelope' }
+    @{ Skill = 'peer-sessions'; Text = 'Do not fall back to the Claude script' }
+    @{ Skill = 'pdf-transcribe'; Text = 'Do not emit it as a Codex tool call' }
+    @{ Skill = 'grill-me'; Text = 'a dedicated user-input tool when' }
+)
+
+foreach ($entry in $codexInvariants) {
+    $content = Get-Content -Raw -LiteralPath (Join-Path $skillsRoot "$($entry.Skill)\SKILL.md")
+    if ($content -notmatch [regex]::Escape($entry.Text)) {
+        $failures.Add("$($entry.Skill): lost Codex invariant $($entry.Text)")
+    }
+}
+
+$hostInvariants = @(
+    @{ Skill = 'request-approval'; Text = 'askQuestions' }
+    @{ Skill = 'request-approval'; Text = 'ask_user' }
+    @{ Skill = 'request-approval'; Text = '"Ask questions"' }
+    @{ Skill = 'grill-me'; Text = 'askQuestions' }
+    @{ Skill = 'grill-me'; Text = 'ask_user' }
+    @{ Skill = 'plan-delegate-verify'; Text = 'runSubagent' }
+    @{ Skill = 'plan-delegate-verify'; Text = '@name' }
+    @{ Skill = 'peer-sessions'; Text = 'not documented (checked 2026-08-28)' }
+    @{ Skill = 'pdf-transcribe'; Text = 'read_file' }
+    @{ Skill = 'any-screenshot'; Text = 'browser_agent' }
+    @{ Skill = 'any-screenshot'; Text = 'screenshotPage' }
+    @{ Skill = 'find-skills'; Text = '~/.agents/skills/' }
+)
+
+foreach ($entry in $hostInvariants) {
+    $content = Get-Content -Raw -LiteralPath (Join-Path $skillsRoot "$($entry.Skill)\SKILL.md")
+    if ($content -notmatch [regex]::Escape($entry.Text)) {
+        $failures.Add("$($entry.Skill): missing host row $($entry.Text)")
+    }
+}
+
 $claudeRunner = Get-Content -Raw -LiteralPath (Join-Path $RepositoryRoot 'tests\run-firing-tests.sh')
 if ($claudeRunner -notmatch 'claude -p') {
     $failures.Add('Claude firing-test runner no longer invokes claude -p')
@@ -95,10 +133,14 @@ foreach ($directory in Get-ChildItem -LiteralPath $skillsRoot -Directory) {
 }
 
 $readme = Get-Content -Raw -LiteralPath (Join-Path $RepositoryRoot 'README.md')
-foreach ($heading in @('Install in Claude Code', 'Install in Codex')) {
+foreach ($heading in @('Install in Claude Code', 'Install in Codex', 'Install anywhere')) {
     if ($readme -notmatch [regex]::Escape($heading)) {
         $failures.Add("README: missing $heading")
     }
+}
+
+if ($readme -notmatch [regex]::Escape('npx skills add ShortArrow/skills -g')) {
+    $failures.Add('README: missing the agent-neutral user-level install command')
 }
 
 if ($readme -match 'skills/<name>/agents/openai\.yaml') {
