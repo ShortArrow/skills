@@ -59,9 +59,8 @@ Without `-g` it writes the project's `.agents/skills/` instead.
 | Gemini CLI | `~/.gemini/skills`, `~/.agents/skills` (the alias wins ties) | `.gemini/skills`, `.agents/skills` |
 
 A skill whose procedure names a tool carries one row per host and an
-"Any other host" row, which is the rule
-[ADR 0002](docs/adr/0002-widen-host-branches-by-capability-table.md) sets
-out. The prose-only skills need nothing: they name no tool, so there is
+"Any other host" row; the forces behind that shape are in the
+[design intent](docs/design-intent.md). The prose-only skills need nothing: they name no tool, so there is
 nothing for a host to differ about. The directories above were checked
 against official documentation on 2026-08-28.
 
