@@ -1,6 +1,6 @@
 ---
 name: clean-docs
-description: Discipline for writing durable artifacts — PR bodies, commits, CHANGELOGs, ADRs, READMEs, specifications, source code. A durable artifact is read by someone who never saw the conversation, so conversation-local labels die at its boundary, and it answers the reader, not the reviewer. Derivation orders documents — living documents follow their source, records freeze at their moment — and settles where each question belongs: what, why, why-not, how much, what changed. Use when writing a PR, a commit, a CHANGELOG, an ADR or an issue, when editing a README or PRD, when unsure where a why, a why-not or a history note belongs, and whenever about to write "See ADR-NNNN".
+description: Discipline for writing durable artifacts — PR bodies, commits, CHANGELOGs, ADRs, READMEs, specifications, source code. A durable artifact is read by someone who never saw the conversation, so conversation-local labels die at its boundary, and it answers the reader, not the reviewer. Derivation orders documents — living documents follow their source, records freeze at their moment — and settles where each question belongs: what, why, why-not, how much, what changed. Use when writing a PR, a commit, a CHANGELOG, an ADR or an issue, when editing a README or PRD, when unsure where a why, a why-not or a history note belongs, when a why that still holds is about to be frozen into an ADR instead of stated as living design intent, and whenever about to write "See ADR-NNNN".
 ---
 
 # Self-Contained Artifacts
@@ -105,11 +105,10 @@ theorem of this.
   requirement, a test plan satisfies the design. Volatile because it
   must track its source.
 - **Record derivation** — a judgment or an observation taken from an
-  artifact at a moment: an ADR records which design is right and how
-  that was judged — the criteria, the trade-offs, the alternatives
-  rejected, never the story of the discussion; a test run records what
-  held that day; a CHANGELOG entry, a PR, a commit record what changed.
-  **Frozen when written.** Volatile not because it moves — it never
+  artifact at a moment: a test run records what held that day; a
+  CHANGELOG entry, a PR, a commit record what changed; an ADR records
+  the forces as they stood when a decision was made. **Frozen when
+  written.** Volatile not because it moves — it never
   moves again — but because it is true only of its moment, and every
   later revision of its subject leaves it further behind.
 
@@ -122,7 +121,7 @@ layers, this is the familiar table:
 
 | Layer | Documents | Nature |
 |---|---|---|
-| Upper — specifications, present tense | Principles, PRD and specifications, README, source code and schemas | Describe how things *are*; edited as they evolve |
+| Upper — specifications, present tense | Design intent, principles, PRD and specifications, README, source code and schemas | Describe how things *are*; edited as they evolve |
 | Lower — records, past tense | ADR, CHANGELOG, release notes, PR, issue, commit | Append-only; frozen when written |
 
 The order is fractal: records have their own gradient (commit < PR <
@@ -133,6 +132,29 @@ derives, but it must keep following the artifacts it threatens — a
 risk retires when the design that carried it changes — so it sits on
 the volatile side and holds the pointer. A "risks" section inside a
 requirement or a design is that pointer written backwards.
+
+### Design intent is a living document
+
+The original ADR already puts its weight where few of its users do: in
+the Context — "the forces at play", "probably in tension", stated
+value-neutrally — kept so that a later reader is not left with the two
+blind paths, accepting a decision whose reasons may have expired or
+reversing one whose reasons still hold (Nygard, 2011). The verdict was
+never the payload; the forces were. A pile of verdict-only ADRs with
+thin context is the concept misread, and it only grows.
+
+Write the forces in the present tense instead, as **design intent**: a
+living document, one section per topic, stating what the design
+protects, which forces are in tension, what it refuses and why while
+that reason holds, how the next case of the same kind is decided, and
+the gate that enforces it where one exists. When the forces change,
+the section is edited like any living document — and under version
+control every edit is the snapshot a frozen ADR used to be, so "what
+were the forces then" is answered by the history of one file.
+
+What remains for a standalone frozen record is the judgment only its
+moment explains: made under a constraint that has since vanished, and
+touching no standing intent. Its natural size is a commit message.
 
 ### Theorems
 
@@ -176,7 +198,9 @@ Present tense, to the living layer:
 | when | When it applies | Use case — the trigger and the conditions |
 | where | Where it runs | Infrastructure configuration |
 | how | How it works | The implementation body; how to operate it, the runbook |
-| which | Which one is in use | Design and lockfile show the outcome; the reason behind the choice goes to the ADR, below |
+| which | Which one is in use | Design and lockfile show the outcome; the reason behind the choice goes to the design intent |
+| why (standing) | Why it is this way, while the reason holds | Design intent — the forces, their tension, what is protected |
+| why-not (standing) | Why not the alternative that keeps being suggested | Design intent — a standing refusal, with its reason |
 | whatever (holds) | Whatever happens, what still holds | Invariants — the type, the domain model's constraints, the docstring's contract |
 | whatever (open) | Whatever it happens to do | Behaviour left open, named as unspecified in the specification, so nobody builds on the accident |
 | what-if | What could go wrong | Risk register |
@@ -188,25 +212,28 @@ Past tense, to the record layer:
 |---|---|---|
 | what-changed | What changed | Commit; PR at branch scope; CHANGELOG at release scope |
 | why (change) | Why it changed | The commit message |
-| why (decision), why-not | Why it is this way, why not the alternatives | ADR |
+| why (moment) | Why it was judged so then, when only that moment explains it | ADR — a snapshot of the forces at the decision; rare once the design intent is versioned |
 | how-much | How much, how fast | A measurement record that names its method and date |
 | when-did | When it happened | Every record carries its date |
 
-Why splits by unit, and the units do not repeat each other. The
-commit message answers for its own diff — the pressure that produced
-this change, in a sentence or two. When a decision stands behind it,
-name the decision by its title, which grep can find in the ADR index;
-a bare ADR number is citation by path alone, and theorem 3 forbids
-that in a record that can never be edited. The ADR answers for the
-decision, across however many commits carry it out. A paragraph
-copied from one into the other must then be edited in both when
-either moves, which is the dependency the layering exists to forbid.
+Why splits by tense before it splits by unit. A why that still holds
+is not history: it lives in the design intent and is edited out the
+day it stops holding. The commit message answers for its own diff —
+the pressure that produced this change, in a sentence or two — and
+when a standing intent stands behind it, names that section by its
+title, which grep can find. A paragraph copied from one document into
+another must be edited in both when either moves, which is the
+dependency the layering exists to forbid.
 
-Why-not has one home. A road not taken has no diff, so no commit can
-record it, and a living document that takes it in acquires history
-(theorem 4). It survives only in the ADR — which is the reason to
-write one when a rejected alternative looks like a simplification a
-future contributor will attempt.
+Why-not splits the same way. The alternative that keeps being
+attempted is refused for a reason that still holds, and that refusal
+belongs in the design intent, where the contributor who arrives to
+"simplify" reads it in the present tense before the attempt. Written
+as the present — X is refused while Y holds — it is not history, so
+theorem 4 is untouched; the day it stops being true it is edited out
+like any living sentence. Only the rejection that expired with its
+moment is record material, and a road not taken has no diff, so the
+commit that declined it says so in a sentence.
 
 ### Code comments
 
@@ -228,11 +255,13 @@ Code is a living document, so the theorems apply to its comments:
 
 ### The reader who wants to know why
 
-They get there without a link from the living document: index the ADRs
-at the entrance to their layer — `docs/decisions/README.md`, say — and
-since each ADR names the file and section it concerns, grep or the
-index finds it. The path is the record's responsibility, not the
-specification's.
+They read the design intent, which is living, so any other living
+document may point at it — theorem 1 permits that direction. For the
+forces as they stood at some past decision, the intent's own history
+is the series of snapshots. Where standalone frozen records exist,
+they are indexed at the entrance to their layer and each names the
+file and section it concerns; the path to a record is the record's
+responsibility, not the specification's.
 
 ### Litmus test
 
@@ -240,8 +269,9 @@ For the reference you are about to write:
 
 - "Without following this, the **current specification** is unclear" → the
   body is underexplained. Delete the reference and finish the body.
-- "Only someone asking **why it is this way** would follow it" → that path
-  is the ADR's job. Do not write the reference.
+- "Only someone asking **why it is this way** would follow it" → that
+  question is the design intent's to answer. Pointing at the intent is
+  legal, living to living; inlining the why is not needed.
 - The target is a record (ADR, CHANGELOG, PR) and you are writing a living
   document → the less derived depending on the more derived. Do not
   write it.
