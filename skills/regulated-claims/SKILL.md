@@ -1,7 +1,7 @@
 ---
 name: regulated-claims
 description: |
-  Claims that are governed by something other than their truth, triggered by the moments that publish one unchecked: about to say a product improves, prevents, cures or reduces a condition, about to write the best, the first, the only or a ranking position, about to show a before and after, about to quote a customer's experience as evidence of a result, about to compare against a named competitor, about to call something free or discounted from a price nobody paid, about to reproduce someone else's text, image or data, or about to name or picture an identifiable person. Being able to prove a claim is not the same as being allowed to make it, and the rules differ by market, medium and product category. Use when writing marketing copy, a release announcement, a store listing, a landing page or a README that sells, and when reviewing one.
+  Claims that are governed by something other than their truth, triggered by the moments that publish one unchecked: about to say a product improves, prevents, cures or reduces a condition, about to write the best, the first, the only or a ranking position, about to show a before and after, about to quote a customer's experience as evidence of a result, about to compare against a named competitor, about to call something free or discounted from a price nobody paid, about to reproduce someone else's text, image or data, or about to name or picture an identifiable person. Being able to prove a claim is not the same as being allowed to make it, and the rules differ by market, medium and product category. Use when a sentence of that kind is being written, strengthened or signed off — in marketing copy, a release announcement, a store listing, a landing page or a README that sells. Editing something else on a page that also carries such a sentence is the moment to name it, not to rewrite it.
 allowed-tools: Read, Edit, Write, Grep, Glob, WebSearch, WebFetch
 ---
 
@@ -143,6 +143,20 @@ health and cosmetic claims, 景品表示法 for superlatives, comparisons
 and reference prices, 著作権法 for quotation, 個人情報保護法 for
 personal data. Other markets have their own, and the class table is
 what carries across; the statute names do not.
+
+## When the request is not about the claim
+
+A page can carry a governed claim in one section and an ordinary
+request in another: fix this table, tighten that description. Do the
+work that was asked, and report the rest as what it is — a list of
+claims that need a decision, named with the class and the fact that
+contradicts them.
+
+Do not rewrite a claim nobody asked you to rewrite. Weakening a
+headline under a formatting request removes the sentence and the
+decision at once, and the person who owns that risk never sees it.
+The exception is a claim you are being asked to strengthen, which is
+the moment in the table above.
 
 ## What this is not for
 

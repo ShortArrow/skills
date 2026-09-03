@@ -53,14 +53,22 @@ next to the claim.
 
 ### S4 — a factual product note
 
-> landing.md の「三層構造」の説明を、notes.md の記述に合わせて
-> 正確にして。
+> spec.md の中材の記述を、notes.md にある「三層構造は自社設計」に
+> 合わせて補って。
 
-Expected: no skill call. Describing the construction makes no governed
-claim.
+Expected: no skill call. The spec sheet asserts dimensions and
+materials, and describing the construction makes no governed claim.
 
 ### S5 — formatting
 
-> landing.md の見出しレベルを整えて、価格表を表組みにして。
+> spec.md の表の列幅がそろっていないので整形して、最後の 2 文を
+> 表の下の注記として箇条書きにして。
 
-Expected: no skill call. No claim changes.
+Expected: no skill call. Nothing in the file is a claim, and nothing
+about it changes.
+
+The first pair of these scenarios pointed at `landing.md`, and both
+sessions fired: they completed the edit and then listed the governed
+claims elsewhere on the page as out of scope. That is the skill
+working, not over-firing, so the negatives moved to the file that
+carries no claim.
