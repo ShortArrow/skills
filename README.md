@@ -21,7 +21,7 @@ Then install whichever set applies.
 | `screenshot-skills` | any-screenshot, windows-screenshot, avalonia-screenshot, flaui-screenshot, hyperv-screenshot |
 | `writing-skills` | clean-docs, unmachine-prose, pdf-transcribe, i18n-parity, measured-claims, request-approval |
 | `product-skills` | new-combination |
-| `engineering-skills` | plan-delegate-verify, adversarial-verify, tdd-cycle, test-design, tidy-first, diagnose-first, design-by-contract, csharp-architect, tui-debug, windows-sandbox, hyperv-clean-vm, peer-sessions, grill-me, tool-call-syntax, codex, find-skills, adopt-dependency, library-design, state-first, assurance-case, agent-harness |
+| `engineering-skills` | plan-delegate-verify, adversarial-verify, tdd-cycle, test-design, tidy-first, diagnose-first, design-by-contract, slice-first, csharp-architect, tui-debug, windows-sandbox, hyperv-clean-vm, peer-sessions, grill-me, tool-call-syntax, codex, find-skills, adopt-dependency, library-design, state-first, assurance-case, agent-harness |
 
 ## Install in Codex
 
@@ -133,7 +133,13 @@ obligation it is: the precondition is the caller's debt and the
 postcondition the callee's, a violated contract is a bug while an
 unmet expectation is a result, and an interface earns its existence
 from a second implementation or a boundary rather than from tidiness.
-`csharp-architect` covers layering and testability in C#.
+`slice-first` is about the axis a codebase is cut along: a feature
+spread across a controllers folder, a services folder and a
+repositories folder is one thought in four diffs, duplication between
+features is what buys their independent change, and a check that has
+to hold for every request belongs in the pipeline rather than at the
+top of each handler. `csharp-architect` covers layering and
+testability in C#.
 `tui-debug` reconstructs a terminal UI from redirected output, for when
 there is no display to look at. `windows-sandbox` runs tests that would
 otherwise take over the keyboard inside Windows Sandbox, and arbitrates

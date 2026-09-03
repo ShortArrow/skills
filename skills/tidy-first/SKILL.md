@@ -72,6 +72,14 @@ It happens mid-flow. Split before committing, not after:
 "I will describe both in the message" is not one of the options. The
 message cannot make a diff answer one question.
 
+## Moving the cut itself
+
+Regrouping folders — layers into features, or back — is the largest
+structural change a codebase takes, and it is still structural: every
+test passes untouched, or the move carried behaviour with it. Do it in
+its own commit, one slice at a time, and leave the behaviour change
+for the commit after. Which axis to move toward is `slice-first`.
+
 ## Without tests there is no referee
 
 Structural-vs-behavioural is only checkable against tests that stay

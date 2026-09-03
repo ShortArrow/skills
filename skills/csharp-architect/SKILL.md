@@ -45,6 +45,52 @@ resulting pieces are called here.
 - **Query** — changes nothing. Returns a DTO.
 - **Handler** — one responsibility, one operation each.
 
+#### Mediator dispatch
+
+A mediator library (MediatR, Mediator.SourceGenerator, Wolverine and
+the like) dispatches a request to the one handler that declares it:
+
+```csharp
+public record CreateProduct(string Name, decimal Price) : IRequest<int>;
+
+public sealed class CreateProductHandler : IRequestHandler<CreateProduct, int>
+{
+    public Task<int> Handle(CreateProduct request, CancellationToken ct) => ...;
+}
+```
+
+The request type is the contract. Registration scans the assembly, so
+a handler is reached by its request type rather than by a reference,
+and nothing but the type connects the two.
+
+Cross-cutting concerns go in the pipeline, registered once, in order:
+
+```csharp
+public sealed class ValidationBehavior<TRequest, TResponse>
+    : IPipelineBehavior<TRequest, TResponse>
+{
+    public async Task<TResponse> Handle(
+        TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken ct)
+    {
+        // validate, then hand on
+        return await next();
+    }
+}
+```
+
+`services.AddMediatR(...)` plus one `AddOpenBehavior` call per
+behaviour is the whole wiring; the order of registration is the order
+of execution, and it is the only place a reader can see what runs
+before a handler.
+
+Two cautions specific to this stack. Assembly scanning means a handler
+with no reference is still reached, so a stale handler stays alive
+until someone deletes it. And a request with one sender and one
+handler gains nothing from the dispatch but the lost jump to
+definition. When the dispatch, the pipeline or the folder layout is
+the question, the rule is in `slice-first` and `design-by-contract`;
+the code above only shows how this stack spells it.
+
 ### DDD
 
 - **Entity** — has a unique identifier.
