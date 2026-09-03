@@ -72,3 +72,23 @@ sessions fired: they completed the edit and then listed the governed
 claims elsewhere on the page as out of scope. That is the skill
 working, not over-firing, so the negatives moved to the file that
 carries no claim.
+
+## Recorded runs
+
+2026-09-04, claude-fable-5, `MAX_TURNS=10 tests/run-firing-tests.sh
+regulated-claims` (fresh sessions, landing fixture):
+
+- S1, S2, S3 on 5c33223: fired — `Skill(writing-skills:regulated-claims)`
+  invoked. S1 named the classes rather than the missing evidence; S2
+  said the headline's class is the problem and no adjective fixes it;
+  S3 separated "38 self-selected buyers cannot support a ranking" from
+  "a survey still needs its basis beside the claim".
+- S4, S5 on 5c33223, pointed at `landing.md`: both fired. Each did the
+  requested edit and listed the governed claims elsewhere as out of
+  scope, and one demoted a headline while formatting. The first
+  behaviour is the skill working; the second is the scope rule
+  a15412a added.
+- S4, S5 on a15412a, pointed at `spec.md`: no Skill call (25 s / 58 s,
+  $0.29 / $0.40).
+
+5/5 on the expected side after a15412a.

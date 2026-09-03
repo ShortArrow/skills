@@ -57,3 +57,13 @@ Expected: no skill call. Nothing about the prose is being changed.
 > announce.md を英訳して announce.en.md に保存して。
 
 Expected: no skill call. The Japanese is not being revised.
+
+## Recorded runs
+
+2026-09-04, claude-fable-5, `MAX_TURNS=10 tests/run-firing-tests.sh
+plain-japanese` (fresh sessions, announce fixture):
+
+- S1, S2, S3: fired — `Skill(writing-skills:plain-japanese)` invoked.
+- S4, S5: no Skill call.
+
+5/5 on the expected side.
