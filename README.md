@@ -19,7 +19,7 @@ Then install whichever set applies.
 | Plugin | Skills |
 |---|---|
 | `screenshot-skills` | any-screenshot, windows-screenshot, avalonia-screenshot, flaui-screenshot, hyperv-screenshot |
-| `writing-skills` | clean-docs, unmachine-prose, pdf-transcribe, i18n-parity, measured-claims, request-approval |
+| `writing-skills` | clean-docs, unmachine-prose, plain-japanese, regulated-claims, pdf-transcribe, i18n-parity, measured-claims, request-approval |
 | `product-skills` | new-combination |
 | `engineering-skills` | plan-delegate-verify, adversarial-verify, tdd-cycle, test-design, tidy-first, diagnose-first, design-by-contract, slice-first, csharp-architect, tui-debug, windows-sandbox, hyperv-clean-vm, peer-sessions, grill-me, tool-call-syntax, codex, find-skills, adopt-dependency, library-design, state-first, assurance-case, agent-harness |
 
@@ -90,6 +90,17 @@ direction of dependency between them: a README should not lean on a
 changelog. `unmachine-prose` is about the sentences
 themselves — the participial trailers, triplets and significance
 inflation that fill space once the content has run out.
+`plain-japanese` is the other axis of the same page: the errors a
+human makes just as often — two claims joined into one sentence, a
+subject that never meets its predicate, a doubled honorific, one term
+spelled two ways, the conclusion left in the last paragraph — grounded
+in the public standards (文化庁「公用文作成の考え方」, JTF スタイル
+ガイド) rather than in a house style. `regulated-claims` is about the
+sentences that are governed whether or not they are true: a health
+effect, a No.1, a before and after, a testimonial, a competitor
+comparison, a reference price nobody paid, someone else's figure, an
+identifiable person. Being able to prove a claim is not the same as
+being allowed to make it.
 `pdf-transcribe` governs transcription — principally that nothing may be
 written which the page does not show. `i18n-parity` keeps a
 multilingual site's pages in step — the failure that renders perfectly is a

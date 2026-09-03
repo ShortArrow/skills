@@ -7,6 +7,10 @@ allowed-tools: Bash, PowerShell, Read, Grep
 
 # Measured claims
 
+Support is one axis. Whether a claim may be made at all is another,
+and a number can satisfy this skill completely while the sentence
+around it is still unpublishable: `regulated-claims` covers that.
+
 A number in a document makes a claim the prose around it inherits. The
 figure that cannot say how it was obtained, on what, and when, spends
 credibility the document does not have.

@@ -30,9 +30,11 @@
       "skills": [
         "./skills/clean-docs",
         "./skills/unmachine-prose",
+        "./skills/plain-japanese",
         "./skills/pdf-transcribe",
         "./skills/i18n-parity",
         "./skills/measured-claims",
+        "./skills/regulated-claims",
         "./skills/request-approval"
       ]
     },
