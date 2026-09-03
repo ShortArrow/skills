@@ -57,3 +57,19 @@ Expected: no skill call. Nothing about the cut changes.
 > このコードベースの構成を一段落で説明して。
 
 Expected: no skill call, and no restructuring offered unasked.
+
+## Recorded runs
+
+2026-09-03, claude-fable-5, `tests/run-firing-tests.sh slice-first`
+(`claude -p --max-turns 6`, fresh sessions, catalog fixture):
+
+- S1, S2, S3: fired — `Skill(engineering-skills:slice-first)` invoked
+  (85 s / 63 s / 113 s, $0.48 / $0.45 / $0.54).
+- S4, S5: no Skill call.
+
+5/5 on the expected side, on the strong signal. All three firing
+scenarios spent their six turns writing the failing test first and
+stopped at Red, so the structural outcome is only partly visible: S2
+wrote no `BaseService`, which is the decline the scenario asks for,
+while S3's check was still in each service when the turns ran out. Run
+S1 and S3 with a higher `--max-turns` to see where the code lands.
