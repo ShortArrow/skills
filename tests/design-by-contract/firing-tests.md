@@ -63,3 +63,21 @@ Expected: no skill call. No obligation moves.
 
 Expected: no skill call. Reporting the current behaviour changes no
 contract.
+
+## Recorded runs
+
+2026-09-03, claude-fable-5, `tests/run-firing-tests.sh design-by-contract`
+(`claude -p --max-turns 6`, fresh sessions, orders fixture):
+
+- First run on e185a0a: S1 and S3 fired, S4 and S5 stayed silent, S2
+  did not fire. The session took the request at face value and went
+  red-green on error-code strings. The description named `null` and
+  `false` and did not name the error code, which is the same merge of
+  bug and result in another costume; 40e1937 added it.
+- S2 twice on 40e1937: fired both times (100 s / 113 s, $0.54 / $0.57).
+  Both raised `ValueError` for the empty customer_id and the
+  non-positive quantity, and left only the expected failure in the
+  return value.
+- S1 59 s $0.40, S3 82 s $0.47.
+
+5/5 on the expected side after 40e1937.
