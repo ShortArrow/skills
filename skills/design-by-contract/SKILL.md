@@ -1,7 +1,7 @@
 ---
 name: design-by-contract
 description: |
-  Obligations at an interface, triggered by the moments that blur who owes what: about to guard against a condition the caller was already required to satisfy, about to check the same argument on both sides of a call, about to return false or null where the contract was violated rather than unmet, about to declare an interface for a type that has one implementation, about to put an interface in the package that implements it, about to strengthen a precondition or weaken a postcondition in an override, or about to write a rule into prose that the type could have carried. A precondition is the caller's debt and a postcondition the callee's, and a condition defended on both sides belongs to neither. Use when writing or reviewing a function signature, when deciding whether something deserves an interface, when a null check is about to be added, and when a docstring is about to say "must not".
+  Obligations at an interface, triggered by the moments that blur who owes what: about to guard against a condition the caller was already required to satisfy, about to check the same argument on both sides of a call, about to return false, null, an error code or an error message where the contract was violated rather than unmet, about to widen such a return value so callers can tell the cases apart, about to declare an interface for a type that has one implementation, about to put an interface in the package that implements it, about to strengthen a precondition or weaken a postcondition in an override, or about to write a rule into prose that the type could have carried. A precondition is the caller's debt and a postcondition the callee's, and a condition defended on both sides belongs to neither. Use when writing or reviewing a function signature, when deciding whether something deserves an interface, when a null check is about to be added, and when a docstring is about to say "must not".
 allowed-tools: Read, Grep, Glob, Edit, Write
 ---
 
@@ -20,6 +20,7 @@ nobody owns is checked twice and relied on never.
 | guard against a state the caller was required to avoid | let it fail loudly at the boundary of the contract; a defensive branch turns a caller's bug into your silent behaviour |
 | validate the same argument in caller and callee | pick the owner: validated at the boundary and passed as a checked type, or required and stated as a precondition |
 | return `false`, `null` or `-1` on a violated precondition | distinguish the two failures: a contract violation is a bug and throws, an expected failure is a value the type carries |
+| add error codes so callers can tell the failures apart | the codes that name a caller bug do not belong in the return type at all; enumerate only the expected failures, and let the violations raise |
 | write `IThing` for the only `Thing` | let a second implementation or a boundary that has to be faked justify it; one implementation behind an interface is two names for one thing |
 | put the interface next to its implementation | the consumer declares the interface it needs, so the dependency points at the abstraction and not at the provider |
 | strengthen a precondition in an override | a subtype may demand less and deliver more, never the reverse; the caller holds the base contract |
