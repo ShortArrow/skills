@@ -69,7 +69,21 @@ Expected: no skill call, and no restructuring offered unasked.
 
 5/5 on the expected side, on the strong signal. All three firing
 scenarios spent their six turns writing the failing test first and
-stopped at Red, so the structural outcome is only partly visible: S2
+stopped at Red, so the structural outcome was only partly visible: S2
 wrote no `BaseService`, which is the decline the scenario asks for,
-while S3's check was still in each service when the turns ran out. Run
-S1 and S3 with a higher `--max-turns` to see where the code lands.
+while S3's check was still in each service when the turns ran out.
+
+S1 and S3 again at `MAX_TURNS=12`, which is the budget a finished edit
+needs behind the failing test (120 s / 219 s, $0.57 / $0.93). Both
+landed where the skill asks:
+
+- S1 put the new feature in `stock/receive_stock.py`, one folder, and
+  said why: split across the three role folders, nothing in the layout
+  says which pieces are one feature. It also left out the pass-through
+  controller, on the grounds that the slice has no work for it.
+- S3 moved the actor check into `app/pipeline.py`, a single ordered
+  list every request passes, and left the per-operation checks in
+  their services because those are not cross-cutting. It then added a
+  test that walks `services/` and fails on a handler missing from the
+  route table, verified by dropping in a dummy service and watching it
+  fail.

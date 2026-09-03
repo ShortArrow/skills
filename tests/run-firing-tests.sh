@@ -4,6 +4,11 @@
 #
 #   tests/run-firing-tests.sh <skill> [out-dir] [scenario-regex]
 #
+# MAX_TURNS raises the per-session turn budget (default 6). Six turns is
+# enough to see the Skill call, and a scenario whose expected outcome is
+# a finished edit needs more, because a session that writes the failing
+# test first spends its budget there.
+#
 # Scenarios are read from tests/<skill>/firing-tests.md — every "### Sn"
 # heading under "## Should fire" or "## Should not fire", with the prompt
 # in the "> " lines that follow — so the document is the only copy. Each
@@ -23,6 +28,7 @@ set -euo pipefail
 skill=${1:?skill name}
 out=${2:-"${TMPDIR:-/tmp}/firing-tests/${skill}"}
 only=${3:-.}
+max_turns=${MAX_TURNS:-6}
 root=$(git -C "$(dirname "$0")" rev-parse --show-toplevel)
 doc="$root/tests/$skill/firing-tests.md"
 [ -f "$doc" ] || { echo "no $doc" >&2; exit 2; }
@@ -60,7 +66,7 @@ while IFS=$'\t' read -r id expect prompt; do
   done
   git -C "$work" add -A && git -C "$work" commit -qm "fixture"
   # stdin is the scenario list; without </dev/null the session reads it and the loop ends after one.
-  (cd "$work" && claude -p "$prompt" --output-format stream-json --verbose --max-turns 6 </dev/null >"$out/$id.jsonl" 2>"$out/$id.err") || true
+  (cd "$work" && claude -p "$prompt" --output-format stream-json --verbose --max-turns "$max_turns" </dev/null >"$out/$id.jsonl" 2>"$out/$id.err") || true
   if grep -q "\"name\":\"Skill\"" "$out/$id.jsonl" && grep -q "\"skill\":\"[a-z-]*:\?$skill\"" "$out/$id.jsonl"; then got=fire; else got=nofire; fi
   if [ "$got" = "$expect" ]; then verdict=pass; pass=$((pass+1)); else verdict=FAIL; fail=$((fail+1)); fi
   printf '%-4s expected %-6s got %-6s %s\n' "$id" "$expect" "$got" "$verdict"
