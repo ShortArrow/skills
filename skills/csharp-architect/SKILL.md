@@ -1,7 +1,7 @@
 ---
 name: csharp-architect
 description: |
-  C# development under MVVM, Clean Architecture, TDD, CQRS and DDD. Use when resolving a linter warning or a build error, refactoring, implementing a feature, or reviewing code — anywhere the question is which layer something belongs in and which way the dependency runs.
+  C# placement and conventions under MVVM, Clean Architecture, TDD, CQRS and DDD: which project a type belongs in, what each layer is called here, and how files are named. Use when resolving a linter warning or a build error, refactoring, implementing a feature, or reviewing code in a C# solution. Which way a dependency runs, and who owes what at an interface, is `design-by-contract`; this skill only says where the pieces sit in this stack.
   Triggers: C#, .NET, MVVM, Clean Architecture, DDD, CQRS, TDD, refactoring, code review
 allowed-tools: Read, Edit, Write, Bash, Grep, Glob, Task
 ---
@@ -25,6 +25,13 @@ allowed-tools: Read, Edit, Write, Bash, Grep, Glob, Task
 ```
 
 **Dependencies run outward to inward.** Domain depends on nothing.
+
+These names are this stack's arrangement of one rule: the layer nearer
+the policy declares the interface it needs and the layer nearer the
+machine implements it. When the question is whether a dependency may
+point somewhere, or whether a type has earned an interface at all, that
+rule is in `design-by-contract`; the picture above only says what the
+resulting pieces are called here.
 
 ### MVVM
 

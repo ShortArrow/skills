@@ -78,6 +78,11 @@ characters and must fail at 8,192 has to be tested at those two values.
 Passing at 4,000 and 12,000 establishes almost nothing about the line
 between them.
 
+Where the boundary is a stated precondition, the value past it is the
+caller's bug rather than a case with an expected result;
+`design-by-contract` decides which of the two a given edge is, and the
+test then asserts the one that applies.
+
 ## The side the specification did not name
 
 "Up to 10 MB" names one end of a range. The other end exists whether

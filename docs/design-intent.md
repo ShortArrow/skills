@@ -46,3 +46,43 @@ name each host and `Any other host`, and per-host invariant strings
 (`AskUserQuestion`, `runSubagent`, `ask_user`, `browser_agent`, …)
 fail the run when a row is generalised away. Deleting a row's key
 string or renaming `Any other host` makes the script exit 1.
+
+## Contracts are written as obligations, not as names
+
+**Protects.** A rule fires when it names the moment it applies to. "The
+caller guarantees a non-empty id" tells the next reader which side to
+fix when it breaks; "follow Clean Architecture" tells them a vocabulary
+and leaves the decision where it was.
+
+**In tension.** Architecture names are how the field talks, and the
+stack in front of us has real layer names that appear in project files
+and namespaces. Dropping them costs recognition; keeping them invites a
+skill that lists vocabulary and fires on nothing. The catalogue's own
+form is the tiebreaker: every skill here states the moments it replaces,
+and a skill that cannot is not yet a rule.
+
+**Refused, while these reasons hold.**
+
+- A skill whose body is a glossary of layer or pattern names. If the
+  reader still has to decide what to do at the moment it matters, the
+  rule has not been written.
+- Restating an architecture's packaging as though it were the rule.
+  Layer names are one arrangement of dependency direction; the
+  obligation is what transfers to a stack that names its layers
+  differently.
+- Splitting one obligation across two skills because the literature
+  splits the words. The contract and the interface are the same
+  decision seen from two sides, so they live in one place.
+- Language-specific placement inside a language-agnostic rule, and the
+  reverse. `csharp-architect` says where a type sits in this stack;
+  `design-by-contract` says which way the dependency may point.
+
+**The next case.** A new design rule is written as its firing moments
+first. If the "About to… | Instead" table cannot be filled, the
+material belongs in an existing skill's section, or nowhere yet.
+
+**Gate.** `tests/<skill>/firing-tests.md` with five scenarios and
+`tests/run-firing-tests.sh`: three that must fire and two that must
+not, each recorded with the run that produced it. A skill that names
+concepts without replacing a moment cannot pass S1–S3, because there
+is no wrong action for it to catch.

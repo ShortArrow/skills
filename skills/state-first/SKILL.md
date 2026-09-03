@@ -89,7 +89,10 @@ re-checks and nothing assumes; the type is the record of the check.
 
 Failure gets the same treatment. A function that can fail returns a
 value that says so in its type, a `Result` or an `Either`, and the
-caller has to take the failure apart to get at the success. `null`,
+caller has to take the failure apart to get at the success. Which
+failures belong in that type is a contract question: an expected
+failure is a result, a violated precondition is a bug, and
+`design-by-contract` keeps them apart. `null`,
 sentinel values and logged-and-swallowed exceptions all let the
 failure travel as a success, and the breakage shows up wherever the
 value is finally used, which is never where it went wrong.
