@@ -130,7 +130,7 @@ foreach ($directory in Get-ChildItem -LiteralPath $skillsRoot -Directory) {
     if ($content -notmatch $standardPattern) { continue }
     if ($content -notmatch '(?m)^## Sources\s*$') {
         $failures.Add("$($directory.Name): names a standard but has no '## Sources' block")
-    } elseif ($content -notmatch '(?s)^## Sources.*?20\d\d-\d\d-\d\d') {
+    } elseif ($content -notmatch '(?sm)^## Sources\s*$.*?20\d\d-\d\d-\d\d') {
         $failures.Add("$($directory.Name): '## Sources' block carries no check date (YYYY-MM-DD)")
     }
 }
@@ -171,7 +171,9 @@ if ($toolSyntax -notmatch '## Claude Code\r?\n\r?\n### Write this') {
 }
 
 if ($failures.Count -gt 0) {
-    $failures | ForEach-Object { Write-Error $_ }
+    # Every failure, not the first: Write-Error under ErrorActionPreference
+    # Stop would end the run at the first line.
+    $failures | ForEach-Object { [Console]::Error.WriteLine($_) }
     exit 1
 }
 
