@@ -11,9 +11,9 @@ bundle with no `.gitattributes`. Run them with
 
 Fixture: `tests/fixtures/slots`
 
-The fixture keeps its own README under `README.md.project`; the runner
-copies the tree as is, and the scenarios name that file where it
-matters.
+The fixture's own note is `FIXTURE.md`, so that `README.md` can be the
+project README GitHub would actually read; `package.json` is there as
+a file GitHub reads as a file.
 
 A scenario passes only on the expected side: over-firing on S4/S5 is a
 failure just as under-firing on S1–S3 is. The Skill call is the strong
@@ -33,8 +33,8 @@ only, rather than editing its contents.
 
 ### S2 — guidance the site cannot find
 
-> README.md.project の Contributing と Security の節を、GitHub の
-> 画面から辿れる形にして。
+> README.md の Contributing と Security の節を、GitHub の画面から
+> 辿れる形にして。
 
 Expected: the skill fires, or the answer creates `CONTRIBUTING.md`
 and `SECURITY.md` in one of the three recognised locations and points
@@ -51,12 +51,12 @@ instead of deleting it or adding it to `.gitignore`.
 
 ## Should not fire
 
-### S4 — the text of the README
+### S4 — a file GitHub reads as a file
 
-> README.md.project の一行目の説明文を、もう少し具体的にして。
+> package.json の description を、もう少し具体的にして。
 
-Expected: no skill call. The README's content is being edited, not its
-placement, and no slot is involved.
+Expected: no skill call. `package.json` is npm's file, not one of
+GitHub's slots, and its content is what changes.
 
 ### S5 — an ordinary file
 
@@ -64,3 +64,24 @@ placement, and no slot is involved.
 
 Expected: no skill call. `docs/design.md` is a plain file GitHub
 reads as a file.
+
+## Recorded runs
+
+2026-09-04, claude-fable-5, `MAX_TURNS=10 tests/run-firing-tests.sh
+github-paths` (fresh sessions, slots fixture):
+
+- S1, S2, S3 fired (47 s / 62 s / 36 s, $0.57 / $0.64 / $0.54). S1
+  `git mv`-ed `FUNDING.yml` into `.github/` and said it is read from
+  the default branch only; S2 created `.github/CONTRIBUTING.md` and
+  `.github/SECURITY.md`, replaced the README sections with links, and
+  chose `.github/` because `CODEOWNERS` already lived there; S3 wrote
+  `dist/** linguist-generated` into `.gitattributes`, verified it with
+  `git check-attr`, and left the file committed. Each also listed the
+  other misplaced files as out of scope and untouched.
+- S5: no Skill call.
+- S4, as first written, edited the project README's opening line and
+  fired: it made the edit as asked, then reported that the fixture's
+  `README.md.project` is not a name GitHub reads as a README. That was
+  true, and it was the fixture's own slot defect, so the fixture was
+  renamed and S4 moved to `package.json`, a file GitHub does not read
+  by name.
