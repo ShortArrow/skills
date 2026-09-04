@@ -85,3 +85,9 @@ github-paths` (fresh sessions, slots fixture):
   true, and it was the fixture's own slot defect, so the fixture was
   renamed and S4 moved to `package.json`, a file GitHub does not read
   by name.
+- S2 and S4 again on d9f48ab, with the README in its slot and S4 on
+  `package.json`: S2 fired (44 s, $0.63) and did the same split into
+  `.github/CONTRIBUTING.md` and `.github/SECURITY.md`; S4 stayed
+  silent (37 s, $0.53) and changed only the description string.
+
+5/5 on the expected side after d9f48ab.
