@@ -75,3 +75,12 @@ no manifest.
 - **Prose and configuration with no assertable behaviour.** Where a check
   exists (a linter, a parity script, a schema), that check plays the role
   of the test: see it fail first, same rule.
+
+## Sources
+
+- Konstantinou, Degiovanni, Papadakis, "Do LLMs generate test oracles
+  that capture the actual or the expected program behaviour?",
+  arXiv:2410.21136, 2024. Cited for its finding on generated oracles;
+  read on 2026-08-26.
+- Red-green-refactor itself is practice (Beck), not a standard, and is
+  not dressed as one.

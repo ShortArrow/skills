@@ -121,6 +121,9 @@ free public document, cited as name, version, date, section, and the
 date it was checked, the way `measured-claims` makes a number carry
 its method. When it cannot, the skill says the rule is practice.
 
-**Gate.** None mechanical yet. `tests/check-portability.ps1` could
-require a `## Sources` block in skills that name a standard; until
-then the rule holds by review.
+**Gate.** `tests/check-portability.ps1`: a skill whose body names a
+standard or a paper (ISTQB, ISO/IEC, RFC, SemVer, SLSA, GSN, Diátaxis,
+文化庁, 消費者庁, arXiv and the rest of the pattern in the script) must
+carry a `## Sources` block, and that block must contain a check date
+in `YYYY-MM-DD`. Deleting the block, or the date, makes the script
+exit 1.

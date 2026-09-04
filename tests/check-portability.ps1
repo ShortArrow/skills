@@ -120,6 +120,21 @@ foreach ($entry in $hostInvariants) {
     }
 }
 
+# A skill that names a public standard rests on it, so it carries a
+# Sources block saying which version was read and when. The pattern is
+# case-sensitive and word-bounded on purpose: "Administrators" contains
+# "nist", and a match there would demand a citation for nothing.
+$standardPattern = 'ISTQB|ISO/IEC|\bIEC 6\d{4}|\bRFC \d{4}|BCP 47|Semantic Versioning|\bSemVer\b|\bSLSA\b|OpenSSF|\bScorecard\b|GSN Community|Diátaxis|文化庁|\bJTF\b|消費者庁|厚生労働省|DO-178|arXiv'
+foreach ($directory in Get-ChildItem -LiteralPath $skillsRoot -Directory) {
+    $content = Get-Content -Raw -LiteralPath (Join-Path $directory.FullName 'SKILL.md')
+    if ($content -notmatch $standardPattern) { continue }
+    if ($content -notmatch '(?m)^## Sources\s*$') {
+        $failures.Add("$($directory.Name): names a standard but has no '## Sources' block")
+    } elseif ($content -notmatch '(?s)^## Sources.*?20\d\d-\d\d-\d\d') {
+        $failures.Add("$($directory.Name): '## Sources' block carries no check date (YYYY-MM-DD)")
+    }
+}
+
 $claudeRunner = Get-Content -Raw -LiteralPath (Join-Path $RepositoryRoot 'tests\run-firing-tests.sh')
 if ($claudeRunner -notmatch 'claude -p') {
     $failures.Add('Claude firing-test runner no longer invokes claude -p')
