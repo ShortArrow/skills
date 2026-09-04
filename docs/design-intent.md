@@ -86,3 +86,41 @@ material belongs in an existing skill's section, or nowhere yet.
 not, each recorded with the run that produced it. A skill that names
 concepts without replacing a moment cannot pass S1–S3, because there
 is no wrong action for it to catch.
+
+## Rules rest on public standards, or say that they rest on practice
+
+**Protects.** A reader who doubts a rule can go and check it. "ISTQB
+says" is checkable only when the reader can open the same document,
+so the standard has to be free, versioned and cited to the section.
+
+**In tension.** The most precise sources are often paid (ISO/IEC/IEEE
+29119, IEEE 1012), a certification textbook, or a well-known blog post
+that restates a standard from memory. Citing the paid one looks
+rigorous and cannot be verified; citing the restatement inherits its
+errors — a section number that names the right heading and the wrong
+number propagates to every file that copies it. And some rules have no
+standard at all: red-green-refactor, tidy first, the slice, the state
+named before the operation are practice, and dressing them in a
+standard's name borrows authority the standard never gave.
+
+**Refused, while these reasons hold.**
+
+- A citation to a document the reader cannot open. Name it as a
+  pointer if it exists, and rest the rule on the free one.
+- A section number that was not read in the cited version. The
+  heading is checked against the document, not against memory or a
+  secondary source.
+- A standard's name on a practice-derived rule. `tdd-cycle`,
+  `tidy-first`, `slice-first`, `state-first` and `diagnose-first` say
+  where they come from and do not cite a standard.
+- A version-less citation. Syllabi and specifications are revised;
+  the version and its date are part of the reference.
+
+**The next case.** When a rule can be grounded, it is grounded in the
+free public document, cited as name, version, date, section, and the
+date it was checked, the way `measured-claims` makes a number carry
+its method. When it cannot, the skill says the rule is practice.
+
+**Gate.** None mechanical yet. `tests/check-portability.ps1` could
+require a `## Sources` block in skills that name a standard; until
+then the rule holds by review.

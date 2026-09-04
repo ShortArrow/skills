@@ -64,12 +64,24 @@ parameter, write the invalid classes beside the valid ones before
 writing any case: wrong type, absent, outside every listed value, the
 caller with no rights at all.
 
+The syllabus states this as a rule rather than a habit: in equivalence
+partitioning the coverage items are the partitions, 100% means every
+identified partition exercised "including invalid partitions", and the
+partitions "must not overlap and must be non-empty sets" (ISTQB CTFL
+v4.0.1 §4.2.1). With several parameters it names the weakest criterion
+Each Choice — every partition of every parameter once, combinations
+ignored — which is the level most suites reach without knowing its
+name, and where the decision table below begins.
+
 ## Boundaries, because that is where the faults are
 
 Off-by-one is the most common arithmetic fault, and it is invisible
-everywhere except at the edge. For each boundary the pair that matters
-is the last value inside and the first value outside. The recurring
-edges: empty, exactly one, many; zero and negative; the declared
+everywhere except at the edge. The pair that matters at each boundary
+is the boundary value and its nearest neighbour across the line, which
+is 2-value BVA (CTFL v4.0.1 §4.2.2); 3-value BVA adds the neighbour on
+the inside too, and the syllabus shows what that buys: a check meant
+as `x ≤ 10` but written as `x = 10` passes both 10 and 11, and only 9
+catches it. The recurring edges: empty, exactly one, many; zero and negative; the declared
 maximum and one past it; the value that is exactly the buffer, the
 limit, the timeout.
 
@@ -89,9 +101,10 @@ test then asserts the one that applies.
 or not the sentence mentions it, and cases derived from the text stop
 where the text stops: a suite with the upper bound tested at −1, 0 and
 +1 bytes and nothing below 1,024 has done boundary analysis on half a
-range. Write the minimum and the maximum of every partition down
-first, then take each with its nearest neighbour in the adjacent
-partition. The unnamed side is usually zero, empty or one, and the
+range. The definition has no side to it: "the minimum and maximum
+values of a partition are its boundary values" (CTFL v4.0.1 §4.2.2).
+Write both down for every partition first, then take each with its
+nearest neighbour in the adjacent partition. The unnamed side is usually zero, empty or one, and the
 specification is usually silent about it because nobody decided.
 
 ## Move two conditions at once
@@ -104,10 +117,14 @@ specification either, so the missing case hides a missing decision.
 
 Lay the conditions out as a decision table and count the rules, then
 cover the rules where two conditions fail at once and the rule where a
-role restriction and a format restriction both apply. The same document
-can read as fully covered under all-conditions and a quarter covered
-under all-rules, and only the second number says anything about the
-combinations. When the rule count is the product of a flag set, the
+role restriction and a format restriction both apply. In decision
+table testing the coverage items are the columns holding feasible
+combinations, and 100% means every such column exercised (CTFL v4.0.1
+§4.2.3); the syllabus adds that the table "helps to find any gaps or
+contradictions in the requirements", which is the missing decision
+above surfacing on its own. The same document can read as fully
+covered under Each Choice and a quarter covered under the columns, and
+only the second number says anything about the combinations. When the rule count is the product of a flag set, the
 cheaper fix is upstream: `state-first` collapses the flags into the
 states that can occur, and the table shrinks to them.
 
@@ -120,6 +137,14 @@ the one most likely to be empty, because writing the prohibition felt
 like handling it. The forbidden transition — the second send while one
 is in flight — is the test, and the guard that is supposed to stop it
 is the thing under test.
+
+The state table makes that row explicit: an invalid transition is an
+empty cell, and the strongest of the three criteria the syllabus
+defines, all transitions coverage, requires attempting every one of
+them — one per test case, so that one defect cannot mask another
+(CTFL v4.0.1 §4.2.4). Valid transitions coverage, the 0-switch most
+suites stop at, never touches those cells, which is how an untested
+"not allowed" row stays green.
 
 Then read the two documents against each other. A test whose path
 disagrees with the table (the table says failed → sending, the test
@@ -177,16 +202,24 @@ One test document measured three ways: 100% of conditions, 90.9%
 MC/DC, 25% of decision rules. All three are true of the same file, so
 a coverage figure without its criterion says nothing, and a figure
 whose criterion is chosen after the count says less. Name it before
-counting: equivalence classes (valid and invalid), two-value
-boundaries, decision rules, transitions taken once each. The rest of
+counting, in the syllabus's own terms so the number can be checked:
+partition coverage and Each Choice (§4.2.1), 2-value or 3-value BVA
+(§4.2.2), decision-table columns (§4.2.3), all states, valid
+transitions or all transitions (§4.2.4). MC/DC is not in the
+Foundation syllabus; it comes from the safety standards (DO-178C, ISO
+26262), and listing it beside the others without saying so is the kind
+of mixed citation that reads as rigour. The rest of
 what a number owes its reader is in `measured-claims`.
 
 ## Checking a suite: count, do not judge
 
 Asking whether a suite is adequate returns the blind spots that
 produced it. A second session on the same model shares them, and so
-does the same person a day later; that is some independence in the
-ISTQB sense, not much. The step that does not share them is counting:
+does the same person a day later. The syllabus calls that "some
+independence", the second of its four levels, and says where the
+value comes from: "differences between the author's and the tester's
+cognitive biases" (CTFL v4.0.1 §1.5.3). A second session on the same
+model shares the biases and keeps only the label. The step that does not share them is counting:
 list the classes off the specification and tick the ones with a test,
 list both bounds of every range, list the rules of the decision table,
 list the rows of every state table, and cite the file and line of each
@@ -214,3 +247,15 @@ nothing. When a fixture produces the input, assert that it did: a suite
 that found zero commits to scan and passed has not scanned anything.
 The vacuous pass is the test-design counterpart of the never-seen-red
 rule: both are tests whose ability to fail was assumed, not shown.
+
+## Sources
+
+- ISTQB Certified Tester Foundation Level Syllabus v4.0.1, 2024-09-15,
+  istqb.org: §1.5.3 Independence of Testing, §4.2.1 Equivalence
+  Partitioning, §4.2.2 Boundary Value Analysis, §4.2.3 Decision Table
+  Testing, §4.2.4 State Transition Testing. Section numbers and quoted
+  wording checked against the PDF on 2026-09-04. §4.1 points onward to
+  ISO/IEC/IEEE 29119-4, which is not free and is not relied on here.
+- Konstantinou, Degiovanni, Papadakis, "Do LLMs generate test oracles
+  that capture the actual or the expected program behaviour?",
+  arXiv:2410.21136, 2024.
