@@ -61,3 +61,24 @@ changelog has, and one entry is being added to it.
 > CHANGELOG.md の 0.2.1 の日付が間違っている。2026-07-14 に直して。
 
 Expected: no skill call. A value changes; nothing about structure does.
+
+## Recorded runs
+
+2026-09-04, claude-fable-5, `MAX_TURNS=10 tests/run-firing-tests.sh
+document-structure` (fresh sessions, guide fixture):
+
+- S1, S2, S3 fired (56 s / 53 s / 56 s, $0.70 / $0.69 / $0.68). S1
+  and S2 both replaced Overview / Details / Notes with headings that
+  read as an outline (Prerequisites, Supported platforms, Install…,
+  Config file, Exit codes), moved the Node requirement ahead of the
+  procedure, numbered the steps one action each with the result after
+  the action, tabulated the four platforms, unified "settings file"
+  and "config" to one name, and cut the history to the one sentence a
+  reader needs. Neither dropped a fact. S3 added an "Uninstall
+  tinyparse" section with a first sentence stating the end state, four
+  numbered steps and "Optional:" at the start of the optional ones,
+  declined to invent a config file name the guide never gives, and
+  left the three generic headings alone as out of scope.
+- S4, S5: no Skill call.
+
+5/5 on the expected side.
