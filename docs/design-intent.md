@@ -127,3 +127,42 @@ standard or a paper (ISTQB, ISO/IEC, RFC, SemVer, SLSA, GSN, Diátaxis,
 carry a `## Sources` block, and that block must contain a check date
 in `YYYY-MM-DD`. Deleting the block, or the date, makes the script
 exit 1.
+
+## A negative scenario stands clear of the trigger
+
+**Protects.** The two "should not fire" scenarios are what prove a
+skill is not always-on. They prove it only when the skill has nothing
+legitimate to say: a negative that sits beside a real instance of the
+trigger tests whether the skill will stay silent about a defect in
+front of it, and silence there would be the wrong behaviour.
+
+**In tension.** A fixture is built to hold the trigger, because the
+positive scenarios need it, so the easiest negative to write is an
+unrelated edit to the same file. Twice that produced a session that
+did the edit as asked, then named the defect beside it as out of
+scope — `regulated-claims` editing a page whose next section carried
+an unlawful claim, `github-paths` editing a README that the fixture
+had pushed out of its slot. Both were recorded as over-firing, and
+both were the skill working.
+
+**Refused, while these reasons hold.**
+
+- A negative scenario whose file or neighbourhood contains the
+  trigger. If the skill would have a true sentence to add, the
+  scenario is not negative.
+- Weakening a description to make such a scenario pass. The fix is on
+  the fixture side: a file the trigger does not touch, or a second
+  fixture.
+- A fixture whose own scaffolding is an instance of the trigger — a
+  note filed under the name the skill is about, a README that is not
+  where the skill says READMEs go.
+
+**The next case.** Write S4 and S5 against a file, a request and a
+neighbourhood the skill has no claim on, and read the transcript of
+any negative that fires before calling it a defect: a session that
+completed the request and listed the rest as out of scope has passed
+on behaviour, and the scenario is what moves.
+
+**Gate.** None mechanical. The recorded runs in each
+`tests/<skill>/firing-tests.md` carry the transcript reading that
+decided each case, so the next reader can check the call.

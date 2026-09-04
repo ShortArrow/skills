@@ -19,6 +19,13 @@
 # passes without a Skill call (the procedure followed, the action refused)
 # are not detected here; read the transcript for those.
 #
+# Write the "should not fire" scenarios against a file and a request the
+# skill has no claim on. A negative placed beside a real instance of the
+# trigger asks the skill to stay silent about a defect in front of it,
+# and a session that does the edit and then names that defect as out of
+# scope has behaved correctly; the scenario is what moves, not the
+# description. docs/design-intent.md carries the reasoning.
+#
 # Cost: one run is one full session with every installed skill in the
 # system prompt. Measure before scaling — the first probe on this machine
 # was 37k input tokens for a one-line prompt.

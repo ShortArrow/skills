@@ -296,6 +296,8 @@ last row for hosts that expose none.
 ## Checks
 
 `tests/run-firing-tests.sh` remains the Claude Code behavioural runner.
+Its negative scenarios are written against files the skill has no claim
+on; the reasoning is in `docs/design-intent.md`.
 `tests/check-portability.ps1` checks every manifest and resource reference,
 the Claude marketplace membership, and the host rows every branching skill
 has to carry:
