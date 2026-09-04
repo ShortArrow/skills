@@ -124,7 +124,7 @@ foreach ($entry in $hostInvariants) {
 # Sources block saying which version was read and when. The pattern is
 # case-sensitive and word-bounded on purpose: "Administrators" contains
 # "nist", and a match there would demand a citation for nothing.
-$standardPattern = 'ISTQB|ISO/IEC|\bIEC 6\d{4}|\bRFC \d{4}|BCP 47|Semantic Versioning|\bSemVer\b|\bSLSA\b|OpenSSF|\bScorecard\b|GSN Community|Diátaxis|文化庁|\bJTF\b|消費者庁|厚生労働省|DO-178|arXiv|docs\.github\.com|github-linguist'
+$standardPattern = 'ISTQB|ISO/IEC|\bIEC 6\d{4}|\bRFC \d{4}|BCP 47|Semantic Versioning|\bSemVer\b|\bSLSA\b|OpenSSF|\bScorecard\b|GSN Community|Diátaxis|文化庁|\bJTF\b|消費者庁|厚生労働省|DO-178|arXiv|docs\.github\.com|github-linguist|developers\.google\.com/style|Microsoft Writing Style Guide|plainlanguage\.gov|digital\.gov'
 foreach ($directory in Get-ChildItem -LiteralPath $skillsRoot -Directory) {
     $content = Get-Content -Raw -LiteralPath (Join-Path $directory.FullName 'SKILL.md')
     if ($content -notmatch $standardPattern) { continue }

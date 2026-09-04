@@ -19,7 +19,7 @@ Then install whichever set applies.
 | Plugin | Skills |
 |---|---|
 | `screenshot-skills` | any-screenshot, windows-screenshot, avalonia-screenshot, flaui-screenshot, hyperv-screenshot |
-| `writing-skills` | clean-docs, unmachine-prose, plain-japanese, regulated-claims, pdf-transcribe, i18n-parity, measured-claims, request-approval |
+| `writing-skills` | clean-docs, unmachine-prose, plain-japanese, document-structure, regulated-claims, pdf-transcribe, i18n-parity, measured-claims, request-approval |
 | `product-skills` | new-combination |
 | `engineering-skills` | plan-delegate-verify, adversarial-verify, tdd-cycle, test-design, tidy-first, diagnose-first, design-by-contract, slice-first, github-paths, csharp-architect, tui-debug, windows-sandbox, hyperv-clean-vm, peer-sessions, grill-me, tool-call-syntax, codex, find-skills, adopt-dependency, library-design, state-first, assurance-case, agent-harness |
 
@@ -100,7 +100,11 @@ sentences that are governed whether or not they are true: a health
 effect, a No.1, a before and after, a testimonial, a competitor
 comparison, a reference price nobody paid, someone else's figure, an
 identifiable person. Being able to prove a claim is not the same as
-being allowed to make it.
+being allowed to make it. `document-structure` is the shape of one
+page in any language: the first line of every unit is the only line
+most readers reach, headings are read alone as an outline, sequence
+gets numbers and fields get columns, and a procedure is one action per
+step with its result.
 `pdf-transcribe` governs transcription — principally that nothing may be
 written which the page does not show. `i18n-parity` keeps a
 multilingual site's pages in step — the failure that renders perfectly is a

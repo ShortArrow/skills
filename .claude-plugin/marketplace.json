@@ -31,6 +31,7 @@
         "./skills/clean-docs",
         "./skills/unmachine-prose",
         "./skills/plain-japanese",
+        "./skills/document-structure",
         "./skills/pdf-transcribe",
         "./skills/i18n-parity",
         "./skills/measured-claims",
