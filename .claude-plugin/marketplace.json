@@ -53,6 +53,7 @@
         "./skills/csharp-architect",
         "./skills/design-by-contract",
         "./skills/slice-first",
+        "./skills/github-paths",
         "./skills/tui-debug",
         "./skills/windows-sandbox",
         "./skills/hyperv-clean-vm",

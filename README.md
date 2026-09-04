@@ -21,7 +21,7 @@ Then install whichever set applies.
 | `screenshot-skills` | any-screenshot, windows-screenshot, avalonia-screenshot, flaui-screenshot, hyperv-screenshot |
 | `writing-skills` | clean-docs, unmachine-prose, plain-japanese, regulated-claims, pdf-transcribe, i18n-parity, measured-claims, request-approval |
 | `product-skills` | new-combination |
-| `engineering-skills` | plan-delegate-verify, adversarial-verify, tdd-cycle, test-design, tidy-first, diagnose-first, design-by-contract, slice-first, csharp-architect, tui-debug, windows-sandbox, hyperv-clean-vm, peer-sessions, grill-me, tool-call-syntax, codex, find-skills, adopt-dependency, library-design, state-first, assurance-case, agent-harness |
+| `engineering-skills` | plan-delegate-verify, adversarial-verify, tdd-cycle, test-design, tidy-first, diagnose-first, design-by-contract, slice-first, github-paths, csharp-architect, tui-debug, windows-sandbox, hyperv-clean-vm, peer-sessions, grill-me, tool-call-syntax, codex, find-skills, adopt-dependency, library-design, state-first, assurance-case, agent-harness |
 
 ## Install in Codex
 
@@ -149,8 +149,11 @@ spread across a controllers folder, a services folder and a
 repositories folder is one thought in four diffs, duplication between
 features is what buys their independent change, and a check that has
 to hold for every request belongs in the pipeline rather than at the
-top of each handler. `csharp-architect` covers layering and
-testability in C#.
+top of each handler. `github-paths` is about the few dozen paths GitHub reads by name: a
+`FUNDING.yml` at the root, a `CITATION.cff` under `docs/`, a second
+`CODEOWNERS`, a template tried on a feature branch — each is not wrong,
+it is invisible, and the feature it was written for simply fails to
+appear. `csharp-architect` covers layering and testability in C#.
 `tui-debug` reconstructs a terminal UI from redirected output, for when
 there is no display to look at. `windows-sandbox` runs tests that would
 otherwise take over the keyboard inside Windows Sandbox, and arbitrates
