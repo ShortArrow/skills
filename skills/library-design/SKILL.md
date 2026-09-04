@@ -40,6 +40,22 @@ and three consequences follow:
   freeze economics as a published package — only the blast radius is
   smaller.
 
+Semantic Versioning is the public spelling of the same line, and it
+starts by refusing to work without one: "Software using Semantic
+Versioning MUST declare a public API" (SemVer 2.0.0, clause 1). Once
+declared, the increments are decided rather than felt — a backward
+incompatible change to that API MUST raise MAJOR (clause 8), new
+backward compatible functionality MUST raise MINOR (clause 7), a
+backward compatible fix MUST raise PATCH (clause 6). Hyrum's law is
+what makes the declaration hard: the spec freezes what you declared,
+and callers freeze what they observed.
+
+The spec also has a name for the module that has not crossed the line
+yet. "Major version zero (0.y.z) is for initial development. Anything
+MAY change at any time" (clause 4). That is the honest label for a
+module with one consumer, and the day it gains a second is the day
+1.0.0 is owed, not the day it is packaged.
+
 ## Take no control
 
 Separate mechanism from policy. Performing an HTTP request is
@@ -165,9 +181,19 @@ has stopped abstracting and started deciding.
 ## When not to apply
 
 A module with one consumer, one repo, one team has not crossed the
-freeze line, and building every replaceable-policy seam for it is
-speculation with a maintenance bill. Keep the disciplines that cost
+freeze line — it is at 0.y.z in SemVer's terms, whether or not it
+carries a number — and building every replaceable-policy seam for it
+is speculation with a maintenance bill. Keep the disciplines that cost
 nothing from day one — no global state, failures that keep their
 cause, no work before the caller asks — and add the seams when the
 second consumer arrives, which is the moment they stop being
 speculative.
+
+## Sources
+
+- Semantic Versioning 2.0.0, semver.org: clause 1 (public API MUST
+  be declared), clauses 6–8 (PATCH, MINOR, MAJOR increments), clause 4
+  (0.y.z), and the FAQ entry on deprecation (document it, then issue a
+  minor release with the deprecation in place). Wording checked against
+  the page on 2026-09-04.
+- Hyrum's law is an observation, not a standard, and is cited as one.
