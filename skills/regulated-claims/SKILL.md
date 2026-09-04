@@ -50,6 +50,7 @@ regime demands.
 | Financial return, employment outcome | usually the most tightly governed of all, often with mandatory risk wording |
 | Someone else's expression or data | a licence, or a quotation that meets its conditions |
 | Personal data, likeness, private facts | a basis for using them, and a scope the person agreed to |
+| Advertising that does not read as advertising — a paid post, a seeded review | a disclosure that it is one, where the reader sees it |
 
 Once the class is named, one of three things happens: the claim is
 made with what the regime requires attached, the claim is narrowed
@@ -138,11 +139,21 @@ Not being sure is the ordinary state, and it has a procedure.
 5. **Escalate to whoever owns the risk** — legal, the client, the
    platform's policy — rather than deciding alone that it is fine.
 
-Named examples, for the market this repository writes for: 薬機法 for
-health and cosmetic claims, 景品表示法 for superlatives, comparisons
-and reference prices, 著作権法 for quotation, 個人情報保護法 for
-personal data. Other markets have their own, and the class table is
-what carries across; the statute names do not.
+Named examples, for the market this repository writes for. The
+statutes are 薬機法 for health and cosmetic claims, 景品表示法 for
+superlatives, comparisons, reference prices and undisclosed
+advertising, 著作権法 for quotation, 個人情報保護法 for personal data.
+The documents to read, though, are the operating guidance the
+regulators publish, because that is where the judgement is spelled
+out: 消費者庁's 「比較広告に関する景品表示法上の考え方」, 「不当な価格
+表示についての景品表示法上の考え方」, 「一般消費者が事業者の表示である
+ことを判別することが困難である表示の運用基準」 (2023-03-28, the
+undisclosed-advertising rule) and 「No.1表示に関する実態調査報告書」
+(2024-09-26, which says what a No.1 claim's survey has to be); and
+厚生労働省's 「医薬品等適正広告基準」 (薬生発0929第4号, 2017-09-29)
+with its 「解説及び留意事項等」 (薬生監麻発0929第5号). Other markets
+have their own; the class table is what carries across, and the
+document names do not.
 
 ## When the request is not about the claim
 
@@ -165,3 +176,14 @@ claim: what it does, what it requires, what it costs, what changed in
 this release. Internal documents with no external reader. Neutral
 technical comparison without a marketing assertion. Being cautious
 here costs clarity and buys nothing.
+
+## Sources
+
+- 消費者庁, 景品表示法関係ガイドライン等 (caa.go.jp): the four titles
+  above as listed on 2026-09-04, with the dates the page shows for the
+  two dated ones.
+- 厚生労働省, 医薬品等適正広告基準の改正について (薬生発0929第4号,
+  平成29年9月29日) and 医薬品等適正広告基準の解説及び留意事項等について
+  (薬生監麻発0929第5号): notice numbers and date confirmed on
+  2026-09-04 through the ministry's published PDF and secondary
+  listings; the text itself was not re-read for this skill.

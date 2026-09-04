@@ -133,6 +133,16 @@ risk retires when the design that carried it changes — so it sits on
 the volatile side and holds the pointer. A "risks" section inside a
 requirement or a design is that pointer written backwards.
 
+Derivation is one axis through the living layer. Diátaxis (Daniele
+Procida) supplies the other: it sorts documentation by the reader's
+need into tutorials, how-to guides, technical reference and
+explanation, along two axes — practical against theoretical, and
+acquisition against application. The two orderings do not compete.
+Derivation says which document may depend on which; Diátaxis says
+which reader a page is for. A page that tries to be two of the four at
+once has the same smell as a document that sits in two layers, and
+splitting it by need is the fix on that axis.
+
 ### Design intent is a living document
 
 The original ADR already puts its weight where few of its users do: in
@@ -283,3 +293,12 @@ For the reference you are about to write:
   are missed. Consolidate under the docs root, with a clear index.
 - This is about **physical placement**, not reference direction. The
   purpose is to maintain a single entrance to the current specification.
+
+## Sources
+
+- Michael Nygard, "Documenting Architecture Decisions", 2011-11-15,
+  cognitect.com — the Context section's definition and the two blind
+  paths, read on 2026-08-31.
+- Diátaxis, diataxis.fr, by Daniele Procida — the four types and two
+  axes as stated on the site on 2026-09-04. No version is published;
+  the site is the reference.

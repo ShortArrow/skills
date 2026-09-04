@@ -153,6 +153,20 @@ tags, not typed by hand. And
 stage 8 is written, not implied: what this case does not assure is
 part of the case.
 
+The tree above is an argument structure, and there is a public
+notation for exactly that shape: Goal Structuring Notation, whose
+Community Standard (Version 3, SCSC-141C, from the Safety-Critical
+Systems Club) is the reference. In its vocabulary the claim is a
+goal, the reasoning step that splits a goal into sub-goals is a
+strategy, and a piece of evidence is a solution; context,
+assumptions and justifications are elements attached to the goals
+they qualify rather than prose beside the diagram, and a goal left
+without support is marked undeveloped instead of omitted. That last
+mark is stage 8 drawn in: the residual risk has a symbol, so a case
+cannot look complete by leaving it out. The mapping here is this
+skill's reading of the notation; the standard's own definitions
+govern where they differ.
+
 The essence: the goal is never to prove the system perfect. It is to
 reach the sentence "under these conditions, within this scope,
 against this risk model, this evidence supports this claim" — and to
@@ -165,3 +179,15 @@ nothing and always apply: a claim carries its conditions, and each
 requirement names the evidence that checked it. The rest — FMEA,
 STPA, WCET, formal argument — scales with the harm of the claim
 being wrong, which is a stage-8 judgement made once, at the start.
+
+## Sources
+
+- GSN Community Standard, Version 3, document SCSC-141C, Safety-Critical
+  Systems Club (scsc.uk/gsn-standard). Version and document number
+  checked on 2026-09-04; the element mapping above is paraphrase, not
+  quotation.
+- ISO/IEC 25010:2023 is named for its characteristic list only; it is
+  not free, and no rule here depends on its text.
+- FMEA, FTA and STPA are named as methods. Their standards (IEC 60812,
+  IEC 61025) are not free; the STPA Handbook (Leveson and Thomas) is a
+  free pointer for the third.

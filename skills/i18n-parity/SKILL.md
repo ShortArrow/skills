@@ -69,6 +69,19 @@ Each of these was a real green run.
 | **A history rewrite** | Every declared revision stops resolving at once. Fail loudly on an unresolvable revision — silently ignoring it turns the whole file off |
 | **No exec bit** | A `.sh` authored on Windows carries no executable bit, and CI exits 126. Invoke it as `bash scripts/check-...sh` rather than relying on the mode |
 
+## Name the language the way the tag does
+
+The check keys on a language identifier, usually a directory name, so
+the two sides have to be spelled the same way or one of them is
+invisible. The public spelling is BCP 47 (RFC 5646): subtags in the
+order language, extended language, script, region, variant, extension,
+private use — `ja`, `en-GB`, `zh-Hant-TW`. Tags are case-insensitive
+and the casing "MUST NOT be taken to carry meaning", but the
+convention is lowercase language, titlecase script, uppercase region,
+and a check that compares strings inherits whatever casing the site
+used. Normalise to the tag before comparing, and when the site's
+directories are `ja` and `JA-JP`, that is the first finding.
+
 ## Scope it per section
 
 Opt sections in rather than checking everything. A documentation section
@@ -81,3 +94,9 @@ everyone to ignore the check.
 In the repository it checks, called from CI. It is short — a hundred lines
 of shell — and it has to run for a person and for a runner, neither of
 which has this skill installed.
+
+## Sources
+
+- RFC 5646, "Tags for Identifying Languages", BCP 47, IETF — subtag
+  order (section 2.1) and case treatment; wording checked on
+  2026-09-04. Obsoletes RFC 4646.
