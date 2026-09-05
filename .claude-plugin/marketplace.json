@@ -67,7 +67,8 @@
         "./skills/library-design",
         "./skills/state-first",
         "./skills/assurance-case",
-        "./skills/agent-harness"
+        "./skills/agent-harness",
+        "./skills/timed-wait"
       ]
     },
     {
