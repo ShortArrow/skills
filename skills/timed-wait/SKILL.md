@@ -1,7 +1,7 @@
 ---
 name: timed-wait
 description: |
-  Putting a clock and a deadline on every long wait — a VM boot, a build, a poll loop watching for a state change, a background command that ends with a notification. A wait without a clock cannot distinguish slow from stuck, and a wait without a deadline cannot end any way except success. Before waiting: write down the expected duration, a poll cadence matched to how fast the state actually changes, and the deadline where waiting stops being the plan; record the start timestamp before launching; report elapsed with every status line. On deadline breach, stop waiting and read the liveness signal — a monotone observable chosen before the wait began — instead of extending the timeout. Use when launching a command expected to run for minutes, when polling until a condition holds, when a wait has no stated end, and when "still running" is about to be reported without a number.
+  Putting a clock and a deadline on every long wait — a VM boot, a build, a poll loop watching for a state change, a background command that ends with a notification. A wait without a clock cannot distinguish slow from stuck, and a wait without a deadline cannot end any way except success. Before waiting: write down the expected duration, a poll cadence matched to how fast the state actually changes, and the deadline where waiting stops being the plan; record the start timestamp before launching; report elapsed with every status line. On deadline breach, stop waiting and read the liveness signal — a monotone observable chosen before the wait began — instead of extending the timeout. A wait for human input is blocked-on-input, a third class beside slow and stuck: no liveness signal exists, so the deadline is a wall-clock time carrying a fallback declared when the wait begins. Use when launching a command expected to run for minutes, when polling until a condition holds, when a wait has no stated end, and when "still running" is about to be reported without a number.
 allowed-tools: Bash, PowerShell, Read
 ---
 
@@ -58,6 +58,21 @@ the distinction needs a **monotone** signal read at each poll. Slow is
 "the signal still moves"; stuck is "the signal has not moved for
 several polls". Deciding this after the deadline breach means staring
 at a silent process with no way to classify it.
+
+## Waiting on a person
+
+A wait for human input is a third class, beside slow and stuck:
+**blocked-on-input**. It has no liveness signal to read — a person
+emits no log bytes — so the deadline does the whole job, and it works
+only if the fallback is declared when the wait begins: "no answer by
+17:51 means proceeding with C". The person then knows what their
+silence buys, and the breach executes a decision already made instead
+of forcing one under a dead clock.
+
+State every deadline as a wall-clock time, not a countdown. A
+countdown restated across turns drifts from its original anchor —
+"within 30 minutes" and "about 10 minutes left" can appear in the
+same report and leave the reader with neither.
 
 ## On breach, diagnose — do not extend
 
