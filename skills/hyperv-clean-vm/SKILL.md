@@ -1,7 +1,7 @@
 ---
 name: hyperv-clean-vm
 description: |
-  Build a Hyper-V checkpoint you can return to for every run — clean state, SSH already listening, key already trusted — so an investigation that needs a pristine Windows repeats without a UAC prompt each time. Restoring a checkpoint taken before the account had a password silently breaks PowerShell Direct, and an administrator's key does not go in the usual file. Use when a bug only reproduces on a machine with nothing preinstalled, or when Windows Sandbox cannot host it.
+  Build a Hyper-V checkpoint you can return to for every run — clean state, SSH already listening, key already trusted — so an investigation that needs a pristine Windows repeats without a UAC prompt each time. Restoring a checkpoint taken before the account had a password silently breaks PowerShell Direct, and an administrator's key does not go in the usual file. Once the checkpoint exists this is the first choice over Windows Sandbox — restore beats rebuilding sandbox state, VMs run in parallel while the sandbox slot is single, and the instance survives for inspection. Use when a bug only reproduces on a machine with nothing preinstalled, when runs must repeat from identical state, and before reaching for the shared sandbox slot.
 allowed-tools: PowerShell, Read, Write, Bash
 ---
 
@@ -12,8 +12,14 @@ value is that run N+1 starts identical to run N, which is exactly what a
 host machine cannot offer once the software under test has been installed
 on it even once.
 
-Windows Sandbox is lighter and should be tried first — see
-`windows-sandbox`. Reach for a VM when the sandbox cannot do the job:
+Once a checkpoint exists, this is the first choice, not the fallback:
+a restore is cheaper than building sandbox state from scratch, several
+VMs run side by side while the machine has exactly one sandbox slot to
+fight over, and the instance can still be inspected after the run.
+Windows Sandbox (`windows-sandbox`) keeps one job — the machine where
+no clean VM has been built yet and the need is a single disposable
+desktop, once. Past preference, there is also what the sandbox cannot
+do at all:
 
 | Sandbox cannot | Why |
 |---|---|

@@ -1,7 +1,7 @@
 ---
 name: windows-sandbox
 description: |
-  Run e2e or UI tests inside Windows Sandbox, where SendInput cannot steal the developer's keyboard, and share the machine's single sandbox slot with other projects. Two agents each ending their run by terminating "the" sandbox terminate each other's; a finished-looking sandbox with no window still holds the slot; disabling vGPU stops LogonCommand from ever running. Use when a project needs an isolated Windows desktop, when a sandbox will not start, or when adding a second project that wants one.
+  Run e2e or UI tests inside Windows Sandbox, where SendInput cannot steal the developer's keyboard, and share the machine's single sandbox slot with other projects. Two agents each ending their run by terminating "the" sandbox terminate each other's; a finished-looking sandbox with no window still holds the slot; disabling vGPU stops LogonCommand from ever running. Where a Hyper-V clean-VM checkpoint already exists, prefer it (`hyperv-clean-vm`) — VMs run in parallel and restore to identical state, while the sandbox slot is single and disposal-only. Use when no clean VM has been built and a project needs one disposable isolated desktop, when a sandbox will not start, or when adding a second project that wants the slot.
 allowed-tools: PowerShell, Read, Write, Edit
 ---
 
