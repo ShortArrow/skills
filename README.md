@@ -310,6 +310,19 @@ has to carry:
 pwsh -File tests/check-portability.ps1
 ```
 
+`tests/check-descriptions.sh` refuses a `SKILL.md` description over
+1,200 characters — long enough for the host's listing budget to
+truncate it, and truncation eats the tail, where the "Use when"
+triggers sit. Wire it into a clone once as its pre-commit:
+
+```bash
+printf '#!/usr/bin/env bash\nexec bash "$(git rev-parse --show-toplevel)/tests/check-descriptions.sh"\n' > .git/hooks/pre-commit
+chmod +x .git/hooks/pre-commit
+```
+
+The dotfiles global hooks call a repository's own pre-commit at the
+end, so the two compose.
+
 ## License
 
 MIT. See [LICENSE](LICENSE).
