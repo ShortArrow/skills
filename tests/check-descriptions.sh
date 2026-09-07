@@ -9,7 +9,7 @@
 # headroom: a thesis plus a use-when list fits well under it, and an
 # enumeration of the body's sections does not — that belongs in the body.
 #
-# Wire into a clone once:  see readme (git hook shim in .git/hooks).
+# Wire into a clone once:  see docs/CONTRIBUTING.md (git hook shim in .git/hooks).
 set -o errexit -o pipefail -o nounset
 
 limit=1200

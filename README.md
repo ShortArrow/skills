@@ -54,52 +54,9 @@ Without `-g` it writes the project's `.agents/skills/` instead.
 | Cursor | `~/.cursor/skills`, `~/.agents/skills`, `~/.claude/skills`, `~/.codex/skills` | `.agents/skills`, `.cursor/skills`, `.claude/skills`, `.codex/skills` |
 | Gemini CLI | `~/.gemini/skills`, `~/.agents/skills` (the alias wins ties) | `.gemini/skills`, `.agents/skills` |
 
-A skill whose procedure names a tool carries one row per host and an
-"Any other host" row; the forces behind that shape are in the
-[design intent](docs/design-intent.md). The prose-only skills need nothing: they name no tool, so there is
-nothing for a host to differ about. The directories above were checked
-against official documentation on 2026-08-28.
-
-## Layout
-
-```
-skills/<name>/SKILL.md          the skill
-skills/<name>/scripts/          anything it executes
-.claude-plugin/marketplace.json plugin grouping
-```
-
-`SKILL.md` needs YAML frontmatter with `name` and `description`.
-
-## What a description is for
-
-**The host starts with each skill's name and description; the body is read
-only when the skill fires.** `claude plugin details <name>` reports the
-Claude Code split. Codex applies a discovery-context budget when many
-skills are installed, so descriptions must remain useful if shortened.
-
-```
-component            always-on  on-invoke
-any-screenshot            ~150       ~960
-windows-screenshot        ~170      ~1.1k
-```
-
-Three things follow.
-
-**Detail belongs in the body.** It costs nothing until the skill is
-actually used, so there is no reason to compress it. The description is
-the part paid for continuously, and it only has to be enough to decide.
-
-**Selection is a judgement, not a match.** The model reads the
-description and decides whether it applies. Listing synonyms of words
-already present buys nothing, and listing them in a second language buys
-nothing either — the skills Anthropic ships are English-only and are used
-in every language. A description that says the same thing twice is paid
-for twice, every session.
-
-**Spend the tokens on boundaries instead.** Where several skills answer
-to the same word — four here respond to "screenshot" — the description is
-the only place that distinction can be drawn before one of them fires.
-Say what the skill is *not* for and which sibling owns that case.
+The directories above were checked against official documentation on
+2026-08-28. How a skill that names a host's tools stays correct on the
+others is in [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md).
 
 ## Other marketplaces
 
@@ -185,31 +142,11 @@ last row for hosts that expose none.
 | [geminicli.com — skills](https://geminicli.com/docs/cli/skills/) | Gemini CLI |
 | [skills.sh](https://www.skills.sh/) | Directory of published skills |
 
-## Checks
+## Contributing
 
-`tests/run-firing-tests.sh` remains the Claude Code behavioural runner.
-Its negative scenarios are written against files the skill has no claim
-on; the reasoning is in `docs/design-intent.md`.
-`tests/check-portability.ps1` checks every manifest and resource reference,
-the Claude marketplace membership, and the host rows every branching skill
-has to carry:
-
-```powershell
-pwsh -File tests/check-portability.ps1
-```
-
-`tests/check-descriptions.sh` refuses a `SKILL.md` description over
-1,200 characters — long enough for the host's listing budget to
-truncate it, and truncation eats the tail, where the "Use when"
-triggers sit. Wire it into a clone once as its pre-commit:
-
-```bash
-printf '#!/usr/bin/env bash\nexec bash "$(git rev-parse --show-toplevel)/tests/check-descriptions.sh"\n' > .git/hooks/pre-commit
-chmod +x .git/hooks/pre-commit
-```
-
-The dotfiles global hooks call a repository's own pre-commit at the
-end, so the two compose.
+Layout, the description budget, host branches, sources, the checks and
+the firing tests: [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md). The
+reasoning behind those shapes: [docs/design-intent.md](docs/design-intent.md).
 
 ## License
 
