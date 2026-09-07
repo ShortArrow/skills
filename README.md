@@ -1,12 +1,8 @@
 # skills
 
 Personal [Agent Skills](https://agentskills.io) for Claude Code, Codex,
-GitHub Copilot, Cursor and Gemini CLI.
-
-Each skill answers a question that comes up repeatedly and is easy to get
-wrong the first time — which capture method fits this target, what a
-document may not assume its reader knows, what a transcription is not
-allowed to invent.
+GitHub Copilot, Cursor and Gemini CLI. Each skill's `description` in its
+`SKILL.md` is the summary the host reads; the table below links to them.
 
 ## Install in Claude Code
 
@@ -18,10 +14,10 @@ Then install whichever set applies.
 
 | Plugin | Skills |
 |---|---|
-| `screenshot-skills` | any-screenshot, windows-screenshot, avalonia-screenshot, flaui-screenshot, hyperv-screenshot |
-| `writing-skills` | clean-docs, unmachine-prose, plain-japanese, document-structure, regulated-claims, pdf-transcribe, i18n-parity, measured-claims, request-approval |
-| `product-skills` | new-combination |
-| `engineering-skills` | plan-delegate-verify, adversarial-verify, tdd-cycle, test-design, tidy-first, diagnose-first, design-by-contract, slice-first, github-paths, csharp-architect, tui-debug, windows-sandbox, hyperv-clean-vm, peer-sessions, grill-me, tool-call-syntax, codex, find-skills, adopt-dependency, library-design, state-first, assurance-case, agent-harness |
+| `screenshot-skills` | [any-screenshot](skills/any-screenshot/SKILL.md), [windows-screenshot](skills/windows-screenshot/SKILL.md), [avalonia-screenshot](skills/avalonia-screenshot/SKILL.md), [flaui-screenshot](skills/flaui-screenshot/SKILL.md), [hyperv-screenshot](skills/hyperv-screenshot/SKILL.md) |
+| `writing-skills` | [clean-docs](skills/clean-docs/SKILL.md), [unmachine-prose](skills/unmachine-prose/SKILL.md), [plain-japanese](skills/plain-japanese/SKILL.md), [document-structure](skills/document-structure/SKILL.md), [regulated-claims](skills/regulated-claims/SKILL.md), [pdf-transcribe](skills/pdf-transcribe/SKILL.md), [i18n-parity](skills/i18n-parity/SKILL.md), [measured-claims](skills/measured-claims/SKILL.md), [request-approval](skills/request-approval/SKILL.md) |
+| `product-skills` | [new-combination](skills/new-combination/SKILL.md) |
+| `engineering-skills` | [plan-delegate-verify](skills/plan-delegate-verify/SKILL.md), [adversarial-verify](skills/adversarial-verify/SKILL.md), [tdd-cycle](skills/tdd-cycle/SKILL.md), [test-design](skills/test-design/SKILL.md), [tidy-first](skills/tidy-first/SKILL.md), [diagnose-first](skills/diagnose-first/SKILL.md), [design-by-contract](skills/design-by-contract/SKILL.md), [slice-first](skills/slice-first/SKILL.md), [github-paths](skills/github-paths/SKILL.md), [csharp-architect](skills/csharp-architect/SKILL.md), [tui-debug](skills/tui-debug/SKILL.md), [windows-sandbox](skills/windows-sandbox/SKILL.md), [hyperv-clean-vm](skills/hyperv-clean-vm/SKILL.md), [peer-sessions](skills/peer-sessions/SKILL.md), [grill-me](skills/grill-me/SKILL.md), [tool-call-syntax](skills/tool-call-syntax/SKILL.md), [codex](skills/codex/SKILL.md), [find-skills](skills/find-skills/SKILL.md), [adopt-dependency](skills/adopt-dependency/SKILL.md), [library-design](skills/library-design/SKILL.md), [state-first](skills/state-first/SKILL.md), [assurance-case](skills/assurance-case/SKILL.md), [agent-harness](skills/agent-harness/SKILL.md) |
 
 ## Install in Codex
 
@@ -63,114 +59,6 @@ A skill whose procedure names a tool carries one row per host and an
 [design intent](docs/design-intent.md). The prose-only skills need nothing: they name no tool, so there is
 nothing for a host to differ about. The directories above were checked
 against official documentation on 2026-08-28.
-
-## Skills
-
-### Screenshots
-
-`any-screenshot` is the entry point: a branch table from what you are
-capturing to the method that works, plus the property the methods share —
-**capture failures do not raise**. They exit 0 and leave an empty image,
-so verifying the result is part of taking it.
-
-The rest do the work. `windows-screenshot` carries PowerShell scripts for
-capturing a process's windows by PID, the whole desktop, and — through a
-one-shot scheduled task — a desktop from an SSH session that has no
-window station of its own. `avalonia-screenshot` renders a window
-off-screen without starting the application. `flaui-screenshot` drives a
-running application through UI Automation, which is the only one of the
-three that can capture a single element or act before capturing.
-
-### Writing
-
-`clean-docs` is about documents that outlive the conversation that
-produced them — including who they are addressed to, which slips most
-when a document is being fixed because someone called it wrong — and about
-direction of dependency between them: a README should not lean on a
-changelog. `unmachine-prose` is about the sentences
-themselves — the participial trailers, triplets and significance
-inflation that fill space once the content has run out.
-`plain-japanese` is the other axis of the same page: the errors a
-human makes just as often — two claims joined into one sentence, a
-subject that never meets its predicate, a doubled honorific, one term
-spelled two ways, the conclusion left in the last paragraph — grounded
-in the public standards (文化庁「公用文作成の考え方」, JTF スタイル
-ガイド) rather than in a house style. `regulated-claims` is about the
-sentences that are governed whether or not they are true: a health
-effect, a No.1, a before and after, a testimonial, a competitor
-comparison, a reference price nobody paid, someone else's figure, an
-identifiable person. Being able to prove a claim is not the same as
-being allowed to make it. `document-structure` is the shape of one
-page in any language: the first line of every unit is the only line
-most readers reach, headings are read alone as an outline, sequence
-gets numbers and fields get columns, and a procedure is one action per
-step with its result.
-`pdf-transcribe` governs transcription — principally that nothing may be
-written which the page does not show. `i18n-parity` keeps a
-multilingual site's pages in step — the failure that renders perfectly is a
-page edited in one language only — and covers the exception that expires by
-itself rather than becoming a permanent hole. `measured-claims` keeps numbers attached
-to their measurement — method, date, spread, and what the figure moves
-with, since a document can carry two stale numbers that disagree and both
-be wrong. `request-approval` obtains confirmation through the current
-host's approval path for anything destructive or outward-facing.
-
-### Product
-
-`new-combination` is idea generation after 松本勝's disruptive-innovation
-framework — a need and a seed combined for the first time, judged by
-empathy times feasibility — and fires on the habits that produce weak
-ideas instead: variants of the existing, assets hunting for a use,
-features accumulated onto a surface that was supposed to get simpler.
-
-### Engineering
-
-`plan-delegate-verify` splits multi-step work by role — the session model
-plans and verifies, subagents on a chosen model implement — and is mostly
-about what a plan must say for an implementer that never saw the
-conversation, and why a subagent reporting success is not evidence.
-`tdd-cycle` is Red-Green-Refactor as the working procedure, written to
-fire at the moments that replace it — verifying by running and looking,
-fixing a bug before reproducing it, editing untested code bare.
-`test-design` is where the cases come from — classes and boundaries out
-of the specification, not a mirror of the implementation, which passes by
-construction. `tidy-first` keeps structural and behavioural change in separate
-commits, and fires on the "while I'm here" cleanup — the urge is right,
-the seat in this diff is wrong.
-`diagnose-first` holds the line between correlation and cause — the
-base rate, the denominator, the refutation decided before acting, and the
-pass mark an intermittent fault needs before any fix gets credit.
-`state-first` names the states before the operation, keeps a property
-apart from a state in a signature, and turns a flag set into one
-enumeration, so the case that "just came up" is a missing state and not
-a new branch. `design-by-contract` asks, for every condition at an interface, whose
-obligation it is: the precondition is the caller's debt and the
-postcondition the callee's, a violated contract is a bug while an
-unmet expectation is a result, and an interface earns its existence
-from a second implementation or a boundary rather than from tidiness.
-`slice-first` is about the axis a codebase is cut along: a feature
-spread across a controllers folder, a services folder and a
-repositories folder is one thought in four diffs, duplication between
-features is what buys their independent change, and a check that has
-to hold for every request belongs in the pipeline rather than at the
-top of each handler. `github-paths` is about the few dozen paths GitHub reads by name: a
-`FUNDING.yml` at the root, a `CITATION.cff` under `docs/`, a second
-`CODEOWNERS`, a template tried on a feature branch — each is not wrong,
-it is invisible, and the feature it was written for simply fails to
-appear. `csharp-architect` covers layering and testability in C#.
-`tui-debug` reconstructs a terminal UI from redirected output, for when
-there is no display to look at. `windows-sandbox` runs tests that would
-otherwise take over the keyboard inside Windows Sandbox, and arbitrates
-the machine's single sandbox slot between projects — without one, two
-runners tear each other's sandbox down. `peer-sessions` reads what other
-sessions on the machine are working on through the host's supported
-session interface — courtesy information, since a session between two
-runs looks exactly like one that has stopped. `grill-me` resolves only the ambiguity
-that would change the implementation. `find-skills` searches the public
-registry before you write a skill that already exists, and
-`adopt-dependency` covers deciding whether to take on what you find —
-including what to do when an installer refuses something.
-`tool-call-syntax` and `codex` are small operational notes.
 
 ## Layout
 
