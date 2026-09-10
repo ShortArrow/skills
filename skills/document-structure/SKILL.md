@@ -131,7 +131,7 @@ this rule is about one document not making its reader walk.
 
 ## What this is not for
 
-Sentence-level correctness — `plain-japanese` for Japanese,
+Sentence-level correctness — `plain-language`,
 and the style guides below for English.
 Whether a document should exist and what it may depend on — `clean-docs`.
 The tells that make prose read as machine-written — `unmachine-prose`.

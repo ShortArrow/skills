@@ -185,5 +185,5 @@ Plain writing that is correct is not a target.
 Nor are the ordinary errors of a language: a doubled honorific,
 a subject that never meets its predicate, の stacked three deep,
 one term spelled two ways.
-Humans make those at the same rate, and they are `plain-japanese`'s.
+Humans make those at the same rate, and they are `plain-language`'s.
 Apply both in turn; mixing them dulls each check.

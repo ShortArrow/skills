@@ -192,7 +192,7 @@ it is omission.
 
 ## Connections
 
-Whether a sentence reads one way (subject meeting predicate, modifier attachment, spelling) is `plain-japanese` for Japanese.
+Whether a sentence reads one way (subject meeting predicate, modifier attachment, spelling) is `plain-language`.
 Whether the headings outline, the paragraphs hold one subject,
 the procedures are numbered, is `document-structure`.
 The tells of machine writing are `unmachine-prose`.

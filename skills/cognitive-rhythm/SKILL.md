@@ -206,7 +206,7 @@ The tells of machine writing (the paragraph that closes neatly every time, the h
 this skill builds the pull where they were, so the two run in turn.
 The reader's map and the holes in an argument are `reader-map`,
 which goes first.
-Sentence correctness is `plain-japanese`.
+Sentence correctness is `plain-language`.
 
 The source gist (below) was written for book manuscripts and assumes the `japanese-tech-writing` gist has been read first;
 in this repository `reader-map` stands in that place.

@@ -1,11 +1,8 @@
----
-name: plain-japanese
-description: |
-  Correct and readable Japanese, triggered by the moments that produce neither: about to write a sentence that carries two claims joined by が or ので, about to let a subject and its predicate disagree across a long modifier, about to stack の three deep or leave a modifier that could attach to two things, about to double an honorific or reach for 尊敬語 where 丁寧語 was enough, about to spell the same term two ways in one document, about to put the conclusion in the last paragraph, or about to write こちら as the text of a link. A reader scans before reading, and a sentence whose parse is ambiguous is wrong even when every word is right. Use when writing or revising Japanese prose of any kind — a README, an announcement, a UI string, an email, an article — and when reviewing a translation into Japanese.
-allowed-tools: Read, Edit, Write, Grep, Glob
----
+# 日本語の文を平明にする
 
-# 平明な日本語
+本体 `SKILL.md` の規則は言語によらない。
+ここには、日本語で余分に起きること（が・ので、「の」の三連、敬語の重複、表記の軸）と、
+日本語の例を置く。
 
 読み手は最初から読まない。
 見出しと先頭を走査して、読む価値があるか決めてから読む。
