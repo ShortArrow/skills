@@ -2,8 +2,8 @@
 
 ## Complete Feature: Order Management
 
-An order-management feature worked through MVVM, Clean Architecture, TDD,
-CQRS and DDD together.
+An order-management feature worked through MVVM, Clean Architecture,
+TDD, CQRS and DDD together.
 
 ### Domain Layer
 

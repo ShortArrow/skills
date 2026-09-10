@@ -346,14 +346,14 @@ public class AsyncRelayCommand : ICommand
 **Choosing:**
 
 - Keeping state in sync → `INotifyPropertyChanged` with `ObservableCollection`
-- Accepting user action → `ICommand` when simple, `ReactiveCommand` when not
+- Accepting user action → `ICommand` when simple,
+  `ReactiveCommand` when not
 - Commanding the View from the VM → `Interaction`, or `MessageBus`
 - Behaviour belonging to the View → `AttachedProperty` or `Behavior`
 
 ### Avalonia: the same, plus input validation
 
-The rows above repeat here so validation can be compared against them in
-one place.
+The rows above repeat here so validation can be compared against them in one place.
 
 | Mechanism | Kind | Mainly for | VM→View | View→VM | Typical | Watch for |
 |------|------|----------|---------|---------|--------|--------|
@@ -441,7 +441,10 @@ one place.
 
 **Avalonia `IClipboard` (11.1.4+)**
 
-Marked `[NotClientImplementable]`, so user code may no longer implement it. It cannot be mocked directly in a test, which means defining your own wrapper:
+Marked `[NotClientImplementable]`,
+so user code may no longer implement it.
+It cannot be mocked directly in a test,
+which means defining your own wrapper:
 
 ```csharp
 // Your own abstraction, declared in Application or Domain

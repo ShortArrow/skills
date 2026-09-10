@@ -75,8 +75,15 @@ $claudeInvariants = @(
     @{ Skill = 'plan-delegate-verify'; Text = 'automatic activation from the' }
 )
 
+# Prose is wrapped one sentence per line (tests/reflow-prose.py), so an
+# invariant phrase may carry a line break; whitespace is collapsed before
+# matching.
+function Get-Collapsed([string]$path) {
+    ((Get-Content -Raw -LiteralPath $path) -replace '\s+', ' ')
+}
+
 foreach ($entry in $claudeInvariants) {
-    $content = Get-Content -Raw -LiteralPath (Join-Path $skillsRoot "$($entry.Skill)\SKILL.md")
+    $content = Get-Collapsed (Join-Path $skillsRoot "$($entry.Skill)\SKILL.md")
     if ($content -notmatch [regex]::Escape($entry.Text)) {
         $failures.Add("$($entry.Skill): lost Claude Code invariant $($entry.Text)")
     }
@@ -92,7 +99,7 @@ $codexInvariants = @(
 )
 
 foreach ($entry in $codexInvariants) {
-    $content = Get-Content -Raw -LiteralPath (Join-Path $skillsRoot "$($entry.Skill)\SKILL.md")
+    $content = Get-Collapsed (Join-Path $skillsRoot "$($entry.Skill)\SKILL.md")
     if ($content -notmatch [regex]::Escape($entry.Text)) {
         $failures.Add("$($entry.Skill): lost Codex invariant $($entry.Text)")
     }
@@ -114,7 +121,7 @@ $hostInvariants = @(
 )
 
 foreach ($entry in $hostInvariants) {
-    $content = Get-Content -Raw -LiteralPath (Join-Path $skillsRoot "$($entry.Skill)\SKILL.md")
+    $content = Get-Collapsed (Join-Path $skillsRoot "$($entry.Skill)\SKILL.md")
     if ($content -notmatch [regex]::Escape($entry.Text)) {
         $failures.Add("$($entry.Skill): missing host row $($entry.Text)")
     }

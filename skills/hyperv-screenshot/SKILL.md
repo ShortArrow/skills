@@ -7,21 +7,21 @@ allowed-tools: PowerShell, Read, Write
 
 # Hyper-V guest screenshot
 
-**The host can photograph the guest's framebuffer directly.** No RDP
-session, no agent in the guest, no user logged in. The VM only has to be
-running.
+**The host can photograph the guest's framebuffer directly.** No RDP session,
+no agent in the guest, no user logged in.
+The VM only has to be running.
 
-This matters when a log says nothing. An installer that hangs writes
-"started" and then stops; the reason is a modal dialog nobody can see.
-Text channels — SSH, PowerShell Direct, `Get-Process` — will not show it,
-because a dialog is not a process and often not even a window with a
-title.
+This matters when a log says nothing.
+An installer that hangs writes "started" and then stops;
+the reason is a modal dialog nobody can see.
+Text channels — SSH, PowerShell Direct,
+`Get-Process` — will not show it,
+because a dialog is not a process and often not even a window with a title.
 
 ## The call
 
-`Msvm_VirtualSystemManagementService.GetVirtualSystemThumbnailImage`
-returns a byte array of 16bpp RGB565. There is no PNG, no bitmap header,
-no stride — the assembly is yours.
+`Msvm_VirtualSystemManagementService.GetVirtualSystemThumbnailImage` returns a byte array of 16bpp RGB565.
+There is no PNG, no bitmap header, no stride — the assembly is yours.
 
 ```powershell
 $ns = 'root\virtualization\v2'
@@ -38,16 +38,15 @@ $res = Invoke-CimMethod -InputObject $mgmt -MethodName GetVirtualSystemThumbnail
 }
 ```
 
-Ask `Msvm_VideoHead` for the size rather than passing one. A guessed size
-is honoured — the API scales — and a scaled thumbnail is worthless for
-reading a dialog.
+Ask `Msvm_VideoHead` for the size rather than passing one.
+A guessed size is honoured — the API scales — and a scaled thumbnail is worthless for reading a dialog.
 
 ## Copy row by row
 
-`Bitmap.LockBits` gives a stride padded to a 4-byte boundary. At 1024
-wide, `1024 * 2 = 2048` is already aligned and a single `Marshal.Copy`
-appears to work; at 1000 wide it is not, and the image shears. Copying
-per row costs nothing and is right at every width.
+`Bitmap.LockBits` gives a stride padded to a 4-byte boundary.
+At 1024 wide, `1024 * 2 = 2048` is already aligned and a single `Marshal.Copy` appears to work;
+at 1000 wide it is not, and the image shears.
+Copying per row costs nothing and is right at every width.
 
 ```powershell
 $bmp  = New-Object System.Drawing.Bitmap($w, $h, [System.Drawing.Imaging.PixelFormat]::Format16bppRgb565)
@@ -66,10 +65,10 @@ $bmp.Save($path, [System.Drawing.Imaging.ImageFormat]::Png)
 
 ## Wake the display first
 
-A guest left alone blanks its screen, and the thumbnail then comes back
-uniformly black — indistinguishable from the failure modes in
-`any-screenshot`. Press and release a harmless key through the synthetic
-keyboard, wait a moment, then capture.
+A guest left alone blanks its screen,
+and the thumbnail then comes back uniformly black — indistinguishable from the failure modes in `any-screenshot`.
+Press and release a harmless key through the synthetic keyboard,
+wait a moment, then capture.
 
 ```powershell
 $kbd = Get-CimAssociatedInstance -InputObject $vm -ResultClassName Msvm_Keyboard
@@ -79,8 +78,8 @@ Invoke-CimMethod -InputObject $kbd -MethodName ReleaseKey -Arguments @{ keyCode 
 Start-Sleep -Seconds 3
 ```
 
-Shift is the safe choice: it wakes the session and types nothing. Do not
-use Enter or Space — either one dismisses the dialog you came to read.
+Shift is the safe choice: it wakes the session and types nothing.
+Do not use Enter or Space — either one dismisses the dialog you came to read.
 
 ## Facts that bite
 
@@ -95,11 +94,11 @@ use Enter or Space — either one dismisses the dialog you came to read.
 
 ## Where this sits
 
-`any-screenshot` branches by target and sends **guest of a running
-Hyper-V VM** here. The host-side alternatives it lists all need the
-target on the host's own desktop, which a guest never is.
+`any-screenshot` branches by target and sends **guest of a running Hyper-V VM** here.
+The host-side alternatives it lists all need the target on the host's own desktop,
+which a guest never is.
 
-For a guest you can log into, RDP plus `windows-screenshot` inside gives
-a sharper image with real window handles. The thumbnail wins when there
-is no session at all — an unattended install, a boot-time failure, a VM
-still at the logon screen.
+For a guest you can log into,
+RDP plus `windows-screenshot` inside gives a sharper image with real window handles.
+The thumbnail wins when there is no session at all — an unattended install,
+a boot-time failure, a VM still at the logon screen.

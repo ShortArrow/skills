@@ -7,29 +7,30 @@ allowed-tools: Bash, PowerShell, Read
 
 # The Clock on the Wait
 
-A wait without a clock cannot tell slow from stuck: both look like
-silence, and the reader of "still waiting" learns nothing either way. A
-wait without a deadline is worse — it has no way to end except
-success, so a hung process is waited on forever, politely.
+A wait without a clock cannot tell slow from stuck:
+both look like silence,
+and the reader of "still waiting" learns nothing either way.
+A wait without a deadline is worse — it has no way to end except success,
+so a hung process is waited on forever, politely.
 
 Three numbers, written down before the wait starts:
 
-1. **Expected duration.** From a previous run, a log, a document. When
-   nothing supplies it, this run is the measurement — record it, and
-   the next wait has its number.
+1. **Expected duration.** From a previous run, a log, a document.
+   When nothing supplies it, this run is the measurement — record it,
+   and the next wait has its number.
 2. **Poll cadence**, matched to how fast the state actually changes.
-   An eight-minute boot deserves a check every minute or two, not
-   every five seconds; polling faster than the state moves spends
-   attention to learn nothing.
-3. **The deadline** — the elapsed time at which waiting stops being
-   the plan. Two or three times the expected duration is a reasonable
-   default. Breach does not mean "wait more"; it means the question
-   has changed from "is it done" to "is it alive".
+   An eight-minute boot deserves a check every minute or two,
+   not every five seconds;
+   polling faster than the state moves spends attention to learn nothing.
+3. **The deadline** — the elapsed time at which waiting stops being the plan.
+   Two or three times the expected duration is a reasonable default.
+   Breach does not mean "wait more";
+   it means the question has changed from "is it done" to "is it alive".
 
 ## Start the clock before the launch
 
-The start timestamp is part of the evidence, and it cannot be
-reconstructed afterwards:
+The start timestamp is part of the evidence,
+and it cannot be reconstructed afterwards:
 
 ```bash
 start=$(date +%s)
@@ -43,46 +44,43 @@ $sw = [System.Diagnostics.Stopwatch]::StartNew()
 "{0:mm\:ss} elapsed" -f $sw.Elapsed
 ```
 
-Every status line carries elapsed against expected — "4m10s of ~8m" —
-so the reader, including the one writing it, sees drift the moment it
-starts rather than at the deadline. A duration reported afterwards
-names both timestamps; a number without its method does not survive
-the report.
+Every status line carries elapsed against expected — "4m10s of ~8m" — so the reader,
+including the one writing it,
+sees drift the moment it starts rather than at the deadline.
+A duration reported afterwards names both timestamps;
+a number without its method does not survive the report.
 
 ## Pick the liveness signal before waiting
 
 Done is one observable; alive is a different one, chosen in advance:
-log bytes growing, files appearing, CPU consumed, a port opening. A
-spinner is not progress, and a quiet process is not necessarily hung —
-the distinction needs a **monotone** signal read at each poll. Slow is
-"the signal still moves"; stuck is "the signal has not moved for
-several polls". Deciding this after the deadline breach means staring
-at a silent process with no way to classify it.
+log bytes growing, files appearing, CPU consumed, a port opening.
+A spinner is not progress,
+and a quiet process is not necessarily hung — the distinction needs a **monotone** signal read at each poll.
+Slow is "the signal still moves";
+stuck is "the signal has not moved for several polls".
+Deciding this after the deadline breach means staring at a silent process with no way to classify it.
 
 ## Waiting on a person
 
 A wait for human input is a third class, beside slow and stuck:
-**blocked-on-input**. It has no liveness signal to read — a person
-emits no log bytes — so the deadline does the whole job, and it works
-only if the fallback is declared when the wait begins: "no answer by
-17:51 means proceeding with C". The person then knows what their
-silence buys, and the breach executes a decision already made instead
-of forcing one under a dead clock.
+**blocked-on-input**.
+It has no liveness signal to read — a person emits no log bytes — so the deadline does the whole job,
+and it works only if the fallback is declared when the wait begins:
+"no answer by 17:51 means proceeding with C".
+The person then knows what their silence buys,
+and the breach executes a decision already made instead of forcing one under a dead clock.
 
-State every deadline as a wall-clock time, not a countdown. A
-countdown restated across turns drifts from its original anchor —
-"within 30 minutes" and "about 10 minutes left" can appear in the
-same report and leave the reader with neither.
+State every deadline as a wall-clock time, not a countdown.
+A countdown restated across turns drifts from its original anchor — "within 30 minutes" and "about 10 minutes left" can appear in the same report and leave the reader with neither.
 
 ## On breach, diagnose — do not extend
 
 A breached deadline with a moving liveness signal is a wrong estimate:
-note the real duration, keep waiting against a revised number. A
-breached deadline with a flat signal is a hang: stop waiting and
-investigate, because more time changes nothing. Extending the timeout
-without reading the signal treats both cases as the first, and
-killing on breach without reading it treats both as the second — each
-error deletes the watchdog's value in one direction.
+note the real duration, keep waiting against a revised number.
+A breached deadline with a flat signal is a hang:
+stop waiting and investigate, because more time changes nothing.
+Extending the timeout without reading the signal treats both cases as the first,
+and killing on breach without reading it treats both as the second — each error deletes the watchdog's value in one direction.
 
 ## Host mechanics
 
@@ -94,7 +92,6 @@ error deletes the watchdog's value in one direction.
 
 ## When not to apply
 
-A command with a known sub-minute duration needs no watchdog — a clock
-on a two-second command is ceremony. The skill starts paying at the
-first wait long enough to wonder about, and at every poll loop whose
-end condition might never arrive.
+A command with a known sub-minute duration needs no watchdog — a clock on a two-second command is ceremony.
+The skill starts paying at the first wait long enough to wonder about,
+and at every poll loop whose end condition might never arrive.

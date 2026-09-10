@@ -7,19 +7,19 @@ allowed-tools: AskUserQuestion, Bash, PowerShell, Read
 
 # Request Approval
 
-Approval has to arrive through the **current host's approval path** and
-name what will actually happen. Agreement in ordinary conversation may not
-be the signal the runtime gate reads.
+Approval has to arrive through the **current host's approval path** and name what will actually happen.
+Agreement in ordinary conversation may not be the signal the runtime gate reads.
 
 Identify the host from the tools it exposes before choosing a row:
-`AskUserQuestion`, `Agent` and `Skill` mean Claude Code; a structured
-tool interface with approval requests on blocked calls means Codex;
+`AskUserQuestion`, `Agent` and `Skill` mean Claude Code;
+a structured tool interface with approval requests on blocked calls means Codex;
 `askQuestions`, `runSubagent` and `#browser` mean Copilot in VS Code;
-`/agent`, a permission prompt with a "rest of the session" option and
-`--allow-all` mean Copilot CLI; an "Ask questions" tool, a Task tool
-and a Browser tool mean Cursor; `ask_user`, `read_file` and subagents
-exposed as tools of their own name mean Gemini CLI. A host that
-matches none of these takes the last row.
+`/agent`,
+a permission prompt with a "rest of the session" option and `--allow-all` mean Copilot CLI;
+an "Ask questions" tool, a Task tool and a Browser tool mean Cursor;
+`ask_user`,
+`read_file` and subagents exposed as tools of their own name mean Gemini CLI.
+A host that matches none of these takes the last row.
 
 | Host | Approval path |
 |---|---|
@@ -31,29 +31,33 @@ matches none of these takes the last row.
 | Gemini CLI | Call `ask_user` with type `choice`, 2 to 4 options, the recommended one first and a "don't" option always present |
 | Any other host | Ask one question in chat with the same labels, then stop and wait. Silence is not consent. Never write the question and the answer both yourself |
 
-Do not simulate any of these paths in prose. If the host exposes no approval
-mechanism for the action, stop and let the user perform it.
+Do not simulate any of these paths in prose.
+If the host exposes no approval mechanism for the action,
+stop and let the user perform it.
 
-**Localize.** Write the question and the option labels in whatever
-language the conversation is in. The examples here are English.
+**Localize.** Write the question and the option labels in whatever language the conversation is in.
+The examples here are English.
 
 ## The handshake
 
-1. **Establish exactly what the action would do**, read back from the
-   system rather than from memory. What that means per family is below.
-2. **Use the host approval path** with one question stating the targets
-   and their scale. In Claude Code, call `AskUserQuestion`: recommended
-   option first, labels concrete — the branch, the count, the size — and
-   always offer a "don't" option. In Codex, put the same facts in the
-   tool-call justification or dedicated approval prompt.
-   In Copilot in VS Code, Cursor and Gemini CLI, the same facts go
-   into the host's question tool; in Copilot CLI and in any other
-   host, into the one chat message that precedes the stop.
+1. **Establish exactly what the action would do**,
+   read back from the system rather than from memory.
+   What that means per family is below.
+2. **Use the host approval path** with one question stating the targets and their scale.
+   In Claude Code, call `AskUserQuestion`: recommended option first,
+   labels concrete — the branch, the count,
+   the size — and always offer a "don't" option.
+   In Codex, put the same facts in the tool-call justification or dedicated approval prompt.
+   In Copilot in VS Code, Cursor and Gemini CLI,
+   the same facts go into the host's question tool;
+   in Copilot CLI and in any other host,
+   into the one chat message that precedes the stop.
 3. **Act on the selection**, then report what changed: the ref update,
    the freed space, the number of commits rewritten.
 
-A selection covers the action it named. It does not extend to the next
-one, or to a wider version of the same one.
+A selection covers the action it named.
+It does not extend to the next one,
+or to a wider version of the same one.
 
 ## What to establish first
 
@@ -68,13 +72,12 @@ one, or to a wider version of the same one.
 
 ## Rules
 
-- **Never `--force` or `--no-verify` unless the user asked.** Prefer
-  `--force-with-lease`, and say in the option description that it refuses
-  if the remote moved.
-- **Do not ask about a risk that is not there.** Overstating turns the
-  handshake into noise, and the next real one gets waved through.
-- **If the action is still refused after approval, stop.** Say what was
-  attempted and what it needs, and let the user run it. Do not reach for
-  a different tool to get the same effect.
-- **The question is the record.** Someone reading the transcript later
-  should be able to tell what was authorised without reconstructing it.
+- **Never `--force` or `--no-verify` unless the user asked.** Prefer `--force-with-lease`,
+  and say in the option description that it refuses if the remote moved.
+- **Do not ask about a risk that is not there.** Overstating turns the handshake into noise,
+  and the next real one gets waved through.
+- **If the action is still refused after approval,
+  stop.** Say what was attempted and what it needs,
+  and let the user run it.
+  Do not reach for a different tool to get the same effect.
+- **The question is the record.** Someone reading the transcript later should be able to tell what was authorised without reconstructing it.

@@ -5,12 +5,12 @@ description: Read what a TUI application is displaying when there is no way to s
 
 # TUI Debug
 
-An agent cannot screenshot a Windows console or a Linux TTY. It does not
-need to: a TUI writes cursor positions, text and colour to stdout as ANSI
-escapes, so **redirecting stdout reconstructs the screen after the fact**.
+An agent cannot screenshot a Windows console or a Linux TTY.
+It does not need to: a TUI writes cursor positions,
+text and colour to stdout as ANSI escapes,
+so **redirecting stdout reconstructs the screen after the fact**.
 
-This is how to start such an application and turn its display into
-something readable.
+This is how to start such an application and turn its display into something readable.
 
 ## When to use it
 
@@ -21,12 +21,11 @@ something readable.
 
 ## When not to
 
-- **Genuine interaction** — verifying a sequence of state transitions
-  driven by keystrokes needs stdin too. Use expect or pty automation.
-- **Applications that write to the screen buffer directly** — curses code
-  using `addstr` plus `refresh` may draw nothing through a redirect. Most
-  frameworks (ratatui, textual, Charm) write to stdout and are fine; some
-  native implementations require a raw tty.
+- **Genuine interaction** — verifying a sequence of state transitions driven by keystrokes needs stdin too.
+  Use expect or pty automation.
+- **Applications that write to the screen buffer directly** — curses code using `addstr` plus `refresh` may draw nothing through a redirect.
+  Most frameworks (ratatui, textual, Charm) write to stdout and are fine;
+  some native implementations require a raw tty.
 - **Full-screen applications built around mouse events.**
 
 ## PowerShell
@@ -58,9 +57,9 @@ $clean -split "`n" | Select-Object -Last 60
 Stop-Process -Id $proc.Id -Force
 ```
 
-`-WindowStyle Hidden` keeps a console from appearing while the user is
-working. Some TUIs will not start their draw thread when hidden — if
-stdout comes back empty, try `-NoNewWindow` or `-WindowStyle Normal`.
+`-WindowStyle Hidden` keeps a console from appearing while the user is working.
+Some TUIs will not start their draw thread when hidden — if stdout comes back empty,
+try `-NoNewWindow` or `-WindowStyle Normal`.
 
 ## bash, Linux, WSL
 
@@ -103,32 +102,27 @@ Or, to remove ANSI entirely:
 
 ## Things that will catch you out
 
-**The capture is a stream of updates, not a screen.** Some applications
-redraw everything each frame; others move the cursor back with `\e[H`, or
-address a cell with `\e[r;cH`, and overwrite. With the latter, **later
-output is closer to the current screen** — `tail -60` shows the final
-state.
+**The capture is a stream of updates,
+not a screen.** Some applications redraw everything each frame;
+others move the cursor back with `\e[H`, or address a cell with `\e[r;cH`, and overwrite. With the latter, **later output is closer to the current screen** — `tail -60` shows the final state.
 
-**ratatui and friends use the alternate screen buffer.** `\e[?1049h` on
-start, `\e[?1049l` on exit, both captured. Reading the log after the
-process has exited can therefore look as though nothing was drawn.
-**Read while the process is alive.**
+**ratatui and friends use the alternate screen buffer.** `\e[?1049h` on start, `\e[?1049l` on exit, both captured. Reading the log after the process has exited can therefore look as though nothing was drawn. **Read while the process is alive.**
 
-**Wide characters shift the columns.** Japanese and other two-cell
-characters break grid alignment in the stripped text. Values are still
-readable; the box drawing will not line up.
+**Wide characters shift the columns.** Japanese and other two-cell characters break grid alignment in the stripped text.
+Values are still readable; the box drawing will not line up.
 
-**Check the process is still running.** `HasExited` tells you. If it died
-immediately, a configuration error is waiting in stderr — always look:
+**Check the process is still running.** `HasExited` tells you.
+If it died immediately,
+a configuration error is waiting in stderr — always look:
 
 ```powershell
 Get-Content "$env:TEMP\tui_err.log" | Select-Object -Last 30
 ```
 
-**Separate the application's own logging.** `tracing` and `log` normally
-write to stderr, which the redirect above captures too. Where log lines
-are interleaved with the drawing they survive the ANSI stripping, so grep
-them out by prefix when they get in the way.
+**Separate the application's own logging.** `tracing` and `log` normally write to stderr,
+which the redirect above captures too.
+Where log lines are interleaved with the drawing they survive the ANSI stripping,
+so grep them out by prefix when they get in the way.
 
 ## What a captured ratatui screen looks like
 
@@ -144,16 +138,17 @@ them out by prefix when they get in the way.
 ...
 ```
 
-The borders are ragged, but Name, HEX and Value extract as text — enough
-to decide whether frames are arriving and whether a field is in range.
+The borders are ragged, but Name,
+HEX and Value extract as text — enough to decide whether frames are arriving and whether a field is in range.
 
 ## Related
 
 - **Full automation including keystrokes** — expect or pty automation.
   Out of scope here.
-- **Screenshots of a GUI application** — choose the method with
-  `any-screenshot`; the capture belongs to `windows-screenshot` or
-  `avalonia-screenshot`. Those failures exit 0 and leave an empty image,
+- **Screenshots of a GUI application** — choose the method with `any-screenshot`;
+  the capture belongs to `windows-screenshot` or `avalonia-screenshot`.
+  Those failures exit 0 and leave an empty image,
   so a wrong choice goes unnoticed.
-- **Reading the TUI's internal state directly** — over IPC, by adding a
-  JSON dump endpoint. Often the easier path.
+- **Reading the TUI's internal state directly** — over IPC,
+  by adding a JSON dump endpoint.
+  Often the easier path.

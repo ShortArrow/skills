@@ -26,29 +26,31 @@ allowed-tools: Read, Edit, Write, Bash, Grep, Glob, Task
 
 **Dependencies run outward to inward.** Domain depends on nothing.
 
-These names are this stack's arrangement of one rule: the layer nearer
-the policy declares the interface it needs and the layer nearer the
-machine implements it. When the question is whether a dependency may
-point somewhere, or whether a type has earned an interface at all, that
-rule is in `design-by-contract`; the picture above only says what the
-resulting pieces are called here.
+These names are this stack's arrangement of one rule:
+the layer nearer the policy declares the interface it needs and the layer nearer the machine implements it.
+When the question is whether a dependency may point somewhere,
+or whether a type has earned an interface at all,
+that rule is in `design-by-contract`;
+the picture above only says what the resulting pieces are called here.
 
 ### MVVM
 
-- **View** — XAML or Razor only. Code-behind kept to a minimum.
+- **View** — XAML or Razor only.
+  Code-behind kept to a minimum.
 - **ViewModel** — implements `INotifyPropertyChanged` and `ICommand`.
 - **Model** — the Domain layer's entities.
 
 ### CQRS
 
-- **Command** — changes state. Returns nothing, or an identifier.
-- **Query** — changes nothing. Returns a DTO.
+- **Command** — changes state.
+  Returns nothing, or an identifier.
+- **Query** — changes nothing.
+  Returns a DTO.
 - **Handler** — one responsibility, one operation each.
 
 #### Mediator dispatch
 
-A mediator library (MediatR, Mediator.SourceGenerator, Wolverine and
-the like) dispatches a request to the one handler that declares it:
+A mediator library (MediatR, Mediator.SourceGenerator, Wolverine and the like) dispatches a request to the one handler that declares it:
 
 ```csharp
 public record CreateProduct(string Name, decimal Price) : IRequest<int>;
@@ -59,8 +61,9 @@ public sealed class CreateProductHandler : IRequestHandler<CreateProduct, int>
 }
 ```
 
-The request type is the contract. Registration scans the assembly, so
-a handler is reached by its request type rather than by a reference,
+The request type is the contract.
+Registration scans the assembly,
+so a handler is reached by its request type rather than by a reference,
 and nothing but the type connects the two.
 
 Cross-cutting concerns go in the pipeline, registered once, in order:
@@ -78,17 +81,16 @@ public sealed class ValidationBehavior<TRequest, TResponse>
 }
 ```
 
-`services.AddMediatR(...)` plus one `AddOpenBehavior` call per
-behaviour is the whole wiring; the order of registration is the order
-of execution, and it is the only place a reader can see what runs
-before a handler.
+`services.AddMediatR(...)` plus one `AddOpenBehavior` call per behaviour is the whole wiring;
+the order of registration is the order of execution,
+and it is the only place a reader can see what runs before a handler.
 
-Two cautions specific to this stack. Assembly scanning means a handler
-with no reference is still reached, so a stale handler stays alive
-until someone deletes it. And a request with one sender and one
-handler gains nothing from the dispatch but the lost jump to
-definition. When the dispatch, the pipeline or the folder layout is
-the question, the rule is in `slice-first` and `design-by-contract`;
+Two cautions specific to this stack.
+Assembly scanning means a handler with no reference is still reached,
+so a stale handler stays alive until someone deletes it.
+And a request with one sender and one handler gains nothing from the dispatch but the lost jump to definition.
+When the dispatch, the pipeline or the folder layout is the question,
+the rule is in `slice-first` and `design-by-contract`;
 the code above only shows how this stack spells it.
 
 ### DDD
@@ -136,15 +138,16 @@ Before:
 - [ ] The purpose is clear
 - [ ] The steps are small
 
-The usual moves: extract method or class, move to the layer it belongs
-in, introduce a value object, replace a conditional with polymorphism.
+The usual moves: extract method or class,
+move to the layer it belongs in, introduce a value object,
+replace a conditional with polymorphism.
 
 After: run every test, and check no new warning appeared.
 
 ### Implementing a feature
 
-1. **Clarify the requirement** — what is to be true afterwards, from
-   each state it can start in (`state-first`).
+1. **Clarify the requirement** — what is to be true afterwards,
+   from each state it can start in (`state-first`).
 2. **Locate the impact** — which layers change.
 3. **Write the test first.**
 4. **Start at the Domain** and work outward.
@@ -160,14 +163,14 @@ Domain Entity/VO → Domain Service → Repository interface
 
 ### Reviewing code
 
-1. **Architecture** — do the dependencies run the right way, and is each
-   piece in the layer it belongs to?
-2. **DDD** — is the domain logic in the Domain layer, and are the
-   aggregate boundaries right?
-3. **CQRS** — are commands and queries separated, and does each handler do
-   one thing?
-4. **Tests** — is the coverage enough, and does each test name state its
-   intent?
+1. **Architecture** — do the dependencies run the right way,
+   and is each piece in the layer it belongs to?
+2. **DDD** — is the domain logic in the Domain layer,
+   and are the aggregate boundaries right?
+3. **CQRS** — are commands and queries separated,
+   and does each handler do one thing?
+4. **Tests** — is the coverage enough,
+   and does each test name state its intent?
 5. **Code** — does it follow SOLID, and is the naming clear?
 
 ## File naming

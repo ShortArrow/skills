@@ -6,7 +6,8 @@
 
 The innermost layer, and the core of the business logic.
 
-**Depends on** nothing. Plain C# only.
+**Depends on** nothing.
+Plain C# only.
 
 **Holds:**
 - Entities

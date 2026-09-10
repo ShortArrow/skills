@@ -7,17 +7,20 @@ allowed-tools: Read, Edit, Write, Grep, Glob, WebSearch, WebFetch
 
 # Regulated claims
 
-Most writing advice is about being right. Some claims are governed
-whether or not they are right: the evidence exists, the sentence is
-true, and publishing it is still an offence, a takedown, or a fine.
-The failure mode is specific — nobody catches it in review, because
-review checks whether the claim is *supported*, and this class fails
-on whether it is *permitted*.
+Most writing advice is about being right.
+Some claims are governed whether or not they are right:
+the evidence exists, the sentence is true,
+and publishing it is still an offence, a takedown, or a fine.
+The failure mode is specific — nobody catches it in review,
+because review checks whether the claim is *supported*,
+and this class fails on whether it is *permitted*.
 
-The rules are not universal. They differ by market, by medium, by who
-the reader is, and by what the product is classified as. So the skill
-is not a list of statutes: it is the step of noticing that a sentence
-belongs to a governed class, before it ships.
+The rules are not universal.
+They differ by market, by medium, by who the reader is,
+and by what the product is classified as.
+So the skill is not a list of statutes:
+it is the step of noticing that a sentence belongs to a governed class,
+before it ships.
 
 ## The moments this replaces
 
@@ -35,9 +38,9 @@ belongs to a governed class, before it ships.
 
 ## Name the class before writing the sentence
 
-The question is never "is this true". It is **what kind of claim is
-this**, because the class decides which regime applies and what the
-regime demands.
+The question is never "is this true".
+It is **what kind of claim is this**,
+because the class decides which regime applies and what the regime demands.
 
 | Class | What the regime typically demands |
 |---|---|
@@ -52,116 +55,119 @@ regime demands.
 | Personal data, likeness, private facts | a basis for using them, and a scope the person agreed to |
 | Advertising that does not read as advertising — a paid post, a seeded review | a disclosure that it is one, where the reader sees it |
 
-Once the class is named, one of three things happens: the claim is
-made with what the regime requires attached, the claim is narrowed
-until it leaves the class, or the claim is dropped. Publishing it and
-waiting is not a fourth option.
+Once the class is named, one of three things happens:
+the claim is made with what the regime requires attached,
+the claim is narrowed until it leaves the class,
+or the claim is dropped.
+Publishing it and waiting is not a fourth option.
 
 ## Evidence is a different question
 
 `measured-claims` covers what a number owes its reader: the method,
-the conditions, the date. That rule still applies here, and it is not
-enough. A benchmark can be impeccable and the sentence still
-unpublishable, because the constraint is on the kind of assertion, not
-on its support.
+the conditions, the date.
+That rule still applies here, and it is not enough.
+A benchmark can be impeccable and the sentence still unpublishable,
+because the constraint is on the kind of assertion, not on its support.
 
 The two failures look alike in review and separate cleanly at the fix:
 
-- **Unsupported** — "3 倍高速" with no method. Fix by measuring and
-  stating how.
-- **Not permitted as written** — "肩こりが治ります" for a cushion. No
-  measurement rescues it; the product's classification decides what
-  may be said, and the fix is a different sentence.
+- **Unsupported** — "3 倍高速" with no method.
+  Fix by measuring and stating how.
+- **Not permitted as written** — "肩こりが治ります" for a cushion.
+  No measurement rescues it;
+  the product's classification decides what may be said,
+  and the fix is a different sentence.
 
 ## Quotation has conditions
 
-Reproducing someone's work is allowed under conditions, and the
-conditions are consistent enough across markets to state as a
-checklist:
+Reproducing someone's work is allowed under conditions,
+and the conditions are consistent enough across markets to state as a checklist:
 
-- **The quoted part is subordinate.** Your text is the main thing; the
-  quotation supports it. A page that is mostly quotation is a copy
-  with a citation attached.
-- **It is visibly separated.** A reader can tell where the quotation
-  starts and stops.
-- **It is unaltered.** Trimming that changes the sense is not
-  quotation.
+- **The quoted part is subordinate.** Your text is the main thing;
+  the quotation supports it.
+  A page that is mostly quotation is a copy with a citation attached.
+- **It is visibly separated.** A reader can tell where the quotation starts and stops.
+- **It is unaltered.** Trimming that changes the sense is not quotation.
 - **The source is named.** Author, title, and where it came from.
-- **There is a reason to quote it.** Necessity is part of the test in
-  most regimes; decoration is not.
+- **There is a reason to quote it.** Necessity is part of the test in most regimes;
+  decoration is not.
 
 Everything failing that list needs a licence instead: stock images,
 figures lifted from a paper, a table of someone's benchmark results,
-code under a licence you have not read, a font, a screenshot of a
-product's UI.
+code under a licence you have not read, a font,
+a screenshot of a product's UI.
 
 ## People are not props
 
-The trigger is identifiability, not the name. A face, a voice, a
-workplace plus a role, a house number, a rare combination of
-attributes — each can identify someone, and each brings both a
-privacy interest and, when used to sell, a commercial one.
+The trigger is identifiability, not the name.
+A face, a voice, a workplace plus a role, a house number,
+a rare combination of attributes — each can identify someone,
+and each brings both a privacy interest and, when used to sell,
+a commercial one.
 
-Consent has a scope, and the scope is what was agreed: a photo given
-for an internal newsletter was not given for a landing page, and a
-customer who agreed to be quoted did not agree to be the face of the
-launch. When the scope is unclear, it has not been given.
+Consent has a scope, and the scope is what was agreed:
+a photo given for an internal newsletter was not given for a landing page,
+and a customer who agreed to be quoted did not agree to be the face of the launch.
+When the scope is unclear, it has not been given.
 
 ## The reaction is a separate failure
 
-A sentence can be lawful, accurate and permitted, and still be the
-thing that gets quoted back at the company for a year. This risk is
-not the legal one and is not managed by the same check.
+A sentence can be lawful, accurate and permitted,
+and still be the thing that gets quoted back at the company for a year.
+This risk is not the legal one and is not managed by the same check.
 
-What draws it is predictable: making a group the joke, treating an
-attribute of a person as the reason for an outcome, irony that reads
-as sincerity when screenshotted alone, an internal in-joke shipped
-outside, urgency manufactured from someone's misfortune, and any
-sentence whose defence requires the surrounding paragraph.
+What draws it is predictable: making a group the joke,
+treating an attribute of a person as the reason for an outcome,
+irony that reads as sincerity when screenshotted alone,
+an internal in-joke shipped outside,
+urgency manufactured from someone's misfortune,
+and any sentence whose defence requires the surrounding paragraph.
 
-The test is mechanical: **take the sentence out of the page and read
-it alone.** That is the unit it will travel in.
+The test is mechanical: **take the sentence out of the page and read it alone.** That is the unit it will travel in.
 
 ## When you are not sure
 
 Not being sure is the ordinary state, and it has a procedure.
 
 1. **Name the class.** The table above; if two apply, both do.
-2. **Find the rule for this market and medium**, from the regulator or
-   the statute rather than from a blog. Note what you read and when —
-   this is the same discipline `measured-claims` puts on a number,
+2. **Find the rule for this market and medium**,
+   from the regulator or the statute rather than from a blog.
+   Note what you read and when — this is the same discipline `measured-claims` puts on a number,
    applied to a rule.
-3. **Write down what the rule requires** next to the claim, so the
-   next reviewer sees the basis instead of re-deriving it.
-4. **If it cannot be resolved, narrow or drop.** A claim held back
-   costs a sentence. A claim published wrong costs the page, the
-   campaign, and sometimes the account.
-5. **Escalate to whoever owns the risk** — legal, the client, the
-   platform's policy — rather than deciding alone that it is fine.
+3. **Write down what the rule requires** next to the claim,
+   so the next reviewer sees the basis instead of re-deriving it.
+4. **If it cannot be resolved,
+   narrow or drop.** A claim held back costs a sentence.
+   A claim published wrong costs the page, the campaign,
+   and sometimes the account.
+5. **Escalate to whoever owns the risk** — legal, the client,
+   the platform's policy — rather than deciding alone that it is fine.
 
-Named examples for the Japanese market, with the statutes and the
-regulators' operating guidance that carries the judgement, are in
-`references/japan.md`. Other markets have their own; the class table is
-what carries across, and the document names do not.
+Named examples for the Japanese market,
+with the statutes and the regulators' operating guidance that carries the judgement,
+are in `references/japan.md`.
+Other markets have their own; the class table is what carries across,
+and the document names do not.
 
 ## When the request is not about the claim
 
-A page can carry a governed claim in one section and an ordinary
-request in another: fix this table, tighten that description. Do the
-work that was asked, and report the rest as what it is — a list of
-claims that need a decision, named with the class and the fact that
-contradicts them.
+A page can carry a governed claim in one section and an ordinary request in another:
+fix this table, tighten that description.
+Do the work that was asked,
+and report the rest as what it is — a list of claims that need a decision,
+named with the class and the fact that contradicts them.
 
-Do not rewrite a claim nobody asked you to rewrite. Weakening a
-headline under a formatting request removes the sentence and the
-decision at once, and the person who owns that risk never sees it.
-The exception is a claim you are being asked to strengthen, which is
-the moment in the table above.
+Do not rewrite a claim nobody asked you to rewrite.
+Weakening a headline under a formatting request removes the sentence and the decision at once,
+and the person who owns that risk never sees it.
+The exception is a claim you are being asked to strengthen,
+which is the moment in the table above.
 
 ## What this is not for
 
-Statements of fact about your own software that carry no governed
-claim: what it does, what it requires, what it costs, what changed in
-this release. Internal documents with no external reader. Neutral
-technical comparison without a marketing assertion. Being cautious
-here costs clarity and buys nothing.
+Statements of fact about your own software that carry no governed claim:
+what it does, what it requires, what it costs,
+what changed in this release.
+Internal documents with no external reader.
+Neutral technical comparison without a marketing assertion.
+Being cautious here costs clarity and buys nothing.

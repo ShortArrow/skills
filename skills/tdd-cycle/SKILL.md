@@ -7,23 +7,22 @@ allowed-tools: Bash, PowerShell, Read, Edit, Write
 
 # The cycle is the procedure
 
-Red, then green, then refactor. Not a review standard applied afterwards —
-the order in which the work happens.
+Red, then green, then refactor.
+Not a review standard applied afterwards — the order in which the work happens.
 
-1. **Red.** Write the smallest test that fails for the reason the change
-   exists. Run it. **The failure message is part of the work product**:
-   keep it, because it is the only evidence the test can fail at all. A
-   test first seen passing proves nothing — a test that asserts nothing
-   passes too. The expected value comes from the specification and is
-   written before the implementation exists; that order is the whole
-   defence against an oracle that copies the code, which is what
-   generated oracles measurably tend to be (arXiv:2410.21136). An
-   expected value with "or" in it cannot go red for a reason, so it is
-   a question for the specification, not yet a test.
-2. **Green.** The smallest change that makes it pass. Resist fixing the
-   adjacent thing; it has no failing test yet.
-3. **Refactor.** Only while green, and the tests stay untouched. If a
-   structural change needs the tests edited, it was not structural.
+1. **Red.** Write the smallest test that fails for the reason the change exists.
+   Run it. **The failure message is part of the work product**: keep it,
+   because it is the only evidence the test can fail at all.
+   A test first seen passing proves nothing — a test that asserts nothing passes too.
+   The expected value comes from the specification and is written before the implementation exists;
+   that order is the whole defence against an oracle that copies the code,
+   which is what generated oracles measurably tend to be (arXiv:2410.21136).
+   An expected value with "or" in it cannot go red for a reason,
+   so it is a question for the specification, not yet a test.
+2. **Green.** The smallest change that makes it pass.
+   Resist fixing the adjacent thing; it has no failing test yet.
+3. **Refactor.** Only while green, and the tests stay untouched.
+   If a structural change needs the tests edited, it was not structural.
 
 ## The moments this replaces
 
@@ -37,50 +36,51 @@ Each of these is the cycle skipped, and each has a correct form:
 | paste the observed output into the expected value | write the expected value from the specification; if the specification is silent, that is a question to ask, not a value to assert |
 | write "tests will be added later" | write the test list now, even if the tests come later — deciding what would be asserted is the part that shapes the design |
 
-The second row is the one that pays most. A bug that was never reproduced
-in a test can return without anything failing.
+The second row is the one that pays most.
+A bug that was never reproduced in a test can return without anything failing.
 
 ## Characterisation tests
 
 For untested code, the first test asserts **what the code does today**,
-verified by running it, not what it should do. Mark it as such — a pinned
-bug looks identical to a pinned feature, and nothing downstream can tell
-them apart. This is the minimal entry point the cycle needs before any
-edit to legacy code.
+verified by running it, not what it should do.
+Mark it as such — a pinned bug looks identical to a pinned feature,
+and nothing downstream can tell them apart.
+This is the minimal entry point the cycle needs before any edit to legacy code.
 
 ## The shape of a test
 
 Given a state, when one thing happens, then one expected difference.
-Assert the delta, not the whole world: a test that asserts everything
-fails for every reason, which is the same as explaining nothing. If the
-Given cannot be stated, the ambiguity is in the design, not the test —
-settle it first. Which Givens the list needs (the classes, both ends of
-every range, the combinations) is `test-design`; this skill only fixes
-the order in which each one is written.
+Assert the delta, not the whole world:
+a test that asserts everything fails for every reason,
+which is the same as explaining nothing.
+If the Given cannot be stated, the ambiguity is in the design,
+not the test — settle it first.
+Which Givens the list needs (the classes, both ends of every range, the combinations) is `test-design`;
+this skill only fixes the order in which each one is written.
 
 ## When a test is genuinely impractical
 
 Hardware in the loop, a GUI without a harness, a one-shot migration.
-The fallback is not silence: state that the change is going in untested,
-write the test plan — the cases, the expected values, what blocks
-automating them — and leave it where the follow-up happens. An untested
-change that says so is recoverable; one that does not is a time bomb with
-no manifest.
+The fallback is not silence:
+state that the change is going in untested,
+write the test plan — the cases, the expected values,
+what blocks automating them — and leave it where the follow-up happens.
+An untested change that says so is recoverable;
+one that does not is a time bomb with no manifest.
 
 ## What this is not for
 
-- **Spikes.** Exploring a shape with throwaway code needs no tests — but
-  the spike is thrown away, and what gets kept is rewritten through the
-  cycle. Keeping the spike *is* skipping the cycle.
-- **Prose and configuration with no assertable behaviour.** Where a check
-  exists (a linter, a parity script, a schema), that check plays the role
-  of the test: see it fail first, same rule.
+- **Spikes.** Exploring a shape with throwaway code needs no tests — but the spike is thrown away,
+  and what gets kept is rewritten through the cycle.
+  Keeping the spike *is* skipping the cycle.
+- **Prose and configuration with no assertable behaviour.** Where a check exists (a linter, a parity script, a schema),
+  that check plays the role of the test: see it fail first, same rule.
 
 ## Sources
 
-- Konstantinou, Degiovanni, Papadakis, "Do LLMs generate test oracles
-  that capture the actual or the expected program behaviour?",
-  arXiv:2410.21136, 2024. Cited for its finding on generated oracles;
-  read on 2026-08-26.
-- Red-green-refactor itself is practice (Beck), not a standard, and is
-  not dressed as one.
+- Konstantinou, Degiovanni, Papadakis,
+  "Do LLMs generate test oracles that capture the actual or the expected program behaviour?",
+  arXiv:2410.21136, 2024.
+  Cited for its finding on generated oracles; read on 2026-08-26.
+- Red-green-refactor itself is practice (Beck), not a standard,
+  and is not dressed as one.

@@ -1,8 +1,9 @@
 # skills
 
 Personal [Agent Skills](https://agentskills.io) for Claude Code, Codex,
-GitHub Copilot, Cursor and Gemini CLI. Each skill's `description` in its
-`SKILL.md` is the summary the host reads; the table below links to them.
+GitHub Copilot, Cursor and Gemini CLI.
+Each skill's `description` in its `SKILL.md` is the summary the host reads;
+the table below links to them.
 
 ## Install in Claude Code
 
@@ -21,19 +22,18 @@ Then install whichever set applies.
 
 ## Install in Codex
 
-Ask Codex's built-in skill installer to install the repository, or use the
-agent-neutral installer:
+Ask Codex's built-in skill installer to install the repository,
+or use the agent-neutral installer:
 
 ```
 npx skills add ShortArrow/skills
 ```
 
-The latter installs under `.agents/skills/`, one of the repository and
-user locations Codex scans. Select individual skills instead of the whole
-catalogue when only a few apply. Restart Codex if a new install does not
-appear. The installer and discovery locations were checked against the
-[official OpenAI documentation](https://learn.chatgpt.com/docs/build-skills)
-on 2026-08-23.
+The latter installs under `.agents/skills/`,
+one of the repository and user locations Codex scans.
+Select individual skills instead of the whole catalogue when only a few apply.
+Restart Codex if a new install does not appear.
+The installer and discovery locations were checked against the [official OpenAI documentation](https://learn.chatgpt.com/docs/build-skills) on 2026-08-23.
 
 ## Install anywhere
 
@@ -41,8 +41,9 @@ on 2026-08-23.
 npx skills add ShortArrow/skills -g
 ```
 
-`-g` writes to `~/.agents/skills/`, which Codex, Copilot (CLI, coding
-agent, VS Code), Cursor and Gemini CLI read as a user-level location.
+`-g` writes to `~/.agents/skills/`, which Codex,
+Copilot (CLI, coding agent, VS Code),
+Cursor and Gemini CLI read as a user-level location.
 Without `-g` it writes the project's `.agents/skills/` instead.
 
 | Host | User directory | Project directory |
@@ -54,22 +55,20 @@ Without `-g` it writes the project's `.agents/skills/` instead.
 | Cursor | `~/.cursor/skills`, `~/.agents/skills`, `~/.claude/skills`, `~/.codex/skills` | `.agents/skills`, `.cursor/skills`, `.claude/skills`, `.codex/skills` |
 | Gemini CLI | `~/.gemini/skills`, `~/.agents/skills` (the alias wins ties) | `.gemini/skills`, `.agents/skills` |
 
-The directories above were checked against official documentation on
-2026-08-28. How a skill that names a host's tools stays correct on the
-others is in [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md).
+The directories above were checked against official documentation on 2026-08-28.
+How a skill that names a host's tools stays correct on the others is in [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md).
 
 ## Other marketplaces
 
 Third-party collections are added the same way rather than copied in.
-Vendoring them would mean carrying their licences and their release
-cadence.
+Vendoring them would mean carrying their licences and their release cadence.
 
 ```
 claude plugin marketplace add anthropics/skills
 ```
 
-These carry `.claude-plugin/marketplace.json`, so `marketplace add` takes
-them directly.
+These carry `.claude-plugin/marketplace.json`,
+so `marketplace add` takes them directly.
 
 | Repository | Covers |
 |---|---|
@@ -82,16 +81,15 @@ them directly.
 | [android/skills](https://github.com/android/skills) | Android development |
 | [MicrosoftDocs/Agent-Skills](https://github.com/MicrosoftDocs/Agent-Skills) | Microsoft documentation |
 
-In Claude Code, every installed skill costs always-on tokens in every
-session, so take the plugin that matches the work rather than the whole
-catalogue.
+In Claude Code, every installed skill costs always-on tokens in every session,
+so take the plugin that matches the work rather than the whole catalogue.
 
 ## Collections that are not marketplaces
 
-These hold skills but declare no marketplace, so `marketplace add` will
-not resolve them. [vercel-labs/skills](https://github.com/vercel-labs/skills)
-installs from any git source into Claude Code, Codex, Cursor, OpenCode and
-some seventy other agents.
+These hold skills but declare no marketplace,
+so `marketplace add` will not resolve them.
+[vercel-labs/skills](https://github.com/vercel-labs/skills) installs from any git source into Claude Code,
+Codex, Cursor, OpenCode and some seventy other agents.
 
 ```
 npx skills add openai/skills
@@ -104,32 +102,31 @@ npx skills add openai/skills
 | [github/awesome-copilot](https://github.com/github/awesome-copilot/tree/main/skills) | Community collection |
 | [remotion-dev/skills](https://github.com/remotion-dev/skills) | Remotion — programmatic video in React |
 
-`--skill` takes one entry instead of the collection, which matters when
-the collection is large.
+`--skill` takes one entry instead of the collection,
+which matters when the collection is large.
 
 ```
 npx skills add https://github.com/vercel-labs/agent-skills --skill vercel-react-best-practices
 ```
 
-The name it resolves is the one the skill declares, not its directory —
-above, `vercel-react-best-practices` lives in `skills/react-best-practices`.
+The name it resolves is the one the skill declares,
+not its directory — above,
+`vercel-react-best-practices` lives in `skills/react-best-practices`.
 
-The command shown under **Install in Codex** reaches this repository the
-same way, which is also how to use these skills from an agent that has no
-plugin system.
+The command shown under **Install in Codex** reaches this repository the same way,
+which is also how to use these skills from an agent that has no plugin system.
 
-By default it writes to `.agents/skills/` in the current project and
-symlinks Claude Code at it; `--agent claude-code` writes to
-`.claude/skills/` instead. Either way it records what it took in
-`skills-lock.json`.
+By default it writes to `.agents/skills/` in the current project and symlinks Claude Code at it;
+`--agent claude-code` writes to `.claude/skills/` instead.
+Either way it records what it took in `skills-lock.json`.
 
 ## The format elsewhere
 
-`SKILL.md` is not specific to Claude Code. The same folder-with-a-manifest
-shape is used across agents. Instructions that name tools or approval
-mechanisms are still host-specific: these skills retain Claude Code's
-existing paths and branch to each host's documented capability, with a
-last row for hosts that expose none.
+`SKILL.md` is not specific to Claude Code.
+The same folder-with-a-manifest shape is used across agents.
+Instructions that name tools or approval mechanisms are still host-specific:
+these skills retain Claude Code's existing paths and branch to each host's documented capability,
+with a last row for hosts that expose none.
 
 | | |
 |---|---|
@@ -144,10 +141,13 @@ last row for hosts that expose none.
 
 ## Contributing
 
-Layout, the description budget, host branches, sources, the checks and
-the firing tests: [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md). The
-reasoning behind those shapes: [docs/design-intent.md](docs/design-intent.md).
+Layout, the description budget, host branches, sources,
+the checks and the firing tests:
+[docs/CONTRIBUTING.md](docs/CONTRIBUTING.md).
+The reasoning behind those shapes:
+[docs/design-intent.md](docs/design-intent.md).
 
 ## License
 
-MIT. See [LICENSE](LICENSE).
+MIT.
+See [LICENSE](LICENSE).
