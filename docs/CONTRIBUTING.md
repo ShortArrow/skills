@@ -48,14 +48,16 @@ and refuses to write if anything but whitespace and blockquote markers would cha
 ## The description is the part that is always on
 
 A host loads every installed skill's name and description into every session and reads the body only when the skill fires.
-In Claude Code, `claude plugin details <name>` shows that split for one skill.
+In Claude Code, `claude plugin details <plugin>@shortarrow-skills` shows that split for one plugin,
+skill by skill.
 Codex applies a discovery budget when many skills are installed and shortens descriptions to fit it.
 
 So the description is paid for continuously, and it has one job:
 to let the model decide whether the skill applies.
 Detail goes in the body, where it costs nothing until it is used.
 Synonyms of words the description already contains add nothing,
-and a second language adds nothing either — the skills Anthropic ships are English-only and fire in every language.
+and a second language adds nothing either;
+the skills Anthropic ships are English-only and fire in every language.
 What the description should spend its words on is the boundary with its siblings:
 four skills here answer to the word "screenshot",
 and the description is the only place that can say which one owns which case before one of them fires.
@@ -64,9 +66,19 @@ Descriptions here are written as the moments the skill replaces ("about to …")
 because a skill fires on a moment and a glossary fires on nothing.
 `docs/design-intent.md` carries the reasoning.
 
-`tests/check-descriptions.sh` refuses a description over 1,200 characters.
-The host's listing truncates near 1,536, the tail is what it cuts,
-and the tail is where the "Use when" triggers sit.
+Claude Code caps the listing twice,
+and both caps were read from the client's own code on 2026-09-10 (`skillListingMaxDescChars`, `skillListingBudgetFraction`).
+One description is cut at 1,536 characters;
+`tests/check-descriptions.sh` refuses one over 1,200 so the "Use when" tail survives.
+The whole listing is also capped at 1% of the context window in characters,
+8,000 at a 200k window.
+Over that, the skills with the fewest recorded uses lose their descriptions first and are listed by name only,
+so a skill that has never fired cannot fire on its description,
+and a new skill starts at the back of that queue.
+This catalogue's forty-one descriptions total about 28,000 characters,
+so with two or more of its plugins installed the default budget is exceeded.
+`tests/check-frontmatter.py` prints the per-plugin totals and the fraction that would hold them all;
+the README tells installers to raise `skillListingBudgetFraction` (0.05 holds the whole catalogue) or to install one plugin.
 
 ## Host branches
 

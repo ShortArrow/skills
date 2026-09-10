@@ -13,6 +13,16 @@ the table below links to them.
 
 Then install whichever set applies.
 
+Claude Code sends the model one listing of every loaded skill and caps it at 1% of the context window (8,000 characters at 200k).
+The descriptions here are deliberately long,
+about 28,000 characters across the four plugins,
+so with more than one plugin installed the least-used skills are listed by name only and never fire on their description.
+Raise the cap in `~/.claude/settings.json`, or install one plugin:
+
+```json
+{ "skillListingBudgetFraction": 0.05 }
+```
+
 | Plugin | Skills |
 |---|---|
 | `screenshot-skills` | [any-screenshot](skills/any-screenshot/SKILL.md), [windows-screenshot](skills/windows-screenshot/SKILL.md), [avalonia-screenshot](skills/avalonia-screenshot/SKILL.md), [flaui-screenshot](skills/flaui-screenshot/SKILL.md), [hyperv-screenshot](skills/hyperv-screenshot/SKILL.md) |
@@ -82,6 +92,7 @@ so `marketplace add` takes them directly.
 | [MicrosoftDocs/Agent-Skills](https://github.com/MicrosoftDocs/Agent-Skills) | Microsoft documentation |
 
 In Claude Code, every installed skill costs always-on tokens in every session,
+and the listing budget above decides which descriptions the model sees at all,
 so take the plugin that matches the work rather than the whole catalogue.
 
 ## Collections that are not marketplaces
