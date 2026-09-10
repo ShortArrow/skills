@@ -69,13 +69,13 @@ or the fixes name the actual defects:「失敗しましたが」の逆接の誤�
 Expected: no skill call.
 Nothing about the prose is being changed.
 
-### S5 — translation direction
+### S5 — a file move
 
-> announce.md を英訳して announce.en.md に保存して。
+> release-notes.md を docs/ に移動して。
 
 Expected: no skill call.
-The Japanese is not being revised, and the translation is a new text,
-not a revision of one.
+A file changes place; no sentence is written or revised.
+(Until 2026-09-10 this scenario asked for announce.md to be translated into English. Once the rule became language-neutral, writing the English translation was inside the skill's scope and the session applied it to the English it wrote, which is the skill working; the scenario moved, per docs/design-intent.md.)
 
 ## Recorded runs
 
@@ -87,3 +87,28 @@ when this skill was `plain-japanese` with a Japanese body and S2 asked for the b
 - S4, S5: no Skill call.
 
 5/5 on the expected side.
+
+2026-09-10, claude-fable-5-1,
+`MAX_TURNS=10 tests/run-firing-tests.sh plain-language` (fresh sessions, announce fixture, plugin cache at deacec1),
+after the rename and the split into a neutral body and a Japanese layer:
+
+- S1, S2, S3 fired (56 s / 44 s / 48 s, $1.06 / $0.63 / $0.69).
+  S1 and S3 opened `references/japanese.md` before editing; S2,
+  the English draft, did not.
+  S1 cut the four-claim sentence into four, closed 目的は…ためです,
+  opened the の三連 into a verb, dropped both doubled honorifics,
+  settled ユーザー, and named the link's destination.
+  S2 cut the but/so chain and the first-of-all sentence into four sentences each,
+  closed "the purpose is so that",
+  opened the four genitives into "we reviewed the settings of our new sync platform",
+  and reduced the stacked courtesies.
+  S3 named each defect in the five UI strings and fixed it.
+- S4: no Skill call (109 s);
+  the session reported that neither the default value nor a config file exists in the fixture.
+- S5, as the translation request: fired.
+  The session translated announce.md and applied the sentence rules to the English it wrote,
+  which is what a language-neutral rule should do;
+  the scenario moved to a file move and was rerun alone: no Skill call.
+
+5/5 on the expected side after the move.
+
