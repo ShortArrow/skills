@@ -161,7 +161,8 @@ def main(argv):
         for plugin, chars in budget['plugins'].items():
             mark = 'over' if chars > default_budget else 'fits'
             print(f'  {plugin:<20} {chars:>6}  {mark}')
-        print(f'  {"all":<20} {budget["total"]:>6}  needs skillListingBudgetFraction >= {budget["fraction_needed"]:.3f}')
+        print(f'  {"all":<20} {budget["total"]:>6}  needs skillListingBudgetFraction >= {budget["fraction_needed"]:.3f} for this catalogue alone')
+        print('  Other plugins and the bundled skills share the same budget; `claude --debug` logs "Skill listing over budget" with the real totals.')
         print()
         print(f'{len(reports)} skills, {errors} errors, {warnings} warnings')
     return 1 if errors or (strict and warnings) else 0
