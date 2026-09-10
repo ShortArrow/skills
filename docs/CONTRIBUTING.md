@@ -10,7 +10,7 @@ tests/<name>/firing-tests.md     its scenarios and recorded runs
 tests/fixtures/<name>/           the repository a scenario runs in
 tests/check-portability.ps1      manifests, hosts, invariants, sources
 tests/check-descriptions.sh      the description length cap
-tests/check-frontmatter.py       the frontmatter parses as the host will parse it
+tests/skill-doctor.py            health of every skill, as the host will see it
 tests/reflow-prose.py            wraps prose one sentence per line, in any language
 tests/run-firing-tests.sh        the behavioural runner
 .claude-plugin/marketplace.json  plugin grouping
@@ -77,7 +77,7 @@ so a skill that has never fired cannot fire on its description,
 and a new skill starts at the back of that queue.
 This catalogue's forty-one descriptions total about 28,000 characters,
 so with two or more of its plugins installed the default budget is exceeded.
-`tests/check-frontmatter.py` prints the per-plugin totals and the fraction that would hold them all;
+`tests/skill-doctor.py` prints the per-plugin totals and the fraction that would hold them all;
 the README tells installers to raise `skillListingBudgetFraction` (0.05 holds the whole catalogue) or to install one plugin.
 
 ## Host branches
@@ -107,27 +107,38 @@ Run before every commit:
 
 ```powershell
 pwsh -File tests/check-portability.ps1
-python tests/check-frontmatter.py
+python tests/skill-doctor.py --strict
 ```
 
-The second parses every frontmatter with a YAML parser,
-as the host does.
-A description written as a plain scalar that contains ": " is not YAML;
-the host then loads no description,
-the skill costs nothing always-on (`claude plugin details <plugin>` shows it as `< 20` tokens) and never fires on its description.
-Two skills sat in that state for weeks without any listing showing it.
-Write descriptions as block scalars (`description: |`).
-
-It checks every manifest and resource reference, marketplace membership,
-the host rows and invariants above, the Sources blocks,
-and the README headings an installer looks for.
+The first checks every manifest and resource reference,
+marketplace membership, the host rows and invariants above,
+the Sources blocks, and the README headings an installer looks for.
 Failures print one per line and the run exits 1.
 
-`tests/check-descriptions.sh` is meant to run as this clone's pre-commit hook.
+The second is this repository's answer to the health report Claude Code does not have.
+Claude Code's own `/skill-doctor` reports usage and context cost,
+and `claude plugin validate` checks manifests;
+on 2026-09-10 the latter passed a SKILL.md whose description the runtime cannot parse and one 2,600 characters long.
+`tests/skill-doctor.py` reads each skill the way the runtime does and prints one row per skill:
+the frontmatter parses as YAML with a matching name and a non-empty description (a plain scalar containing ": " is not YAML, and the runtime then loads no description at all, which `claude plugin details` shows as `< 20` always-on tokens);
+the description is under 1,200 characters (warning) and 1,536 (error, where the runtime truncates);
+every `references/*.md` is named in the body and every named path exists;
+a skill with `references/japanese.md` has a Language layers section;
+and the files follow the one-sentence-per-line rule.
+It ends with the listing budget per plugin.
+It exits 1 on an error, and with `--strict` on a warning;
+`--json` prints the same report as one object.
+It takes any skills directory as its argument,
+so it also serves for a catalogue that is not this one.
+
+`tests/check-descriptions.sh` is the description cap alone, in bash,
+meant to run as this clone's pre-commit hook.
 Wire it once:
 
 ```bash
-printf '#!/usr/bin/env bash\nexec bash "$(git rev-parse --show-toplevel)/tests/check-descriptions.sh"\n' > .git/hooks/pre-commit
+printf '#!/usr/bin/env bash
+exec bash "$(git rev-parse --show-toplevel)/tests/check-descriptions.sh"
+' > .git/hooks/pre-commit
 chmod +x .git/hooks/pre-commit
 ```
 
