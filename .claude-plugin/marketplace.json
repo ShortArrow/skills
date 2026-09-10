@@ -33,6 +33,7 @@
         "./skills/plain-japanese",
         "./skills/document-structure",
         "./skills/reader-map",
+        "./skills/cognitive-rhythm",
         "./skills/pdf-transcribe",
         "./skills/i18n-parity",
         "./skills/measured-claims",
