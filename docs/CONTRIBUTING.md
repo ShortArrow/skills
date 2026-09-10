@@ -5,6 +5,7 @@
 ```
 skills/<name>/SKILL.md           the skill
 skills/<name>/scripts/           anything it executes
+skills/<name>/references/        material the body links to, read only when needed
 tests/<name>/firing-tests.md     its scenarios and recorded runs
 tests/fixtures/<name>/           the repository a scenario runs in
 tests/check-portability.ps1      manifests, hosts, invariants, sources
@@ -17,6 +18,18 @@ docs/design-intent.md            the forces behind these shapes
 `SKILL.md` opens with YAML frontmatter holding `name` and `description`.
 The name matches the directory; the portability check refuses a
 mismatch.
+
+## Language-specific material is linked, not inlined
+
+A skill's body carries the language-neutral rule, in English. What
+differs by language — the tells, the constructions, the endings, the
+worked examples — goes in `references/<language>.md` (today:
+`references/japanese.md` in `unmachine-prose`, `reader-map` and
+`cognitive-rhythm`), and the body says in one paragraph what is there
+and links it. A session revising Japanese reads the Japanese file; a
+session revising English never loads it. `plain-japanese` is the
+exception, because its rule is Japanese. The portability check refuses
+a `references/` path the body names but the directory lacks.
 
 ## The description is the part that is always on
 

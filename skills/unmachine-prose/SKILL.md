@@ -16,8 +16,10 @@ them. Fix the density, not the dictionary.
 
 **The two languages barely overlap.** English tells are syntactic —
 trailing participles, `not X but Y`, em dashes. Japanese has none of those
-constructions. Its tells are in 文末, 接続詞 and 段落の閉じ方. Checking
-Japanese against an English list finds nothing and proves nothing.
+constructions; its tells sit in 文末, 接続詞 and 段落の閉じ方, and checking
+Japanese against the English list finds nothing and proves nothing. The
+Japanese list is `references/japanese.md`, written in Japanese. Read it
+when the draft is Japanese, and read only it.
 
 ---
 
@@ -97,216 +99,86 @@ says nothing. `This helps when the working set exceeds RAM` does.
 
 ---
 
-# 日本語
+# Japanese
 
-英語の一覧は使えない。日本語の兆候は語彙より**文末・接続・段落の閉じ方**に出る。
-英語から乗ってくるのも、記法より**修辞**のほうが被害が大きい。
-
-## 比喩と擬人化が英語から乗ってくる
-
-英語の技術文書は、物を主語にして人の動詞を与えるのが標準の書き方になっている。
-日本語の技術文書ではならない。英語の比喩をそのまま訳すと擬人化になり、読みにくい
-訳文の匂いだけが残る。
-
-| 訳した比喩 | 元の英語 | 事実を書く |
-|---|---|---|
-| shim の**値段** | what a shim costs | shim を経由すると何 ms 増えるか |
-| 実行が終わるまで**居座る** | stays in the middle | 実行が終わるまでプロセスとして残る |
-| リンクは**腐る** | the link goes stale | リンク先が消えればリンクは切れる |
-| 選ばなかったほうの**枝** | the wrong branch | 候補は 2 つあり、片方を選んだ |
-| この仕掛けが**太らせる** | feeds this | 該当するウィンドウが増える |
-| 原因候補が**手元にある** | is always available | 毎月あるので必ず見つかる |
-| 最後にやったことを**肯定する** | confirms whatever you did last | 直後が順調なら対処に見える |
-
-判定は 1 つ。**主語が物なのに、人にしか使わない動詞が付いていないか。** 居座る、
-肯定する、待つ、太る、腐る、語る、知っている、抱える、背負う。付いていたら、その
-動詞が指している観測事実に書き換える。
-
-見出しでも同じ。日本語の技術見出しは、比喩より内容の名指しのほうが強い。
-
-## 英語で書いてから訳している
-
-上の兆候はまとめて 1 つの原因から出る。英語の草稿を作ってから日本語にする、その
-手順そのもの。用語だけでなく語順と比喩が付いてくる。
-
-日本語版は、同じ事実から日本語で書き直す。訳すのは用語だけにする。
-
-見分け方は、日本語だけを読んで元の英語が透けるかどうか。無生物主語が続く、
-関係代名詞をそのまま連体修飾に伸ばした長い主語、「〜のほうが〜」の多用。
-
-## 文末が同型で続く
-
-最も出やすい。「〜できる」「〜である」「〜します」が等間隔で連続し、リズムが一定になる。
-
-> キャッシュは書き込み時に破棄されます。読み取りはロックを取得します。
-> 整合性が保たれます。
-
-人間が書くと文の長さも語尾も揺れる。**3 文続けて同じ語尾なら疑う。**
-
-## 「〜ことで」構文
-
-英語の分詞句後置に相当する日本語の癖。
-
-> マーカーを検証する**ことで**、無言の失敗を防いでいます。
-> shim を経由する**ことで**、バージョンが固定されます。
-
-前半と後半の因果が自明なら、後半は情報を足していない。切って、因果が非自明な部分だけ書く。
-
-> マーカーが無ければ落とす。無ければ、ローカルの ignore が消えた設定が
-> 正常に生成される。
-
-## 判断を保留する語尾
-
-> 〜と言えるでしょう / 〜ではないでしょうか / 場合によります /
-> 一概には言えません / 〜が求められます
-
-技術文書で条件を書かずにぼかすのは、読者に判断を投げているだけ。**条件を書く。**
-
-> 5 万行を超えるとインデックスが効かなくなる。それ未満なら問題ない。
-
-## 抽象語の多用
-
-「重要」「有効」「最適」「価値」「〜性」「〜化」。定義せずに使うと、何も言っていない文になる。
-
-> 保守性が向上します → 設定が 1 箇所になり、変更時に触るファイルが 3 つから 1 つになる
-
-## 接続詞が過剰
-
-「また」「さらに」「そして」「したがって」を各文頭に置くと、論理の接続が丁寧すぎて進行感が消える。**繋がりが自明なら接続詞は要らない。**
-
-## 段落が毎回きれいに閉じる
-
-段落の末尾で必ずまとめに入る。人間の技術文書は、次の段落に continue する形で終わることが多い。
-
-## 見出しの内容を本文冒頭で繰り返す
-
-> ## PATH の予算
-> PATH の予算について説明します。
-
-見出しが既に言っている。本文は事実から始める。
-
-## タイトルが冒頭の 1 節だけを指している
-
-書きながら付けたタイトルは、最初に書いた節に引っ張られる。5 節ある記事の
-1 節目が bat の不具合なら「bat が返ってこない理由」になり、残り 4 節を約束から
-外してしまう。
-
-**要約文と突き合わせる。** 要約は書き終えてから付けるので、たいてい要約のほうが
-記事全体を正しく言っている。タイトルと要約が別のことを言っていたら、直すのは
-タイトル。
-
-> title: bat が返ってこない理由は shim だった
-> summary: mise のツールを symlink 経由で起動している理由と、それができない 60 本
-
-見出しを縦に並べて、タイトルが全部を覆っているかも見る。覆えていなければ、記事が
-実際に主張していることを名指しする。
-
-## 英語圏の記法が混入する
-
-- 文末のコロン（`以下のとおりです：`）は日本語の習慣にない
-- 半角スペースで単語を区切る
-- 箇条書きが `**用語**: 説明` になる
-
-## メリット・デメリットの並列で終わる
-
-利点と欠点を対称に並べて、**どちらを選んだかを書かない**。技術文書で必要なのは選択と理由。
-
-## 削っただけだと lorem ipsum になる
-
-ここまでの禁止だけを適用すると、正しくて何も言っていない文が並ぶ。比喩を外した跡に
-一般的な動詞を置くと、比喩が運んでいた情報のぶんだけ薄くなる。
-
-| 外した比喩 | 置いた語（薄い） | 事実を戻した形 |
-|---|---|---|
-| 間に居座る | 間に残ります | ツールが終わるまで shim も終了しない |
-| これを太らせる | 該当ウィンドウを増やします | 送られた先で即 cloak されるので件数が増える |
-| いつでも手元にある | 見つかります | ほぼ毎月あるので、どの月の症状にも当たる |
-
-判定は文単位。**その 1 文を消して、読者が失う事実はあるか。** 無ければ、比喩を
-外した跡地が残っているだけ。
-
-もう 1 つ出やすいのが否定の連鎖。「壊れていません」「説明がつきません」「入りま
-せん」が並ぶと、成り立たないことの列挙で段落が終わる。**言えることは肯定で書く。**
-
-- 「バイナリは壊れていません」→「同じ実行ファイルを直接叩けば普通に動きました」
-- 「遅さでは説明がつきません」→「遅いだけならプロンプトは返ってくる」
-
-対象そのものが不在や不成立なら、否定が並ぶのは正しい。cloak されたウィンドウの話で
-「z オーダーを上げても出てこない」は事実そのもの。数で判定できるものではない。
-
-日本語の技術文が読める形になるのは、1 文ごとに具体（数値、コマンド名、実際の動作）
-が入っているとき。禁止を守っただけでは足りない。
+Everything language-specific is in `references/japanese.md`: the
+metaphors and personifications that ride in from English, the 「〜ことで」
+construction, the endings that withhold a judgement, the paragraph that
+closes neatly every time, the title that names only the first section,
+and the lorem ipsum left behind when metaphors are deleted and nothing is
+put back. It is written in Japanese because the reader checking a
+Japanese draft should be reading Japanese, not a description of it.
 
 ---
 
-## 二言語ペアを書くとき
+## Bilingual pairs
 
-二言語のドキュメントペアで最も多い事故は、片方の言語で書いてから
-もう片方へ訳すこと。上の「英語で書いてから訳している」は、ペア執筆では
-例外ではなく既定の手順になりやすい — 「両言語に同じ編集を」という
-作業指示そのものが翻訳を招く。
+The commonest accident in a bilingual documentation pair is writing one
+language and translating it into the other. The instruction that produces
+it is innocent, "make the same edit in both languages", and under it
+the draft translated from English becomes the default rather than the
+exception.
 
-- **各言語版は、共有した事実の列から別々に書く。** 訳してよいのは用語
-  だけ。語順・比喩・構文が原文から乗ってきたら、それは訳した証拠。
-- **検査は言語ごとに、その言語のリストで行う。** ペアの片側だけ検査して
-  もう片側を「同じ内容だから」で通さない。日本語を英語のリストで検査
-  しても何も出ない。
-- **執筆を委譲するなら、チェックリストを指示文に載せる。** サブエージェント
-  や同僚はこのスキルを読んでいない。指示は「両言語に同じ編集を」ではなく
-  「同じ事実を、各言語の慣習で書く」とし、対象言語の検査項目を添える。
+- **Write each language from the shared list of facts.** Only terms are
+  translated. Word order, metaphors and syntax that carry over from the
+  other draft are the evidence that it was translated.
+- **Check each language against its own list.** Passing one side because
+  it "says the same thing" passes nothing; Japanese checked against the
+  English list yields nothing.
+- **When delegating the writing, put the checklist in the prompt.** A
+  subagent or a colleague has not read this skill. The instruction is
+  "the same facts, in each language's conventions", with the target
+  language's checks attached, not "the same edit in both".
 
-実例。二言語 README をペアで書いた結果、日本語側に「チェックアウトの中で
-しか動かない」「プロトコルを話す」「読んでいる場所によって違う」が残り、
-レビューの指摘まで誰も気づかなかった。どれも英語草稿が透けた訳文で、
-日本語として読み直していれば書かない形をしている。
+An instance: a bilingual README written as a pair left
+「チェックアウトの中でしか動かない」「プロトコルを話す」「読んでいる場所によって
+違う」 on the Japanese side, and nobody noticed until review. Each is an
+English draft showing through — a shape nobody writes when reading the
+Japanese as Japanese.
 
-## 自分の草稿を検査する
+## Checking your own draft
 
-**英語** — 文末だけを縦に読む。分詞句と significance inflation は両方そこに出る。
+**English** — read the sentence endings down the page. Participial
+trailers and significance inflation both land there.
 
-200 語あたりで数える。
+Count per 200 words:
 
-- 文末 `-ing` 節
-- 三つ組
+- sentence-final `-ing` clauses
+- triplets
 - `not X but Y`
-- `- **Bold**:` 行
-- em dash
+- `- **Bold**:` lines
+- em dashes
 
-**日本語** — 2 回読む。1 回目は文末だけを縦に、同じ語尾が続いていないか。2 回目は
-主語と動詞の組だけを拾い、物が主語の文に人の動詞が付いていないか。
+**Japanese** — two reads, and a different count; both are in
+`references/japanese.md`.
 
-200 字あたりで数える。
+**Thinness does not show in a count.** Formal Japanese ends most
+sentences in ます・です, and that ratio passes ninety percent in prose
+that is perfectly good; a threshold on ending distribution or sentence
+length flags text that has nothing wrong with it. Instead, pick one
+sentence per paragraph and delete it. **A run of sentences whose deletion
+costs nothing is the lorem ipsum itself.** The ground left after a
+deleted metaphor shows up here.
 
-- 同一語尾の連続
-- 物が主語の意志動詞（居座る、肯定する、待つ、腐る）
-- 「〜ことで」
-- 「〜でしょう」「〜ではないでしょうか」
-- 文頭の接続詞
-- 定義なしの「重要」「最適」「〜性」
+One of these is style. Several stacking is a signal.
 
-**薄さは数えても出ない。** 敬体で書けば文末が「ます・です」に寄るのは当たり前で、
-その比率は良く書けた文章でも 9 割を超える。文末の分布や文長の分散を閾値にすると、
-問題の無い文章まで引っかかる。
+## Length
 
-かわりに、段落ごとに 1 文選んで消してみる。**消して困らない文が続いていたら、それが
-lorem ipsum の実体。** 比喩を外した跡地はここに出る。
+Cut, and most of the above disappears together, because these patterns
+are **what fills the page after the content has run out**. The trailing
+participle, the triplet, the closing paragraph — each is a way of
+continuing past the end of what there was to say.
 
-どちらも、1 つなら文体。複数が重なると信号になる。
+If a third can go without a single fact going with it, the word count
+was the tell.
 
-日本語は、書いた本人が英語の草稿を持っているときほど検出が難しい。元の文が頭に
-残っていると、訳したものが自然に読める。**英語を見ずに日本語だけを読む**のが唯一の
-検査になる。
+## What is not a tell
 
-## 長さ
+Correct spelling. A long word used precisely. Consistent formatting.
+Structure that follows the shape of the content. Plain writing that is
+correct is not a target.
 
-削ると上のほとんどが同時に消える。これらのパターンは、**書くことが尽きた後に紙面を埋めるもの**だから。後置分詞も、三つ組も、締めの段落も、内容の終わりを越えて書き続けるための手段になっている。
-
-3 分の 1 削って事実が 1 つも減らないなら、その語数が兆候だった。
-
-## 兆候ではないもの
-
-正しい綴り。正確に使われた長い語。一貫した書式。内容の形に沿った構造。平明に書いて正しいことは、直す対象ではない。
-
-日本語の誤り一般も、ここには入らない。二重敬語、主述のねじれ、「の」の連続、表記
-ゆれは人間も同じだけ犯すもので、機械が書いた兆候ではない。それらは
-`plain-japanese` が扱う。両方を順に当てるのはよいが、混ぜるとどちらの検査も鈍る。
+Nor are the ordinary errors of a language: a doubled honorific, a
+subject that never meets its predicate, の stacked three deep, one term
+spelled two ways. Humans make those at the same rate, and they are
+`plain-japanese`'s. Apply both in turn; mixing them dulls each check.
