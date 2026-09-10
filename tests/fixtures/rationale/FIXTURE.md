@@ -6,7 +6,8 @@ a paragraph about the spool reappears inside the section on deduplication with n
 a sentence about the old version's settings screen sits in a paragraph about the new rule,
 the word that answers the previous sentence arrives at the end of the next one with the subject and object swapped,
 two causes of slowness are written as one,
-a cause is asserted without its mechanism,"重要なのは" announces a point that is then bolded,
+a cause is asserted without its mechanism,
+"重要なのは" announces a point that is then bolded,
 one claim is made twice in different words,
 and the Windows agent is "confirmed" to behave the same in a document that later says the Windows agent has not been started.
 `settings.md` beside it is a plain settings reference — a table of keys,

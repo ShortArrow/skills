@@ -7,9 +7,8 @@ the spool is described before it is defined,
 a paragraph goes back to the spool without saying so,
 the old version's settings screen intrudes on the new rule,
 an answering word lands at the end of the next sentence with subject and object swapped,
-two causes are written as one,
-a cause has no mechanism,"重要なのは" announces a bolded point,
-one claim is made twice,
+two causes are written as one, a cause has no mechanism,
+"重要なのは" announces a bolded point, one claim is made twice,
 and the Windows agent is "confirmed" in a document that later says it was never started.
 `settings.md` beside it is a plain settings table.
 Run them with `tests/run-firing-tests.sh reader-map`.

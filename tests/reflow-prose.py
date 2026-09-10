@@ -47,15 +47,19 @@ def width(s):
 
 # --- language layers -------------------------------------------------------
 
+def wide(c):
+    return unicodedata.east_asian_width(c) in 'WF'
+
+
 def join_ja(a, b):
     if not a:
         return b
     pa, nb = a[-1], b[0]
     if pa in '（「『(' or nb in '）」』)、。，．,.':
         return a + b
-    if ASCII.match(pa) or ASCII.match(nb):
-        return a + ' ' + b
-    return a + b
+    if wide(pa) and wide(nb):
+        return a + b
+    return a + ' ' + b
 
 
 def join_en(a, b):
