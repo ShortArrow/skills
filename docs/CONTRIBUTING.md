@@ -136,9 +136,7 @@ meant to run as this clone's pre-commit hook.
 Wire it once:
 
 ```bash
-printf '#!/usr/bin/env bash
-exec bash "$(git rev-parse --show-toplevel)/tests/check-descriptions.sh"
-' > .git/hooks/pre-commit
+printf '#!/usr/bin/env bash\nexec bash "$(git rev-parse --show-toplevel)/tests/check-descriptions.sh"\n' > .git/hooks/pre-commit
 chmod +x .git/hooks/pre-commit
 ```
 
