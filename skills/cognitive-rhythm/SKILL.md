@@ -25,7 +25,13 @@ A page that is scanned (a README, a procedure, a reference) belongs to `document
 whose rule is the opposite: conclusion first.
 One document gets one of the two, never both.
 
-The Japanese forms (which endings carry hesitation, which openers and closers to delete, the beat of a turn) and worked examples in Japanese are in `references/japanese.md`.
+## Language layers
+
+The rule is language-neutral; what differs by language is layered on,
+not mixed in.
+Japanese: read `references/japanese.md` before writing or revising Japanese.
+It carries the forms that exist only there and worked examples in Japanese.
+A draft in another language uses the body alone.
 
 ## The moments this replaces
 

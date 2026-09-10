@@ -27,7 +27,13 @@ A reader builds a map as they go and files each new piece of information somewhe
 the moment a piece arrives with nowhere to go, they are lost.
 The rules below come from editorial practice and rest on no standard.
 
-The Japanese-specific forms (where the answering word tends to land, what the passive does to a run of facts, which endings carry doubt) and worked examples in Japanese are in `references/japanese.md`.
+## Language layers
+
+The rule is language-neutral; what differs by language is layered on,
+not mixed in.
+Japanese: read `references/japanese.md` before writing or revising Japanese.
+It carries the forms that exist only there and worked examples in Japanese.
+A draft in another language uses the body alone.
 
 ## The moments this replaces
 

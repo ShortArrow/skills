@@ -126,6 +126,45 @@ a skill whose body names a standard or a paper (ISTQB, ISO/IEC, RFC, SemVer, SLS
 and that block must contain a check date in `YYYY-MM-DD`.
 Deleting the block, or the date, makes the script exit 1.
 
+## Language-neutral rules, with language layers
+
+**Protects.** A writing rule that holds in every language is written once,
+in English, and fires on English and Japanese drafts alike.
+What holds only in Japanese (the constructions, the endings, the courtesy grammar, the worked examples) sits in `references/japanese.md`,
+named from one fixed section of the body,
+so a session revising Japanese reads it and a session revising English never pays for it.
+
+**In tension.** The examples that make a rule land are bound to a language,
+and a body full of Japanese examples fires only for Japanese.
+The opposite pull is as real:
+a body kept neutral by deleting the specifics becomes a glossary that fires on nothing.
+The layer is what lets the body stay a rule and the examples stay concrete.
+
+**Refused, while these reasons hold.**
+
+- A Japanese-only form in a body, or a neutral rule in a layer file.
+- A layer file the body does not name.
+  Unlinked, it is never read.
+- A skill whose whole rule is Japanese.
+  `plain-japanese` was one; one claim per sentence,
+  a subject that meets its predicate,
+  one head per modifier and one spelling per term hold in English too,
+  so it became `plain-language` with a Japanese layer.
+- A translated copy of the neutral rule inside the layer.
+  The layer says what is different, not what is the same.
+
+**The next case.** A new writing skill is written neutral first.
+Each moment in its table is checked against an English and a Japanese draft,
+and whatever holds in only one goes to the layer.
+A second language is a second layer file, named from the same section.
+
+**Gate.** `tests/check-portability.ps1`:
+every `references/<language>.md` must be named in its skill's `SKILL.md`,
+and every `references/` path a body names must exist.
+`tests/reflow-prose.py` gives line wrapping the same shape:
+one neutral rule,
+and the sentence ends and separators of each language chosen from the characters in the paragraph.
+
 ## A negative scenario stands clear of the trigger
 
 **Protects.** The two "should not fire" scenarios are what prove a skill is not always-on.

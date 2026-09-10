@@ -20,30 +20,29 @@ docs/design-intent.md            the forces behind these shapes
 The name matches the directory;
 the portability check refuses a mismatch.
 
-## Language-specific material is linked, not inlined
+## Language-neutral rules, with language layers
 
-A skill's body carries the language-neutral rule, in English.
-What differs by language — the tells, the constructions, the endings,
-the worked examples — goes in `references/<language>.md` (today: `references/japanese.md` in `unmachine-prose`, `reader-map` and `cognitive-rhythm`),
-and the body says in one paragraph what is there and links it.
-Material specific to a market rather than a language (`regulated-claims`'s statutes and guidance) takes the same shape as `references/japan.md`,
-and carries its own `## Sources` block.
-A session revising Japanese reads the Japanese file;
-a session revising English never loads it.
-`plain-japanese` is the exception, because its rule is Japanese.
-The portability check refuses a `references/` path the body names but the directory lacks.
+A skill's body is the rule that holds in every language, in English.
+What differs by language goes in `references/<language>.md` (today `references/japanese.md`),
+and the body names it from a section called **Language layers**,
+placed right after the introduction and worded the same way in every writing skill,
+so the layer is loaded whenever the draft is Japanese and never otherwise.
+Material specific to a market rather than a language takes the same shape (`regulated-claims` and its `references/japan.md`) and carries its own `## Sources` block.
+The portability check refuses a layer file the body does not name,
+and a named path the directory lacks.
+`docs/design-intent.md` carries the reasoning.
 
-## Japanese prose is wrapped at sentence boundaries
+## Prose is wrapped one sentence per line
 
-Japanese text in a skill,
-a reference file or a fixture is wrapped one sentence per line,
-and a sentence wider than about 72 columns is broken after a 、.
-A fixed-width wrap splits words,
-makes every later edit re-flow the paragraph in the diff,
-and in some renderers shows a space where the line broke.
-`python tests/reflow-prose.py <file>` applies the rule and reports any change other than whitespace and blockquote markers.
-Existing English text keeps its 72-column wrap,
-which breaks at spaces and has none of these problems.
+In every language: a sentence ends a line,
+a sentence wider than about 72 columns breaks after a clause separator (, ; : 、),
+and a line never breaks inside a word, a bracket or a quoted phrase.
+A fixed-width wrap re-flows a whole paragraph in the diff when one word changes and puts breaks where no reader pauses;
+in Japanese it also splits words and can render as a stray space.
+`python tests/reflow-prose.py <file>` applies the rule,
+with the sentence ends and separators of each language layered on from the characters in the paragraph,
+and refuses to write if anything but whitespace and blockquote markers would change.
+`--check` lists the files that are not yet in shape.
 
 ## The description is the part that is always on
 

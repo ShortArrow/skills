@@ -42,6 +42,19 @@ foreach ($directory in Get-ChildItem -LiteralPath $skillsRoot -Directory) {
     }
 }
 
+# A language layer that the body does not link is never read: every
+# references/<language>.md must be named in its skill's SKILL.md.
+foreach ($directory in Get-ChildItem -LiteralPath $skillsRoot -Directory) {
+    $referencesDir = Join-Path $directory.FullName 'references'
+    if (-not (Test-Path -LiteralPath $referencesDir)) { continue }
+    $content = Get-Content -Raw -LiteralPath (Join-Path $directory.FullName 'SKILL.md')
+    foreach ($layer in Get-ChildItem -LiteralPath $referencesDir -Filter '*.md') {
+        if ($content -notmatch [regex]::Escape("references/$($layer.Name)")) {
+            $failures.Add("$($directory.Name): references/$($layer.Name) exists but SKILL.md does not link it")
+        }
+    }
+}
+
 $hostBranchSkills = @(
     'any-screenshot',
     'codex',

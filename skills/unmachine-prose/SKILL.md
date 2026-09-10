@@ -19,8 +19,6 @@ Fix the density, not the dictionary.
 Japanese has none of those constructions;
 its tells sit in 文末,接続詞 and 段落の閉じ方,
 and checking Japanese against the English list finds nothing and proves nothing.
-The Japanese list is `references/japanese.md`, written in Japanese.
-Read it when the draft is Japanese, and read only it.
 
 ---
 
@@ -107,7 +105,13 @@ Cite it, measure it, or own it as your judgement.
 
 ---
 
-# Japanese
+# Language layers
+
+The rule is language-neutral; what differs by language is layered on,
+not mixed in.
+Japanese: read `references/japanese.md` before writing or revising Japanese.
+It carries the forms that exist only there and worked examples in Japanese.
+A draft in another language uses the body alone.
 
 Everything language-specific is in `references/japanese.md`:
 the metaphors and personifications that ride in from English,
@@ -117,7 +121,6 @@ the title that names only the first section,
 and the lorem ipsum left behind when metaphors are deleted and nothing is put back.
 It is written in Japanese because the reader checking a Japanese draft should be reading Japanese,
 not a description of it.
-
 ---
 
 ## Bilingual pairs
