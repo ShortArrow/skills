@@ -1,6 +1,7 @@
 ---
 name: clean-docs
-description: Discipline for writing durable artifacts — PR bodies, commits, CHANGELOGs, ADRs, READMEs, specifications, source code. A durable artifact is read by someone who never saw the conversation, so conversation-local labels die at its boundary, and it answers the reader, not the reviewer. Derivation orders documents — living documents follow their source, records freeze at their moment — and settles where each question belongs: what, why, why-not, how much, what changed. Use when writing a PR, a commit, a CHANGELOG, an ADR or an issue, when editing a README or PRD, when unsure where a why, a why-not or a history note belongs, when a why that still holds is about to be frozen into an ADR instead of stated as living design intent, and whenever about to write "See ADR-NNNN".
+description: |
+  Discipline for writing durable artifacts — PR bodies, commits, CHANGELOGs, ADRs, READMEs, specifications, source code. A durable artifact is read by someone who never saw the conversation, so conversation-local labels die at its boundary, and it answers the reader, not the reviewer. Derivation orders documents — living documents follow their source, records freeze at their moment — and settles where each question belongs: what, why, why-not, how much, what changed. Use when writing a PR, a commit, a CHANGELOG, an ADR or an issue, when editing a README or PRD, when unsure where a why, a why-not or a history note belongs, when a why that still holds is about to be frozen into an ADR instead of stated as living design intent, and whenever about to write "See ADR-NNNN".
 ---
 
 # Self-Contained Artifacts

@@ -1,6 +1,7 @@
 ---
 name: find-skills
-description: Find an existing skill before writing one or working through a specialised task by hand. Search the vendor-official collections by owner first — the open registry is open publication, and a skill is code that runs with the agent's full permissions, so install count is popularity rather than review. Use when a task looks like something a vendor will already have solved: a file format, a framework's conventions, a toolchain.
+description: |
+  Find an existing skill before writing one or working through a specialised task by hand. Search the vendor-official collections by owner first — the open registry is open publication, and a skill is code that runs with the agent's full permissions, so install count is popularity rather than review. Use when a task looks like something a vendor will already have solved: a file format, a framework's conventions, a toolchain.
 allowed-tools: Bash, Read, WebFetch
 ---
 

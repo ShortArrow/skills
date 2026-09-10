@@ -10,6 +10,7 @@ tests/<name>/firing-tests.md     its scenarios and recorded runs
 tests/fixtures/<name>/           the repository a scenario runs in
 tests/check-portability.ps1      manifests, hosts, invariants, sources
 tests/check-descriptions.sh      the description length cap
+tests/check-frontmatter.py       the frontmatter parses as the host will parse it
 tests/reflow-prose.py            wraps prose one sentence per line, in any language
 tests/run-firing-tests.sh        the behavioural runner
 .claude-plugin/marketplace.json  plugin grouping
@@ -94,7 +95,16 @@ Run before every commit:
 
 ```powershell
 pwsh -File tests/check-portability.ps1
+python tests/check-frontmatter.py
 ```
+
+The second parses every frontmatter with a YAML parser,
+as the host does.
+A description written as a plain scalar that contains ": " is not YAML;
+the host then loads no description,
+the skill costs nothing always-on (`claude plugin details <plugin>` shows it as `< 20` tokens) and never fires on its description.
+Two skills sat in that state for weeks without any listing showing it.
+Write descriptions as block scalars (`description: |`).
 
 It checks every manifest and resource reference, marketplace membership,
 the host rows and invariants above, the Sources blocks,
