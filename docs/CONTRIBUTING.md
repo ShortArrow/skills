@@ -10,6 +10,7 @@ tests/<name>/firing-tests.md     its scenarios and recorded runs
 tests/fixtures/<name>/           the repository a scenario runs in
 tests/check-portability.ps1      manifests, hosts, invariants, sources
 tests/check-descriptions.sh      the description length cap
+tests/reflow-japanese.py         wraps Japanese prose one sentence per line
 tests/run-firing-tests.sh        the behavioural runner
 .claude-plugin/marketplace.json  plugin grouping
 docs/design-intent.md            the forces behind these shapes
@@ -26,10 +27,23 @@ differs by language — the tells, the constructions, the endings, the
 worked examples — goes in `references/<language>.md` (today:
 `references/japanese.md` in `unmachine-prose`, `reader-map` and
 `cognitive-rhythm`), and the body says in one paragraph what is there
-and links it. A session revising Japanese reads the Japanese file; a
+and links it. Material specific to a market rather than a language
+(`regulated-claims`'s statutes and guidance) takes the same shape as
+`references/japan.md`, and carries its own `## Sources` block. A session revising Japanese reads the Japanese file; a
 session revising English never loads it. `plain-japanese` is the
 exception, because its rule is Japanese. The portability check refuses
 a `references/` path the body names but the directory lacks.
+
+## Japanese prose is wrapped at sentence boundaries
+
+Japanese text in a skill, a reference file or a fixture is wrapped one
+sentence per line, and a sentence wider than about 72 columns is broken
+after a 、. A fixed-width wrap splits words, makes every later edit
+re-flow the paragraph in the diff, and in some renderers shows a space
+where the line broke. `python tests/reflow-japanese.py <file>` applies
+the rule and reports any change other than whitespace and blockquote
+markers. Existing English text keeps its 72-column wrap, which breaks at
+spaces and has none of these problems.
 
 ## The description is the part that is always on
 
