@@ -129,3 +129,11 @@ after the body was rewritten in English with the Japanese forms and examples mov
   the session invoked `document-structure` and rewrote the procedure.
 
 5/5 on the expected side.
+
+2026-09-11, claude-fable-5-1, same command,
+after the description was shortened from 1,115 to 993 characters to fit under Copilot CLI's 1,024-character cap (the Japanese example phrases and the parenthetical explainers went; every trigger stayed):
+
+- S1, S2, S3 fired; S4, S5: no cognitive-rhythm call.
+
+5/5 on the expected side.
+
