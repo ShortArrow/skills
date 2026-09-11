@@ -10,7 +10,6 @@ hooks/                           scripts the plugin hooks run (Claude Code only)
 tests/<name>/firing-tests.md     its scenarios and recorded runs
 tests/fixtures/<name>/           the repository a scenario runs in
 tests/check-portability.ps1      manifests, hosts, invariants, sources
-tests/check-descriptions.sh      the description length cap
 tests/skill-doctor.py            health of every skill, as the host will see it
 tests/reflow-prose.py            wraps prose one sentence per line, in any language
 tests/run-firing-tests.sh        the behavioural runner
@@ -72,7 +71,7 @@ and both caps were read from the client's own code on 2026-09-10 (`skillListingM
 One description is cut at 1,536 characters.
 GitHub Copilot CLI is stricter:
 its skill schema rejects a description over 1,024 characters and the skill is not listed at all (read from its bundle on 2026-09-11; four skills here were missing from Copilot until they were shortened).
-`tests/check-descriptions.sh` and `tests/skill-doctor.py` refuse one over 1,000 so both the tail and the Copilot listing survive.
+`tests/skill-doctor.py` refuses one over 1,000 so both the tail and the Copilot listing survive.
 The whole listing is also capped at 1% of the context window in characters,
 8,000 at a 200k window.
 Over that, the skills with the fewest recorded uses lose their descriptions first and are listed by name only,
@@ -141,15 +140,16 @@ pwsh -File tests/check-portability.ps1
 python tests/skill-doctor.py --strict
 ```
 
-The first checks every manifest and resource reference,
-marketplace membership, the host rows and invariants above,
+The first checks the host rows and their string invariants,
 the Sources blocks, and the README headings an installer looks for.
 Failures print one per line and the run exits 1.
 
 The second is this repository's answer to the health report Claude Code does not have.
 Claude Code's own `/skill-doctor` reports usage and context cost,
 and `claude plugin validate` checks manifests;
-on 2026-09-10 the latter passed a SKILL.md whose description the runtime cannot parse and one 2,600 characters long.
+on 2026-09-10 the latter passed a SKILL.md whose description the runtime cannot parse and one 2,600 characters long,
+and on 2026-09-11 it passed a marketplace entry whose hooks were given as a file path,
+a form the runtime silently ignores.
 `tests/skill-doctor.py` reads each skill the way the runtime does and prints one row per skill:
 the frontmatter parses as YAML with a matching name and a non-empty description (a plain scalar containing ": " is not YAML, and the runtime then loads no description at all, which `claude plugin details` shows as `< 20` always-on tokens);
 the description is under 1,000 characters (warning),
@@ -157,44 +157,24 @@ the description is under 1,000 characters (warning),
 every `references/*.md` is named in the body and every named path exists;
 a skill with `references/japanese.md` has a Language layers section;
 and the files follow the one-sentence-per-line rule.
-It ends with the listing budget per plugin.
+Then the marketplace: every skill in exactly one plugin,
+every listed path present,
+hooks in the inline object form with every script they run present,
+and the listing budget per plugin.
+With `--host` it also asks this machine's Claude Code what it loaded:
+the installed cache is at HEAD,
+and no skill loaded at `< 20` always-on tokens.
 It exits 1 on an error, and with `--strict` on a warning;
 `--json` prints the same report as one object.
 It takes any skills directory as its argument,
 so it also serves for a catalogue that is not this one.
 
-`tests/check-descriptions.sh` is the description cap alone, in bash,
-meant to run as this clone's pre-commit hook.
-Wire it once:
+Wire the doctor as this clone's pre-commit hook once:
 
 ```bash
-printf '#!/usr/bin/env bash\nexec bash "$(git rev-parse --show-toplevel)/tests/check-descriptions.sh"\n' > .git/hooks/pre-commit
+printf '#!/usr/bin/env bash\nexec python "$(git rev-parse --show-toplevel)/tests/skill-doctor.py" --strict\n' > .git/hooks/pre-commit
 chmod +x .git/hooks/pre-commit
 ```
-
-## The checkout in Codex and Copilot CLI
-
-Both hosts read `~/.agents/skills/<name>/SKILL.md`.
-On the machine that holds this checkout,
-link the working tree there instead of installing a copy,
-so an edit is live in every host at once and the firing tests,
-the doctor and the hosts all read the same files:
-
-```powershell
-$dst = Join-Path $env:USERPROFILE '.agents/skills'
-New-Item -ItemType Directory -Force $dst | Out-Null
-Get-ChildItem skills -Directory | ForEach-Object {
-  New-Item -ItemType Junction -Path (Join-Path $dst $_.Name) -Target $_.FullName
-}
-```
-
-A skill added later needs its own junction;
-removing one is deleting the junction.
-Checked on 2026-09-11: Codex 0.146.0 listed all 42 skills through the junctions,
-and Copilot CLI 1.0.83 listed 38 until the four descriptions over its 1,024-character cap were shortened,
-then all 42.
-Elsewhere, `npx skills add ShortArrow/skills -g` installs a copy,
-as the README says.
 
 ## Firing tests
 
