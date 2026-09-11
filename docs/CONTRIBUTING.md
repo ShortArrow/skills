@@ -148,6 +148,30 @@ printf '#!/usr/bin/env bash\nexec bash "$(git rev-parse --show-toplevel)/tests/c
 chmod +x .git/hooks/pre-commit
 ```
 
+## The checkout in Codex and Copilot CLI
+
+Both hosts read `~/.agents/skills/<name>/SKILL.md`.
+On the machine that holds this checkout,
+link the working tree there instead of installing a copy,
+so an edit is live in every host at once and the firing tests,
+the doctor and the hosts all read the same files:
+
+```powershell
+$dst = Join-Path $env:USERPROFILE '.agents/skills'
+New-Item -ItemType Directory -Force $dst | Out-Null
+Get-ChildItem skills -Directory | ForEach-Object {
+  New-Item -ItemType Junction -Path (Join-Path $dst $_.Name) -Target $_.FullName
+}
+```
+
+A skill added later needs its own junction;
+removing one is deleting the junction.
+Checked on 2026-09-11: Codex 0.146.0 listed all 42 skills through the junctions,
+and Copilot CLI 1.0.83 listed 38 until the four descriptions over its 1,024-character cap were shortened,
+then all 42.
+Elsewhere, `npx skills add ShortArrow/skills -g` installs a copy,
+as the README says.
+
 ## Firing tests
 
 A skill's description is its implementation,
