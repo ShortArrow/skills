@@ -49,6 +49,7 @@
       "skills": [
         "./skills/plan-delegate-verify",
         "./skills/adversarial-verify",
+        "./skills/assumption-breaking",
         "./skills/tdd-cycle",
         "./skills/test-design",
         "./skills/tidy-first",
