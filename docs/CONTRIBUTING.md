@@ -68,8 +68,10 @@ because a skill fires on a moment and a glossary fires on nothing.
 
 Claude Code caps the listing twice,
 and both caps were read from the client's own code on 2026-09-10 (`skillListingMaxDescChars`, `skillListingBudgetFraction`).
-One description is cut at 1,536 characters;
-`tests/check-descriptions.sh` refuses one over 1,200 so the "Use when" tail survives.
+One description is cut at 1,536 characters.
+GitHub Copilot CLI is stricter:
+its skill schema rejects a description over 1,024 characters and the skill is not listed at all (read from its bundle on 2026-09-11; four skills here were missing from Copilot until they were shortened).
+`tests/check-descriptions.sh` and `tests/skill-doctor.py` refuse one over 1,000 so both the tail and the Copilot listing survive.
 The whole listing is also capped at 1% of the context window in characters,
 8,000 at a 200k window.
 Over that, the skills with the fewest recorded uses lose their descriptions first and are listed by name only,
@@ -126,7 +128,8 @@ and `claude plugin validate` checks manifests;
 on 2026-09-10 the latter passed a SKILL.md whose description the runtime cannot parse and one 2,600 characters long.
 `tests/skill-doctor.py` reads each skill the way the runtime does and prints one row per skill:
 the frontmatter parses as YAML with a matching name and a non-empty description (a plain scalar containing ": " is not YAML, and the runtime then loads no description at all, which `claude plugin details` shows as `< 20` always-on tokens);
-the description is under 1,200 characters (warning) and 1,536 (error, where the runtime truncates);
+the description is under 1,000 characters (warning),
+1,024 (error: Copilot CLI drops the skill) and 1,536 (error: Claude Code truncates);
 every `references/*.md` is named in the body and every named path exists;
 a skill with `references/japanese.md` has a Language layers section;
 and the files follow the one-sentence-per-line rule.

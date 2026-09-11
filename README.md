@@ -67,6 +67,8 @@ Without `-g` it writes the project's `.agents/skills/` instead.
 
 The directories above were checked against official documentation on 2026-08-28.
 How a skill that names a host's tools stays correct on the others is in [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md).
+Copilot CLI also rejects a skill whose description exceeds 1,024 characters,
+so every description here is kept under 1,000.
 
 ## Other marketplaces
 

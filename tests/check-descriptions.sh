@@ -1,18 +1,18 @@
 #!/usr/bin/env bash
 #
-# Refuse SKILL.md descriptions long enough for the harness to truncate.
+# Refuse SKILL.md descriptions a host would truncate or reject.
 #
-# The model-facing skill listing shortens descriptions to fit a context
-# budget (hard truncation near 1536 chars); the tail is what gets cut,
-# and the tail is where the "Use when" triggers live, so an over-long
-# description loses exactly the part recall depends on. 1200 leaves
-# headroom: a thesis plus a use-when list fits well under it, and an
-# enumeration of the body's sections does not — that belongs in the body.
+# Two hosts set the cap. Claude Code truncates a description at 1,536
+# characters (skillListingMaxDescChars), from the tail, which is where the
+# "Use when" triggers sit. GitHub Copilot CLI rejects the whole skill when
+# the description exceeds 1,024 characters ("Skill description must be at
+# most 1024 characters", read from its bundle on 2026-09-11): the skill is
+# not listed at all. 1,000 leaves headroom under the tighter of the two.
 #
 # Wire into a clone once:  see docs/CONTRIBUTING.md (git hook shim in .git/hooks).
 set -o errexit -o pipefail -o nounset
 
-limit=1200
+limit=1000
 root="$(cd -P "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 target="${1:-$root/skills}"
 fail=0

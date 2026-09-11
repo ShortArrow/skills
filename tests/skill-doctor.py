@@ -10,8 +10,9 @@ the runtime does. This does, for each skill:
             directory, description is a non-empty string (a plain scalar
             containing ": " is not YAML, and the runtime then loads no
             description at all)
-  desc      description length: warn over 1,200 characters, error over
-            1,536, which is where the runtime truncates
+  desc      description length: warn over 1,000 characters; error over
+            1,024, where Copilot CLI rejects the skill outright, and over
+            1,536, where Claude Code truncates
   layers    every references/*.md is named in the body, every references/
             scripts/ assets/ path the body names exists, and a skill with
             references/japanese.md carries a "Language layers" section
@@ -38,7 +39,8 @@ import sys
 import yaml
 
 FENCE = '\n---\n'
-DESC_WARN = 1200
+DESC_WARN = 1000
+DESC_COPILOT = 1024
 DESC_CAP = 1536
 CONTEXT_CHARS = 200000 * 4
 DEFAULT_FRACTION = 0.01
@@ -89,9 +91,11 @@ def examine(skill_dir):
         n = len(description.strip())
         report['description_chars'] = n
         if n > DESC_CAP:
-            report['errors'].append(f'desc: {n} characters, the runtime truncates at {DESC_CAP}')
+            report['errors'].append(f'desc: {n} characters, Claude Code truncates at {DESC_CAP} and Copilot CLI rejects the skill over {DESC_COPILOT}')
+        elif n > DESC_COPILOT:
+            report['errors'].append(f'desc: {n} characters, Copilot CLI rejects a skill whose description exceeds {DESC_COPILOT} and never lists it')
         elif n > DESC_WARN:
-            report['warnings'].append(f'desc: {n} characters, over the {DESC_WARN} house cap; the "Use when" tail is what truncation removes')
+            report['warnings'].append(f'desc: {n} characters, over the {DESC_WARN} house cap (Copilot CLI rejects at {DESC_COPILOT}); the "Use when" tail is what truncation removes')
 
     for rel in RESOURCE.findall(text):
         rel = rel.rstrip('.,:;')
