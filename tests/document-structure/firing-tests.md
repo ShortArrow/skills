@@ -88,3 +88,11 @@ A value changes; nothing about structure does.
 - S4, S5: no Skill call.
 
 5/5 on the expected side.
+
+2026-09-11, claude-fable-5-1, same command,
+after "a pull request body" joined the description's list of documents (a body written inside `gh pr create` had been arriving as one paragraph; the writing-skills plugin also gained a PreToolUse hook on `gh pr *` for the moment the description cannot see):
+
+- S1, S2, S3 fired; S4, S5: no Skill call.
+
+5/5 on the expected side.
+
