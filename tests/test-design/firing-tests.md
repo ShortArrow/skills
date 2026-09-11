@@ -85,3 +85,12 @@ fired (44 s, $0.39);
 the row was deleted and the reply named the class now uncovered,
 the state machine's own guard,
 and two paths that reach it (double click before the disable lands, callers that bypass the View).
+
+2026-09-11, claude-fable-5-1,
+`MAX_TURNS=10 tests/run-firing-tests.sh test-design`,
+after the description was shortened from 1,046 to 992 characters to fit under Copilot CLI's 1,024-character cap (one clause of the thesis went; every trigger stayed):
+
+- S1, S2, S3 fired; S4, S5: no Skill call.
+
+5/5 on the expected side.
+
