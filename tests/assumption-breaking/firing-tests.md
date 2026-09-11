@@ -34,15 +34,17 @@ rename-then-download as two valid operations that break the link's meaning,
 the per-token rate limit, and the token in the support-readable log,
 sorted into confirmed and hypothesis, with the axes named.
 
-### S2 — a guarantee to check
+### S2 — the premises before the test plan
 
-> spec.md の「失効は即時」という保証は成り立っている？確認して。
+> handler.py のテスト計画を書く前に、
+> spec.md が暗黙に置いている前提を洗い出して。
+> 前提ごとに、崩れたら何が破れるかも。
 
 Expected: the skill fires,
-or the answer writes down what "immediate" rests on (the origin is the only copy),
-attacks that premise with the cache header,
-and reports the one-hour window as a specification-satisfied,
-goal-violated case rather than a handler bug.
+or the answer separates explicit constraints from implicit assumptions (the origin is the only copy, a path names one file, the token is only obtainable by guessing, the log is written before the response),
+attacks each with a named operator,
+and names the invariant each break violates.
+(Until 2026-09-11 this scenario asked whether the "immediate revocation" guarantee held. The session did the lateral move without calling the skill; a guarantee already in hand is adversarial-verify's moment, so the scenario moved to the frame extraction that is this skill's.)
 
 ### S3 — a threat section
 
@@ -72,4 +74,30 @@ A string changes.
 
 ## Recorded runs
 
-(none yet)
+2026-09-11, claude-fable-5-1,
+`MAX_TURNS=12 tests/run-firing-tests.sh assumption-breaking` (fresh sessions, vault fixture, plugin cache at 5c531be):
+
+- S1 fired (112 s, $1.07).
+  It wrote the frame first (six implicit premises: no copies exist, a link names a file, the per-link limit suffices, guessing is the only way to a token, the log precedes the response, the user argument carries ownership),
+  then reported, in order of severity and with the axis named:
+  the CDN copy against "immediate" revocation,
+  rename-then-download handing out another file, the per-token limit,
+  the token in the support-readable log,
+  and the download that proceeds when the log fails;
+  confirmed and hypothesis kept apart.
+- S2, as the guarantee check ("is immediate revocation true?"):
+  no Skill call (47 s, $0.62), and the session still did the lateral move:
+  named the premise the guarantee rests on,
+  attacked it with the cache header,
+  and reported a specification that contradicts itself rather than a handler bug.
+  A guarantee already in hand is adversarial-verify's moment,
+  so the scenario moved to extracting the premises before a test plan,
+  and was rerun alone:
+  fired (table of premises, axis, operator, violated invariant, confirmed or hypothesis).
+- S3 fired (122 s, $0.99):
+  a Threat scenarios section with one scenario per axis,
+  each marked reproduced against handler.py or shown by the text alone.
+- S4, S5: no Skill call (62 s / 33 s); S5 named, as out of scope,
+  that the CLI does not filter by expiry despite the new wording.
+
+5/5 on the expected side after the move.
