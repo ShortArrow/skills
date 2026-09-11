@@ -162,6 +162,17 @@ Two things a verifier looks for that a reviewer of the diff does not:
 - **What was widened.** An implementer that fixed something adjacent has told you the plan was wrong,
   or has done something nobody checked.
 
+When the verification itself is delegated to a fresh context,
+as `adversarial-verify` asks for expensive claims,
+the verifier's prompt has to carry its method,
+because a subagent has read none of these skills.
+Give it two, in this order:
+`assumption-breaking` to widen the search (extract the premises the plan and the result rest on, walk at least four distinct axes, ask whether the plan can be satisfied while the goal fails) and `adversarial-verify` to narrow the report (refute by default, confirmed and hypothesis kept apart).
+A verifier given only the second finds what the plan already named;
+a verifier given only the first reports hypotheses as defects.
+Name the skills in the prompt and quote the parts that matter;
+a bare instruction to "verify adversarially" hands the method back to the model that produced the work.
+
 ## When the plan is a test plan
 
 The rule that the implementer has no say over what done means gets tighter,
