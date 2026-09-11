@@ -109,15 +109,12 @@ The writing-skills entry in `.claude-plugin/marketplace.json` declares a PreTool
 the body is written from the commits and the diff, says what changed,
 why and what is left, carries no conversation-local labels,
 and is checked against `clean-docs`,
-`document-structure` and `plain-language`. the body is written from the commits and the diff,
-says what changed, why and what is left,
-carries no conversation-local labels,
-and is checked against `clean-docs`,
 `document-structure` and `plain-language`.
 The hook is written inline in the marketplace entry,
-because that is the only form a marketplace entry accepts (a file path is not, and a `hooks/hooks.json` at the shared plugin root would register once per plugin);
-the script it runs, `hooks/pr-body-context.sh`,
-prints one JSON object. the script it runs prints one JSON object.
+because that is the only form a marketplace entry accepts:
+a file path is silently ignored,
+and a `hooks/hooks.json` at the shared plugin root would register once per plugin.
+The script it runs, `hooks/pr-body-context.sh`, prints one JSON object.
 Hooks are Claude Code's mechanism and no other host runs them,
 so the descriptions still carry the moment for Codex and Copilot;
 the hook is the backstop for the one place a description is blind.
