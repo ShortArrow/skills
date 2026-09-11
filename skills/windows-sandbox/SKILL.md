@@ -1,13 +1,13 @@
 ---
 name: windows-sandbox
 description: |
-  Run e2e or UI tests inside Windows Sandbox, where SendInput cannot steal the developer's keyboard, and share the machine's single sandbox slot with other projects. Two agents each ending their run by terminating "the" sandbox terminate each other's; a finished-looking sandbox with no window still holds the slot; disabling vGPU stops LogonCommand from ever running. Where a Hyper-V clean-VM checkpoint already exists, prefer it (`hyperv-clean-vm`) — VMs run in parallel and restore to identical state, while the sandbox slot is single and disposal-only. Use when no clean VM has been built and a project needs one disposable isolated desktop, when a sandbox will not start, or when adding a second project that wants the slot.
+  Run e2e or UI tests inside Windows Sandbox, where SendInput cannot steal the developer's keyboard, and share the machine's single sandbox slot with other projects. Two agents each ending their run by terminating "the" sandbox terminate each other's; a finished-looking sandbox with no window still holds the slot; disabling vGPU stops LogonCommand from ever running. Where a Hyper-V clean-VM checkpoint already exists, prefer it (`hyperv-clean-vm`) — VMs run in parallel and restore to identical state, while the sandbox slot is single and disposal-only. The sandbox is a window in the developer's own session: a signed-out host, an SSH-only logon or an unattended runner cannot start it, and that ground is Hyper-V's. Use when a developer is logged on and no clean VM has been built, when a sandbox will not start, or when adding a second project that wants the slot.
 allowed-tools: PowerShell, Read, Write, Edit
 ---
 
 # Windows Sandbox as a test target
 
-**Nothing here is a runtime dependency.** A project's test runner must work for a person and for CI,
+**Nothing here is a runtime dependency.** A project's test runner must work for a person and for a CI runner,
 neither of which has this skill installed — and the installed copy lives under a hashed plugin cache path that no repository can reference anyway.
 What projects share is the lock protocol below.
 `scripts/` is a reference implementation to copy in,
@@ -34,6 +34,23 @@ Run those on the host and they type into whatever the developer is looking at.
 
 Data isolation is a separate problem with separate answers (a config directory environment variable, a temp profile).
 Do not reach for the sandbox to get it.
+
+## The host has to be logged on
+
+Windows Sandbox is a window in the developer's interactive session,
+not a service.
+Its client runs in that session,
+the guest's automatic logon needs the vGPU that only a desktop session provides (the same reason disabling vGPU leaves `LogonCommand` unrun),
+and the sandbox CLI's `exec` documents that it needs an active user session established through `connect`.
+So a host with nobody signed in,
+a host reached over SSH with no desktop logon,
+or an unattended CI runner cannot start the sandbox at all:
+the run does not fail loudly, it never begins.
+The unattended cases are Hyper-V's:
+`hyperv-clean-vm` runs under the VMMS service with nobody logged on to the host,
+and `hyperv-screenshot` reads the guest's screen without anyone logged on to the guest.
+The interactive-logon requirement for the host is the conclusion this skill draws from those three facts;
+Microsoft's Windows Sandbox pages state the guest-side session requirement and do not describe a headless or service mode.
 
 ## One slot, shared by everyone
 
@@ -145,8 +162,10 @@ so the parser is case-insensitive.
 
 Copy `scripts/` into the repository — two files,
 nothing outside PowerShell and `wsb.exe` — and call them from the project's own runner.
-Then the runner works for a person, for CI, and for any agent,
-and it keeps working when this skill is uninstalled.
+Then the runner works for a person, for any agent,
+and for a CI runner whose agent is signed on interactively (an auto-logon session on the runner);
+a signed-out runner gets a Hyper-V VM instead,
+and either way it keeps working when this skill is uninstalled.
 
 That copy will drift from this one, and mostly that is fine:
 the guest command,
@@ -164,3 +183,14 @@ Keep in the project only what is about the project:
 - Which tests are sandbox-only.
   Pure unit tests do not take the keyboard and should stay on the host,
   where they run in seconds
+
+## Sources
+
+- Microsoft Learn, "Windows Sandbox command line interface",
+  section Exec (learn.microsoft.com/windows/security/application-security/application-isolation/windows-sandbox/windows-sandbox-cli):
+  "An active user session is required to execute a command in the context of the currently logged on user … a remote desktop connection should be established",
+  and `--run-as ExistingLogin` "fails if there's no active user session".
+  Read 2026-09-11.
+- Microsoft Learn, "Windows Sandbox" overview and "Install Windows Sandbox" (same section of learn.microsoft.com),
+  read 2026-09-11: one instance at a time, Pro/Enterprise/Education only,
+  no service or headless mode described.
