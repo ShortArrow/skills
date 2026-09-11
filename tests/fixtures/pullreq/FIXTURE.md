@@ -4,3 +4,6 @@ for a change that moved a retry loop out of the HTTP client into the queue worke
 `NOTES.md` is the author's working notes from the session,
 full of conversation-local labels ("option B", "the H1 finding", "the thing we discussed"),
 so that a body written from the notes instead of from the commits can be told apart.
+The patch is illustrative:
+its hunk headers are not exact and it does not `git apply`;
+the scenarios read it, they do not apply it.

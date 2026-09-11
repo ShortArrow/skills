@@ -68,4 +68,21 @@ Lines are regrouped; nothing durable is written for a reader.
 
 ## Recorded runs
 
-(none yet)
+2026-09-11, claude-fable-5-1,
+`MAX_TURNS=10 tests/run-firing-tests.sh clean-docs` (fresh sessions, pullreq fixture, plugin cache at 4bbd905):
+
+- S1, S2, S3 fired ($0.85 / $0.76 / $0.82).
+  S1 wrote the body from the commits and the diff with what changed, why,
+  the behaviour changes for callers and what is left,
+  and said it had left the notes' labels out;
+  the saved body carries none of them.
+  S2 wrote a Conventional Commits subject with a body in the order now,
+  before and why it was a problem, what the tests guarantee.
+  S3 wrote an issue that stands alone:
+  the behaviour as the diff shows it, the gap, a proposal,
+  with no "this PR".
+- S4, S5: no Skill call ($0.56 / $0.51).
+  S4 noted that diff.patch does not `git apply` (the hunk counts are illustrative),
+  which the fixture description now says.
+
+5/5 on the expected side.
