@@ -78,8 +78,7 @@ Use `is`.
 
 ## Formatting
 
-**Inline-header bullets.** `- **Term**:
-description` is the most recognisable shape in machine-written documentation.
+**Inline-header bullets.** `- **Term**: description` is the most recognisable shape in machine-written documentation.
 Keep it for genuine key-value data.
 When the descriptions are sentences, write sentences.
 

@@ -13,8 +13,7 @@ An unauthenticated request can never reach a file except through a valid link.
 
 ## Delivery
 
-Files are served through the CDN with `Cache-Control: public,
-max-age=3600` so that popular files do not load the origin.
+Files are served through the CDN with `Cache-Control: public, max-age=3600` so that popular files do not load the origin.
 
 ## Operations
 

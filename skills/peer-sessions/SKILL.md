@@ -62,8 +62,7 @@ Read `cwd` from inside the file instead of reversing it.
 
 ### What each one can establish
 
-- **A task file says what the session intends.** `status:
-  in_progress` names the one it is on.
+- **A task file says what the session intends.** `status: in_progress` names the one it is on.
   It does not say whether that work holds anything right now.
 - **An mtime says it wrote something at that moment.** Not that it finished.
   A session pausing between two runs looks exactly like a session that has stopped for the day.

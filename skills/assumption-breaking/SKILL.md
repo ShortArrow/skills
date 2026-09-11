@@ -112,8 +112,7 @@ Ask, in this order:
 
 > Revocation is immediate: after a user revokes a link,
 > no further download through it succeeds.
-> Files are served through the CDN with `Cache-Control: public,
-> max-age=3600`.
+> Files are served through the CDN with `Cache-Control: public, max-age=3600`.
 
 Every component is correct.
 The handler deletes the row; the CDN honours the header.
@@ -121,14 +120,13 @@ The goal, "no download after revocation", fails for up to an hour,
 and no test of the handler will find it,
 because the handler is not where the failure is.
 The same specification stores a path in the link,
-so `rename` followed by `download` — two valid operations — hands out whichever file now lives at that path.
+so `rename` followed by `download`, two valid operations,
+hands out whichever file now lives at that path.
 
 ## Borrow failures by structure, not by vocabulary
 
 Searching the same field for analogous failures finds the failures the field already knows.
-Instead, describe the structure with no domain words — several agents,
-a finite resource, each holding one and waiting for another,
-in a cycle — and look in three fields that share it.
+Instead, describe the structure with no domain words (several agents, a finite resource, each holding one and waiting for another, in a cycle) and look in three fields that share it.
 A mutex deadlock and four cars at an intersection each waiting for the car on their right share every word of that description and none of the vocabulary.
 The intersection's remedies come back with it:
 a right-of-way rule is lock ordering,
@@ -164,7 +162,8 @@ A lateral hypothesis reported as a defect costs the reviewer their credibility a
 A decision that is cheap to reverse is taken and watched,
 not framed and re-framed.
 A one-line fix inside a well-tested function has no frame worth attacking.
-A specification fixed by law or by a customer is still framed — list its assumptions so they are known — but its constraints are not relitigated here.
+A specification fixed by law or by a customer is still framed (list its assumptions so they are known),
+but its constraints are not relitigated here.
 The gate is the one `adversarial-verify` uses:
 what does it cost if this frame is wrong and nobody notices for a week?
 

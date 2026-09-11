@@ -4,8 +4,8 @@
 
 The rule is the same for every language: a sentence ends a line, a
 sentence wider than LIMIT display columns also breaks after a clause
-separator, and a line never breaks inside a word, a bracket or a quoted
-phrase. Headings, tables, code, frontmatter and horizontal rules are left
+separator, and a line never breaks inside a word, a bracket, a code span
+or a quoted phrase. Headings, tables, code, frontmatter and horizontal rules are left
 alone. Inside a blockquote, lines are joined only when the previous line
 is an unfinished sentence, so quoted headings, key: value lines and
 deliberate breaks stay.
@@ -128,17 +128,20 @@ def split_sentences(text):
     out, cur, last_sep = [], '', -1
     stack = []
     straight = 0
+    code = 0
     i = 0
     while i < len(text):
         c = text[i]
         cur += c
         if c == '"':
             straight ^= 1
+        elif c == '`':
+            code ^= 1
         elif c in OPENERS:
             stack.append(OPENERS[c])
         elif stack and c == stack[-1]:
             stack.pop()
-        enclosed = bool(stack) or straight
+        enclosed = bool(stack) or straight or code
         if not enclosed and sentence_end(text, i):
             j = i + 1
             while j < len(text) and text[j] in CLOSERS and text[j] != '*':
