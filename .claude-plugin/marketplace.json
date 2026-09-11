@@ -27,7 +27,23 @@
       "description": "Producing durable artifacts: self-contained documents, faithful PDF transcription, translations kept in step, numbers that carry their measurement, and approval for actions that cannot be taken back",
       "source": "./",
       "strict": false,
-      "hooks": "./hooks/writing-skills.json",
+      "hooks": {
+        "PreToolUse": [
+          {
+            "matcher": "Bash",
+            "if": "Bash(gh pr *)",
+            "hooks": [
+              {
+                "type": "command",
+                "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/pr-body-context.sh\"",
+                "shell": "bash",
+                "timeout": 10,
+                "statusMessage": "PR body: applying the writing skills"
+              }
+            ]
+          }
+        ]
+      },
       "skills": [
         "./skills/clean-docs",
         "./skills/unmachine-prose",

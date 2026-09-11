@@ -167,18 +167,16 @@ foreach ($directory in Get-ChildItem -LiteralPath $skillsRoot -Directory) {
     }
 }
 
-# A plugin that names a hooks file ships it, and the file is JSON that
-# names a script which exists.
+# A plugin that declares hooks inline (the only form a marketplace entry
+# supports) names scripts under ${CLAUDE_PLUGIN_ROOT} that must exist here.
 $marketplaceData = $marketplace | ConvertFrom-Json
 foreach ($plugin in $marketplaceData.plugins) {
     if (-not $plugin.hooks) { continue }
-    $hooksPath = Join-Path $RepositoryRoot ($plugin.hooks -replace '^\./', '' -replace '/', '\')
-    if (-not (Test-Path -LiteralPath $hooksPath)) {
-        $failures.Add("$($plugin.name): hooks file $($plugin.hooks) does not exist")
+    if ($plugin.hooks -is [string]) {
+        $failures.Add("$($plugin.name): hooks given as a file path; a marketplace entry only supports the inline object form")
         continue
     }
-    $hooksData = Get-Content -Raw -LiteralPath $hooksPath | ConvertFrom-Json
-    foreach ($event in $hooksData.hooks.PSObject.Properties) {
+    foreach ($event in $plugin.hooks.PSObject.Properties) {
         foreach ($group in $event.Value) {
             foreach ($hook in $group.hooks) {
                 if ($hook.command -match 'CLAUDE_PLUGIN_ROOT\}/([^" ]+)') {
