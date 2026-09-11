@@ -167,6 +167,31 @@ foreach ($directory in Get-ChildItem -LiteralPath $skillsRoot -Directory) {
     }
 }
 
+# A plugin that names a hooks file ships it, and the file is JSON that
+# names a script which exists.
+$marketplaceData = $marketplace | ConvertFrom-Json
+foreach ($plugin in $marketplaceData.plugins) {
+    if (-not $plugin.hooks) { continue }
+    $hooksPath = Join-Path $RepositoryRoot ($plugin.hooks -replace '^\./', '' -replace '/', '\')
+    if (-not (Test-Path -LiteralPath $hooksPath)) {
+        $failures.Add("$($plugin.name): hooks file $($plugin.hooks) does not exist")
+        continue
+    }
+    $hooksData = Get-Content -Raw -LiteralPath $hooksPath | ConvertFrom-Json
+    foreach ($event in $hooksData.hooks.PSObject.Properties) {
+        foreach ($group in $event.Value) {
+            foreach ($hook in $group.hooks) {
+                if ($hook.command -match 'CLAUDE_PLUGIN_ROOT\}/([^" ]+)') {
+                    $script = Join-Path $RepositoryRoot ($Matches[1] -replace '/', '\')
+                    if (-not (Test-Path -LiteralPath $script)) {
+                        $failures.Add("$($plugin.name): hook script $($Matches[1]) does not exist")
+                    }
+                }
+            }
+        }
+    }
+}
+
 $readme = Get-Content -Raw -LiteralPath (Join-Path $RepositoryRoot 'README.md')
 foreach ($heading in @('Install in Claude Code', 'Install in Codex', 'Install anywhere')) {
     if ($readme -notmatch [regex]::Escape($heading)) {

@@ -6,6 +6,7 @@
 skills/<name>/SKILL.md           the skill
 skills/<name>/scripts/           anything it executes
 skills/<name>/references/        material the body links to, read only when needed
+hooks/<plugin>.json              hooks a plugin ships (Claude Code only)
 tests/<name>/firing-tests.md     its scenarios and recorded runs
 tests/fixtures/<name>/           the repository a scenario runs in
 tests/check-portability.ps1      manifests, hosts, invariants, sources
@@ -98,6 +99,23 @@ an undocumented capability is written as `not documented (checked <date>)` and f
 The Claude Code and Codex rows are pinned by string invariants in the portability check,
 so a later edit that generalises them into host-neutral prose fails the run.
 Prose-only skills need none of this.
+
+## A hook for the moment a description cannot see
+
+A description fires when the model decides what to do next.
+A body typed inside a Bash call (`gh pr create --body ...`) is written without that pause,
+at the end of a long session, from the conversation,
+and that is where pull request bodies go sloppy.
+`hooks/writing-skills.json` ships with the writing-skills plugin a PreToolUse hook on `gh pr *` that injects the rule as context before the command runs:
+the body is written from the commits and the diff, says what changed,
+why and what is left, carries no conversation-local labels,
+and is checked against `clean-docs`,
+`document-structure` and `plain-language`.
+The marketplace entry names the file;
+the script it runs prints one JSON object.
+Hooks are Claude Code's mechanism and no other host runs them,
+so the descriptions still carry the moment for Codex and Copilot;
+the hook is the backstop for the one place a description is blind.
 
 ## Sources
 

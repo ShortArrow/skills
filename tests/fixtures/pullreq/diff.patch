@@ -1,0 +1,56 @@
+diff --git a/src/queue/worker.py b/src/queue/worker.py
+--- a/src/queue/worker.py
++++ b/src/queue/worker.py
+@@ -12,10 +12,24 @@ class QueueWorker:
+-    def send(self, item):
+-        return self.client.post(item)
++    def __init__(self, client, settings):
++        self.client = client
++        self.attempts = settings.retry_attempts
++        self.interval = settings.retry_interval_seconds
++
++    def send(self, item):
++        for attempt in range(self.attempts):
++            response = self.client.post(item)
++            if response.ok:
++                return response
++            if 400 <= response.status < 500:
++                raise PermanentFailure(response)
++            time.sleep(self.interval * (2 ** attempt))
++        raise GaveUp(item, self.attempts)
+diff --git a/src/http/client.py b/src/http/client.py
+--- a/src/http/client.py
++++ b/src/http/client.py
+@@ -30,12 +30,4 @@ class HttpClient:
+     def post(self, item):
+-        for _ in range(3):
+-            response = self._session.post(self.url, json=item)
+-            if response.ok:
+-                return response
+-            time.sleep(1)
+-        return response
++        return self._session.post(self.url, json=item)
+diff --git a/settings.toml b/settings.toml
+--- a/settings.toml
++++ b/settings.toml
+@@ -3,2 +3,4 @@
+ [queue]
+ batch = 100
++retry_attempts = 5
++retry_interval_seconds = 2
+diff --git a/tests/queue/test_worker.py b/tests/queue/test_worker.py
+--- a/tests/queue/test_worker.py
++++ b/tests/queue/test_worker.py
+@@ -0,0 +1,22 @@
++def test_gives_up_after_last_attempt(failing_client, settings):
++    worker = QueueWorker(failing_client, settings)
++    with pytest.raises(GaveUp):
++        worker.send({"id": 1})
++    assert failing_client.calls == settings.retry_attempts
++
++
++def test_does_not_retry_on_client_error(client_returning_404, settings):
++    worker = QueueWorker(client_returning_404, settings)
++    with pytest.raises(PermanentFailure):
++        worker.send({"id": 1})
++    assert client_returning_404.calls == 1

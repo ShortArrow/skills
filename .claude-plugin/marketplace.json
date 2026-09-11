@@ -27,6 +27,7 @@
       "description": "Producing durable artifacts: self-contained documents, faithful PDF transcription, translations kept in step, numbers that carry their measurement, and approval for actions that cannot be taken back",
       "source": "./",
       "strict": false,
+      "hooks": "./hooks/writing-skills.json",
       "skills": [
         "./skills/clean-docs",
         "./skills/unmachine-prose",

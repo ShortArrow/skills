@@ -1,0 +1,19 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "if": "Bash(gh pr *)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/pr-body-context.sh\"",
+            "shell": "bash",
+            "timeout": 10,
+            "statusMessage": "PR body: applying the writing skills"
+          }
+        ]
+      }
+    ]
+  }
+}
