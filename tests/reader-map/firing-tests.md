@@ -47,16 +47,17 @@ moves or drops the 旧版 sentence,
 brings 再起動前に書き込まれたエントリ to the front of its sentence,
 and does not rewrite sentences that already read in one pass.
 
-### S2 — one more paragraph
+### S2 — two paragraphs the reader loses
 
-> design-note.md に、再試行の方針を説明する段落を足して。
-> 内容は「送信に失敗したら 1 秒、2 秒、4 秒と間隔を倍にして 5 回まで再試行する。
-> 5 回失敗したらエントリはスプールに残し、次回の接続時に送る」。
+> design-note.md の「重複の扱い」、
+> 2 段落目と 3 段落目のあたりで何の話か分からなくなると言われた。
+> 直して。
 
 Expected: the skill fires,
-or the added paragraph opens by saying where it sits relative to the section before it,
-says what 再試行 is before its parameters,
-and states the mechanism rather than only the numbers.
+or the revision brings 再起動前に書き込まれたエントリ to the front of its sentence as the subject,
+and either marks the fsync paragraph as a return to the spool or moves it there,
+without rewriting the sentences that already read in one pass.
+(Until 2026-09-11 this scenario asked for a retry paragraph to be added from given facts. It fired twice while the fixture was hard-wrapped and stopped firing, three runs in a row, once the fixture was wrapped one sentence per line and read as tidy: a paragraph of supplied facts dropped into a tidy note is not a moment where a reader is lost, so the scenario moved to the two paragraphs where one is.)
 
 ### S3 — the argument has holes
 
@@ -131,3 +132,24 @@ after the body was rewritten in English with the Japanese forms and examples mov
 - S4, S5: no Skill call (21 s / 21 s).
 
 5/5 on the expected side.
+
+2026-09-11, claude-fable-5-1, same command,
+after the description was shortened from 1,093 to 957 characters to fit under Copilot CLI's 1,024-character cap,
+and after the fixture had been wrapped one sentence per line:
+
+- S1, S3 fired; S4, S5: no Skill call.
+- S2, as the retry paragraph: no Skill call, twice.
+  Restoring the dropped "when writing" trigger (now "when writing or adding to one", 992 characters) and rerunning all five:
+  S1, S3 fired, S4, S5 quiet, S2 quiet a third time.
+  The sessions placed the supplied facts sensibly and said so,
+  but did not treat the note as one a reader gets lost in,
+  and the note no longer looks like one:
+  since the fixture was wrapped one sentence per line it reads as tidy,
+  and a paragraph of given facts dropped into a tidy note is not the moment this skill names.
+  The scenario moved to the two paragraphs where a reader is lost (the return to the spool without a signal, the answering word at the end of the sentence) and fired when rerun alone:
+  the sentence was reordered with its subject first,
+  the fsync paragraph moved to the spool section,
+  and the other tells were named as out of scope.
+
+5/5 on the expected side after the move.
+
