@@ -65,6 +65,10 @@ and the description is the only place that can say which one owns which case bef
 Descriptions here are written as the moments the skill replaces ("about to …"),
 because a skill fires on a moment and a glossary fires on nothing.
 `docs/design-intent.md` carries the reasoning.
+Short is not the goal; ambiguity and the budget are.
+A long description made of concrete moments does not over-fire (the S4 and S5 scenarios measure that),
+a short one made of a domain name does;
+OpenAI's guidance for GPT-6 Astra (developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra, read 2026-09-14) draws the same line with "use when working with databases" against "use when adding or changing a migration".
 
 Claude Code caps the listing twice,
 and both caps were read from the client's own code on 2026-09-10 (`skillListingMaxDescChars`, `skillListingBudgetFraction`).

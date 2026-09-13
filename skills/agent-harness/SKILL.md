@@ -32,6 +32,18 @@ Three surfaces, each with an equivalent in every stack:
   how-to-test — separated,
   so each stays short enough to survive in context,
   and the agent reads the one the task needs.
+  The root document says which layer answers which task,
+  not that every layer is read first.
+  "Before every edit, read architecture.md, database.md and deployment.md" spends the context of a typo fix on three documents it will not use;
+  "architecture.md for a service boundary, database.md for a schema change, deployment.md when preparing a deployment" is read once,
+  at the moment it applies.
+- **Permitted workflows, stated.** A boundary says what the agent may not touch;
+  it also has to say what it may do without asking,
+  or a careful model stops at every step of work that was always safe.
+  "The local tests use disposable fixtures and have no production access: run them, fix what the requested change broke, and rerun without asking at each step" is a permission,
+  and it belongs beside the prohibitions.
+  A stronger model reads a strong prohibition as a reason to pause;
+  the prohibitions written to restrain a weaker one are the first thing to reread when a newer model keeps stopping.
 
 ## Computational sensors: one fast command
 
@@ -111,3 +123,11 @@ Sensors are an investment repaid per session, so the tiers differ:
 - **Skip the harness entirely** for spikes, throwaway scripts,
   and single-session work: when the harness would outlive the code,
   it is ceremony.
+
+## Sources
+
+- OpenAI, "Rethinking skills and prompts for GPT-6 Astra" (developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra),
+  read 2026-09-14: conditional document references instead of a stack read before every edit,
+  explicit permission for safe workflows,
+  and the observation that guidance written for an earlier model overconstrains a later one.
+  The rest of this skill rests on practice.

@@ -138,7 +138,7 @@ A subagent starts with none of the conversation.
 Anything the plan leaves implicit becomes a guess,
 and the guess arrives as working code that solves a different problem.
 
-Each item carries four things:
+Each item carries five things:
 
 1. **The file and what changes about it.** Not "the parser" — the path.
 2. **The check that decides it is done.** A command with an expected result.
@@ -147,6 +147,10 @@ Each item carries four things:
    so an implementer who sees an adjacent problem leaves it alone.
 4. **What it depends on.** Items with no dependency between them run at once;
    items with one do not.
+5. **How far it goes, and where it stops.** Whether the item ends at code that compiles,
+   at the check passing, or at the change running,
+   inspected and its failures fixed; and what lies outside it.
+   An implementer that reaches a first working version and comes back for review has stopped where nobody told it not to.
 
 A plan that reads "fix the three issues from the audit" names nothing an implementer can act on.
 The severity codes, the option letters and the positional references all die at the subagent boundary.
