@@ -123,6 +123,15 @@ find each declared constant — a scout returns it faster and cheaper.
 When the question is still what the shape *is*,
 reading it yourself is what produces the plan.
 
+Which model each role runs on follows the same line.
+Tier by the cost of that role being wrong, not by the role's name:
+the closer a role sits to a verdict (the planner, the verifier, a reviewer whose finding will be acted on),
+the higher the tier; the closer it sits to producing facts (a scout, an implementer holding a written plan and a failing test),
+the lower.
+A cast written as names,
+this model for the developer and that one for the reviewer,
+goes stale with the model list; the rule does not.
+
 ## The plan is an artifact, not a conversation
 
 A subagent starts with none of the conversation.
