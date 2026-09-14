@@ -23,7 +23,8 @@ the runtime could not parse. This does, for each skill:
 then the marketplace beside the skills directory:
 
   member    every skill is in exactly one plugin and every listed path
-            exists
+            exists (a plugin with no skills list carries every skill under
+            its source, as the host does)
   hooks     a plugin's hooks are the inline object a marketplace entry
             accepts (a file path is silently ignored), and every script
             they run under ${CLAUDE_PLUGIN_ROOT} exists
@@ -152,7 +153,12 @@ def examine_marketplace(repo, reports):
     for plugin in data.get('plugins', []):
         pname = plugin.get('name', '?')
         total = 0
-        for rel in plugin.get('skills', []):
+        listed = plugin.get('skills')
+        if listed is None:
+            # No explicit list: the plugin carries every skill under <source>/skills, the host's convention
+            source = os.path.join(repo, *str(plugin.get('source', './')).strip('./').split('/')) if str(plugin.get('source', './')).strip('./') else repo
+            listed = ['./skills/' + os.path.basename(d) for d in sorted(glob.glob(os.path.join(source, 'skills', '*'))) if os.path.isdir(d)]
+        for rel in listed:
             skill = os.path.basename(rel)
             if not os.path.isdir(os.path.join(repo, *rel.strip('./').split('/'))):
                 out['errors'].append(f'member: {pname} lists {rel}, which does not exist')

@@ -49,6 +49,12 @@ Deleting a row's key string or renaming `Any other host` makes the script exit 1
 ## Contracts are written as obligations, not as names
 
 **Protects.** A rule fires when it names the moment it applies to.
+The moment sits before the act:
+a description written as "about to …" constrains what is about to be written,
+where a rule written as "avoid …" can only be applied to what was written.
+Prevention costs one reading at the moment;
+correction costs a second pass,
+and the habit that produced the text is still there for the next paragraph (natural-japanese states the same as 事後修正より生成時制約, read 2026-09-14).
 "The caller guarantees a non-empty id" tells the next reader which side to fix when it breaks;
 "follow Clean Architecture" tells them a vocabulary and leaves the decision where it was.
 

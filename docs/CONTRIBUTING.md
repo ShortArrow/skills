@@ -64,6 +64,9 @@ and the description is the only place that can say which one owns which case bef
 
 Descriptions here are written as the moments the skill replaces ("about to …"),
 because a skill fires on a moment and a glossary fires on nothing.
+The moment is placed before the act,
+so the skill prevents rather than repairs;
+a rule that can only be applied to finished text arrives after the habit has already shaped the next paragraph.
 `docs/design-intent.md` carries the reasoning.
 Short is not the goal; ambiguity and the budget are.
 A long description made of concrete moments does not over-fire (the S4 and S5 scenarios measure that),
