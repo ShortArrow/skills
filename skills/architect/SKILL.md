@@ -1,12 +1,12 @@
 ---
-name: csharp-architect
+name: architect
 description: |
-  C# placement and conventions under MVVM, Clean Architecture, TDD, CQRS and DDD: which project a type belongs in, what each layer is called here, and how files are named. Use when resolving a linter warning or a build error, refactoring, implementing a feature, or reviewing code in a C# solution. Which way a dependency runs, and who owes what at an interface, is `design-by-contract`; this skill only says where the pieces sit in this stack.
+  Where a piece of code sits in a layered stack: what each layer is called, what it holds and refuses, the order a feature is built in, and the checks before calling it done. Use when resolving a linter warning or a build error, refactoring, implementing a feature, or reviewing code in a solution arranged as MVVM, Clean Architecture, CQRS and DDD. The body is stack-neutral; what differs by language, framework or binary boundary is layered on from references/ and read only for the stack in hand — today C# (.NET, MVVM, Avalonia, CQRS with a mediator, DDD, analyzer codes). Which way a dependency runs, and who owes what at an interface, is `design-by-contract`; how the code is cut is `slice-first`; this skill only says where the pieces sit.
   Triggers: C#, .NET, MVVM, Clean Architecture, DDD, CQRS, TDD, refactoring, code review
 allowed-tools: Read, Edit, Write, Bash, Grep, Glob, Task
 ---
 
-# C# Architect
+# Architect
 
 ## Core principles
 
@@ -35,9 +35,9 @@ the picture above only says what the resulting pieces are called here.
 
 ### MVVM
 
-- **View** — XAML or Razor only.
+- **View** — markup only.
   Code-behind kept to a minimum.
-- **ViewModel** — implements `INotifyPropertyChanged` and `ICommand`.
+- **ViewModel** — exposes state for binding and commands for input.
 - **Model** — the Domain layer's entities.
 
 ### CQRS
@@ -48,50 +48,12 @@ the picture above only says what the resulting pieces are called here.
   Returns a DTO.
 - **Handler** — one responsibility, one operation each.
 
-#### Mediator dispatch
-
-A mediator library (MediatR, Mediator.SourceGenerator, Wolverine and the like) dispatches a request to the one handler that declares it:
-
-```csharp
-public record CreateProduct(string Name, decimal Price) : IRequest<int>;
-
-public sealed class CreateProductHandler : IRequestHandler<CreateProduct, int>
-{
-    public Task<int> Handle(CreateProduct request, CancellationToken ct) => ...;
-}
-```
-
-The request type is the contract.
-Registration scans the assembly,
-so a handler is reached by its request type rather than by a reference,
-and nothing but the type connects the two.
-
-Cross-cutting concerns go in the pipeline, registered once, in order:
-
-```csharp
-public sealed class ValidationBehavior<TRequest, TResponse>
-    : IPipelineBehavior<TRequest, TResponse>
-{
-    public async Task<TResponse> Handle(
-        TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken ct)
-    {
-        // validate, then hand on
-        return await next();
-    }
-}
-```
-
-`services.AddMediatR(...)` plus one `AddOpenBehavior` call per behaviour is the whole wiring;
-the order of registration is the order of execution,
-and it is the only place a reader can see what runs before a handler.
-
-Two cautions specific to this stack.
-Assembly scanning means a handler with no reference is still reached,
-so a stale handler stays alive until someone deletes it.
-And a request with one sender and one handler gains nothing from the dispatch but the lost jump to definition.
+Cross-cutting concerns go in the pipeline the requests already pass through,
+registered once, in order,
+and that registration is the only place a reader can see what runs before a handler.
 When the dispatch, the pipeline or the folder layout is the question,
 the rule is in `slice-first` and `design-by-contract`;
-the code above only shows how this stack spells it.
+the stack layer shows how the stack spells it.
 
 ### DDD
 
@@ -107,6 +69,23 @@ the code above only shows how this stack spells it.
 2. **Green** — the least code that passes it.
 3. **Refactor** — improve, keeping the tests green.
 
+## Stack layers
+
+The rule is stack-neutral; what differs by language,
+framework or binary boundary is layered on, not mixed in.
+Read the layer for the stack in hand before placing or naming anything,
+and no other:
+
+- C#: `references/csharp.md` — the MVVM interfaces,
+  mediator dispatch and its pipeline, analyzer codes, file naming.
+  It links onward to `references/csharp-architecture.md` (the layers in detail),
+  `references/csharp-patterns.md` (implementation patterns) and `references/csharp-examples.md` (a complete feature),
+  read only when the task reaches them.
+
+A stack with no layer file uses the body alone.
+A new language, a framework or a binary boundary (an ABI, an interop layer) is a new file under `references/`,
+named here, holding only what differs from the body.
+
 ## By task
 
 ### Resolving a linter warning
@@ -116,17 +95,13 @@ the code above only shows how this stack spells it.
 3. Fix in line with the architecture, not around it.
 4. Run the affected tests.
 
-Common ones:
-
-- `CA1062` — add the null check, or adopt nullable reference types
-- `CA1822` — make it static if it touches no instance state
-- `CS8618` — enable nullable reference types, or guarantee initialisation
+The stack layer lists the common codes and their fixes.
 
 ### Resolving a build error
 
 1. Read the whole message.
 2. Decide whether it is a dependency problem or a code problem.
-3. Dependency — check the NuGet and project references.
+3. Dependency — check the package and project references.
 4. Code — check types, namespaces, access modifiers.
 5. Confirm with a clean build.
 
@@ -173,41 +148,11 @@ Domain Entity/VO → Domain Service → Repository interface
    and does each test name state its intent?
 5. **Code** — does it follow SOLID, and is the naming clear?
 
-## File naming
-
-```
-Domain/
-  Entities/          {Name}.cs
-  ValueObjects/      {Name}.cs
-  Services/          {Name}Service.cs
-  Events/            {Name}Event.cs
-
-Application/
-  Commands/          {Action}{Entity}Command.cs
-  Queries/           Get{Entity}Query.cs
-  Handlers/          {Command/Query}Handler.cs
-  DTOs/              {Name}Dto.cs
-
-Infrastructure/
-  Repositories/      {Entity}Repository.cs
-  Services/          {External}Service.cs
-
-Presentation/
-  ViewModels/        {View}ViewModel.cs
-  Views/             {Name}View.xaml
-```
-
-## Further reading
-
-- [architecture.md](./architecture.md) — the layers in detail
-- [patterns.md](./patterns.md) — implementation patterns
-- [examples.md](./examples.md) — code
-
 ## Before calling it done
 
 - [ ] Every test passes
 - [ ] No new warnings
 - [ ] The build succeeds
 - [ ] Dependencies run the right way
-- [ ] Naming follows the conventions
+- [ ] Naming follows the stack layer's conventions
 - [ ] Everything sits in the layer it belongs to

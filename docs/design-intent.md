@@ -79,7 +79,7 @@ and a skill that cannot is not yet a rule.
   so they live in one place.
 - Language-specific placement inside a language-agnostic rule,
   and the reverse.
-  `csharp-architect` says where a type sits in this stack;
+  `architect` says where a type sits, with the stack's spelling in its layer;
   `design-by-contract` says which way the dependency may point.
 
 **The next case.** A new design rule is written as its firing moments first.
@@ -163,6 +163,10 @@ The layer is what lets the body stay a rule and the examples stay concrete.
 Each moment in its table is checked against an English and a Japanese draft,
 and whatever holds in only one goes to the layer.
 A second language is a second layer file, named from the same section.
+A stack layer is decided the same way:
+`architect` is written neutral,
+and a language, a framework or a binary boundary is one file under `references/`,
+named from its Stack layers section and holding only what that stack spells differently.
 
 **Gate.** `tests/check-portability.ps1`:
 every `references/<language>.md` must be named in its skill's `SKILL.md`,

@@ -31,6 +31,15 @@ so the layer is loaded whenever the draft is Japanese and never otherwise.
 Material specific to a market rather than a language takes the same shape (`regulated-claims` and its `references/japan.md`) and carries its own `## Sources` block.
 The portability check refuses a layer file the body does not name,
 and a named path the directory lacks.
+
+A stack takes the same shape.
+`architect`'s body is the placement rule that holds in every language,
+and `references/<stack>.md` (today `references/csharp.md`,
+with its longer material in files prefixed `csharp-`) holds what one language,
+a framework or a binary boundary spells differently,
+named from a section called **Stack layers**.
+A session reads the layer for the stack in hand and no other,
+so what it loads grows with the stacks it touches and not otherwise.
 `docs/design-intent.md` carries the reasoning.
 
 ## Prose is wrapped one sentence per line

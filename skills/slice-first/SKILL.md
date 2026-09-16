@@ -120,4 +120,5 @@ which is how a cut is changed safely.
 and the pipeline's checks are preconditions stated once.
 `state-first` names the states a slice's feature moves between.
 Where the arrangement has to be expressed in a particular stack's project layout,
-that placement is the stack's own skill — `csharp-architect` for C#.
+that placement is `architect`,
+whose stack layers spell it per language.
