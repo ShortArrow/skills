@@ -1,7 +1,7 @@
 ---
 name: agent-harness
 description: |
-  Making an AI coding agent hold a project's conventions by construction, in any language: prose conventions decay as the session grows, while gates — types, lints, permissions — bind at turn 1 and turn 200 alike. Feedforward narrows what can be written (strictest toolchain mode, permission boundary, layered docs); computational sensors in one fast command catch the rest; an inferential review is triaged into fix-code, fix-spec, mechanize, or reject; error messages state the fix; deliberate violations test the harness itself. The free layer goes everywhere, each paid sensor is added after an observed violation, and nothing is frozen mid-exploration. Use when setting up a repository for AI coding sessions, when the same correction repeats across sessions, when conventions in CLAUDE.md are being ignored, and when reviewing generated code stops scaling.
+  Making an AI coding agent hold a project's conventions by construction, in any language: prose conventions decay as the session grows, while gates — types, lints, permissions — bind at turn 1 and turn 200 alike. Feedforward narrows what can be written (strictest toolchain mode, permission boundary, layered docs); computational sensors in one fast command catch the rest; an inferential review is triaged into fix-code, fix-spec, mechanize, or reject; error messages state the fix; deliberate violations test the harness itself. The free layer goes everywhere, each paid sensor is added after an observed violation, and nothing is frozen mid-exploration. Use when setting up a repository for AI coding sessions, when the same correction repeats across sessions, when conventions in CLAUDE.md are being ignored, when a skill that ran yesterday fails today at a different step, and when reviewing generated code stops scaling.
 ---
 
 # The Agent Harness
@@ -93,6 +93,33 @@ the violations that pass silently mark the next sensors to build.
 This is the same discipline as seeing a test red before trusting it green,
 applied to the gates themselves.
 
+## Repair the step, not the run
+
+An agent that succeeds four runs in five is not one that fails at random one time in five.
+On the AppWorld benchmark a ReAct agent on GPT-4.1 passed 77% of runs and only 53% of tasks five times out of five (Duesterwald et al., 2026),
+and the gap is the steps where the model's next action is close to a coin toss.
+A skill "that worked yesterday" fails today at one of those steps,
+and the step that failed today is not the only one of its kind.
+
+So a skill's repair is a harness of its own,
+not a "fix it" typed at the failure.
+Take the trajectory that failed and resample each step several times;
+the steps whose answers scatter are the brittle ones,
+including the ones that happened to pass this time,
+and each gets a guideline written into the skill at that step.
+That procedure raised five-of-five success by 16 points on the same tasks and 13 on similar ones.
+The moment to write the guideline is the one the resampling found,
+not the one that happened to fail.
+
+Two things practice adds.
+A fix has to land everywhere the same instruction is stated:
+one repair fixed the script a skill ran and left the same defect in the example command in the skill's prose,
+and only a second check step caught it.
+And a fix is tried on inputs beyond the one that failed,
+the one that used to pass included;
+a fetch that stopped at 100 records was rerun at 25,
+125 and 203 before the change was kept.
+
 ## The conversion habit
 
 A correction spoken to the agent lasts one session.
@@ -130,4 +157,17 @@ Sensors are an investment repaid per session, so the tiers differ:
   read 2026-09-14: conditional document references instead of a stack read before every edit,
   explicit permission for safe workflows,
   and the observation that guidance written for an earlier model overconstrains a later one.
+- Evelyn Duesterwald, Benjamin Elder, Lilian Ngweta,
+  Shashanka Ubaru and Malgorzata Zimon,
+  "Closing the Consistency Gap: Self-Evolving Agents That Learn to Stay on Course",
+  arXiv 2609.08832, submitted 2026-09-08; abstract read 2026-09-17:
+  the consistency gap,
+  the analyser that finds low-consistency steps by resampling,
+  and the guideline generator that writes memory for them.
+- ナレッジセンス, 「SKILL.md を良くする技術。AIのブレをなくす。」,
+  zenn.dev/knowledgesense/articles/9adf1e9b17ffd6,
+  published 2026-09-15 and read 2026-09-17:
+  the repair procedure as a skill of its own,
+  the fix that missed the prose copy of the command,
+  and the rerun at three record counts.
   The rest of this skill rests on practice.

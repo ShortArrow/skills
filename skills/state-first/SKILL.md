@@ -22,6 +22,7 @@ each arriving as a branch nobody planned.
 | carry a raw value inward and check it where it is used | reject it at the boundary it crossed, and let the type past the boundary say it was checked |
 | return `null`, `-1` or log-and-continue on failure | return a value whose type carries the failure, so the caller cannot ignore it by accident |
 | describe a feature as a sequence of steps | describe the state that counts as success first, then the steps that reach it from each start state |
+| add a lock, a delay or a retry so two screens stop colliding | name the screen's states and give one arbiter the transitions; a collision is two owners of one state |
 
 ## Name the states before the operation
 
@@ -81,6 +82,16 @@ Replace the set with one enumeration whose members are the states that can actua
 and the impossible combinations stop existing.
 The decision table in `test-design` shrinks with them:
 rules are counted over states, not over bits.
+
+A screen that is "sending" in one variable,
+"selecting" in another and "visible" in a third is this set of flags with a user attached.
+A second keypress lands between two flags and the screen stops answering,
+or a cancel key has to be pressed twice because one flag was cleared and the other was not.
+The screen's states are one enumeration held in one place,
+and a keypress that does not fit the current state is ignored by rule,
+not by a lock added after the first collision.
+`architect` gives the presentation structure that holds it:
+passive views, and one arbiter that owns the transitions.
 
 ## The boundary is where validation lives
 

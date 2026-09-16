@@ -13,6 +13,14 @@ Read after `SKILL.md`, for a .NET solution.
 Base classes for both, `RelayCommand` and its async form,
 and the Avalonia input-validation variant are in `csharp-patterns.md`.
 
+The screen's arbiter is the root ViewModel, or a shell service it owns:
+it holds the current mode as one enumeration and decides visibility for every child.
+A child ViewModel exposes its own state for binding and raises what it cannot settle upward,
+as an event or through a messenger (`IMessenger` in CommunityToolkit.Mvvm),
+and holds no reference to a sibling.
+Code-behind never sets `IsVisible`;
+a view that does is a view deciding.
+
 ## Mediator dispatch
 
 A mediator library (MediatR, Mediator.SourceGenerator, Wolverine and the like) dispatches a request to the one handler that declares it:
@@ -58,6 +66,10 @@ When the dispatch, the pipeline or the folder layout is the question,
 the rule is in `slice-first` and `design-by-contract`;
 the code above only shows how this stack spells it.
 
+MediatR left the Apache licence at v13.0.0 (2025-07-02) for a dual commercial and open-source licence and requires a licence key at registration (release notes read 2026-09-17).
+A solution adopting it after that date chooses its licence first;
+Mediator.SourceGenerator and a direct call to the handler are the routes that do not ask.
+
 ## Analyzer codes
 
 - `CA1062` — add the null check, or adopt nullable reference types
@@ -92,6 +104,34 @@ Presentation/
   ViewModels/        {View}ViewModel.cs
   Views/             {Name}View.xaml
 ```
+
+## Feature-cut layout
+
+```
+src/
+  Features/
+    Orders/
+      PlaceOrder.cs        endpoint mapping, request record, handler
+      CancelOrder.cs
+      GetOrderDetail.cs
+    Shipping/
+      CreateShipment.cs
+  Shared/
+    Persistence/AppDbContext.cs
+    Behaviors/RequestLogging.cs
+```
+
+One file per feature: the endpoint mapping,
+the request record and the handler together,
+so a change to the feature touches one file,
+and the number of files a change touches is the measure of whether the cut is right.
+`Shared/` holds the persistence context and the pipeline behaviours,
+the two things every slice passes through;
+anything else placed there takes `slice-first`'s scrutiny.
+The cross-cutting goes in ASP.NET Core middleware or an endpoint filter,
+never as a line at the top of each handler.
+Which of the two layouts a solution uses is `slice-first`'s call;
+both are spelled here so that either answer has a shape.
 
 ## Further reading
 

@@ -1,8 +1,7 @@
 ---
 name: architect
 description: |
-  Where a piece of code sits in a layered stack: what each layer is called, what it holds and refuses, the order a feature is built in, and the checks before calling it done. Use when resolving a linter warning or a build error, refactoring, implementing a feature, or reviewing code in a solution arranged as MVVM, Clean Architecture, CQRS and DDD. The body is stack-neutral; what differs by language, framework or binary boundary is layered on from references/ and read only for the stack in hand — today C# (.NET, MVVM, Avalonia, CQRS with a mediator, DDD, analyzer codes). Which way a dependency runs, and who owes what at an interface, is `design-by-contract`; how the code is cut is `slice-first`; this skill only says where the pieces sit.
-  Triggers: C#, .NET, MVVM, Clean Architecture, DDD, CQRS, TDD, refactoring, code review
+  Where a piece of code sits in a layered stack, triggered by the moments that misplace it: about to decide which project or folder a new type goes in, about to put a framework attribute or a network client on a domain type, about to let a view decide its own visibility or set a sibling's, about to add a lock, a delay or a retry so two screens stop colliding, about to resolve an analyzer warning by editing around the architecture, about to build a feature from the view inward, or about to review code for which layer each piece is in. The body is stack-neutral: what each layer is called and holds, the order a feature is built in, one arbiter for a screen's state, the checks before calling it done. What a language, framework or binary boundary spells differently is layered on from references/, read only for the stack in hand, today C# (.NET, MVVM, Avalonia, CQRS, DDD) and Go. Dependency direction is design-by-contract; the cut is slice-first; this skill says where the pieces sit.
 allowed-tools: Read, Edit, Write, Bash, Grep, Glob, Task
 ---
 
@@ -26,6 +25,11 @@ allowed-tools: Read, Edit, Write, Bash, Grep, Glob, Task
 
 **Dependencies run outward to inward.** Domain depends on nothing.
 
+The picture names the layers;
+it does not say whether the layer or the feature is the outer folder.
+That is `slice-first`'s call,
+and each stack layer shows the feature-cut layout beside the layered one.
+
 These names are this stack's arrangement of one rule:
 the layer nearer the policy declares the interface it needs and the layer nearer the machine implements it.
 When the question is whether a dependency may point somewhere,
@@ -39,6 +43,27 @@ the picture above only says what the resulting pieces are called here.
   Code-behind kept to a minimum.
 - **ViewModel** — exposes state for binding and commands for input.
 - **Model** — the Domain layer's entities.
+
+### Presentation: the screen has one arbiter
+
+A view draws what it is told and reports what the user did;
+it decides nothing.
+Which screen is visible, which input is accepted now,
+and what a second keypress means while the first is still being handled are decided in one place:
+an arbiter that holds the screen's state as one state machine (`state-first`),
+with every view's presenter under it in a tree that has a single root.
+An event a presenter cannot settle goes up the tree until one can;
+nothing goes sideways to a sibling.
+
+The failure this replaces is the one generated GUI code drifts into,
+because desktop and game interface conventions are thin in what a model has read:
+each screen shows and hides itself and reaches into its neighbours,
+the first collision is patched with a lock, then a delay, then a retry,
+and the symptoms are a screen that stops answering rapid keypresses,
+a cancel key that has to be pressed twice,
+and a popup that does not appear.
+Those are three views of one missing arbiter.
+Do not patch the collision; move the decision.
 
 ### CQRS
 
@@ -76,11 +101,15 @@ framework or binary boundary is layered on, not mixed in.
 Read the layer for the stack in hand before placing or naming anything,
 and no other:
 
-- C#: `references/csharp.md` — the MVVM interfaces,
-  mediator dispatch and its pipeline, analyzer codes, file naming.
+- C#: `references/csharp.md` — the MVVM interfaces and the screen's arbiter,
+  mediator dispatch and its pipeline, analyzer codes,
+  the layered and the feature-cut layouts.
   It links onward to `references/csharp-architecture.md` (the layers in detail),
   `references/csharp-patterns.md` (implementation patterns) and `references/csharp-examples.md` (a complete feature),
   read only when the task reaches them.
+- Go: `references/go.md` — the package as the slice,
+  interfaces declared on the consuming side,
+  middleware for the cross-cutting, what a slice may import.
 
 A stack with no layer file uses the body alone.
 A new language, a framework or a binary boundary (an ABI, an interop layer) is a new file under `references/`,
@@ -156,3 +185,16 @@ Domain Entity/VO → Domain Service → Repository interface
 - [ ] Dependencies run the right way
 - [ ] Naming follows the stack layer's conventions
 - [ ] Everything sits in the layer it belongs to
+
+## Sources
+
+- nrs, 「バイブコーディングで GUI が壊れていく理由とその対策プロンプト」,
+  zenn.dev/nrs/articles/9ba91aea587bf5,
+  published 2026-09-15 and read 2026-09-17: the passive view,
+  the presenter tree with one root, events bubbling upward,
+  the mediator that is a state machine,
+  and the three symptoms of screens that decide for themselves.
+- 株式会社一創, 「Vertical Slice Architecture」,
+  issoh.co.jp/tech/details/10356, read 2026-09-17:
+  the feature-cut layouts in C# and Go and the store interface declared on the slice's side.
+  The rest of this skill rests on practice.

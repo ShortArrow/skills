@@ -85,6 +85,7 @@ so `marketplace add` takes them directly.
 | Repository | Covers |
 |---|---|
 | [anthropics/skills](https://github.com/anthropics/skills) | Document formats, artifact building, skill creation |
+| [blader/humanizer](https://github.com/blader/humanizer) | An English rewrite pass over finished prose: twenty-five tells ranked by strength, resting on Wikipedia's "Signs of AI writing". Overlaps `unmachine-prose`'s English list, which constrains at the moment of writing; run humanizer on text that already exists |
 | [coji/natural-japanese](https://github.com/coji/natural-japanese) | Japanese business documents: a writing constitution, corpus-calibrated catalogues of machine tells and translationese, document types, and a morphological linter. Overlaps this catalogue's Japanese layers; run one or the other on a draft, not both |
 | [google/skills](https://github.com/google/skills) | Google products and technologies |
 | [microsoft/skills](https://github.com/microsoft/skills) | Grounding coding agents in Microsoft SDKs |

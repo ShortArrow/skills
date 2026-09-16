@@ -1,7 +1,7 @@
 ---
 name: clean-docs
 description: |
-  Discipline for writing durable artifacts — PR bodies, commits, CHANGELOGs, ADRs, READMEs, specifications, source code. A durable artifact is read by someone who never saw the conversation, so conversation-local labels die at its boundary, and it answers the reader, not the reviewer. Derivation orders documents — living documents follow their source, records freeze at their moment — and settles where each question belongs: what, why, why-not, how much, what changed. Use when writing a PR, a commit, a CHANGELOG, an ADR or an issue, when editing a README or PRD, when unsure where a why, a why-not or a history note belongs, when a why that still holds is about to be frozen into an ADR instead of stated as living design intent, and whenever about to write "See ADR-NNNN".
+  Discipline for writing durable artifacts — PR bodies, commits, CHANGELOGs, ADRs, READMEs, specifications, source code. A durable artifact is read by someone who never saw the conversation, so conversation-local labels die at its boundary, and it answers the reader, not the reviewer. Derivation orders documents — living documents follow their source, records freeze at their moment — and settles where each question belongs: what, why, why-not, how much, what changed. Use when writing a PR, a commit, a CHANGELOG, an ADR, a design document or an issue, when editing a README or PRD, when unsure where a why, a why-not or a history note belongs, when a why that still holds is about to be frozen into an ADR instead of stated as living design intent, when about to give an alternative the requirements already exclude the same pros and cons as the one adopted, and whenever about to write "See ADR-NNNN".
 ---
 
 # Self-Contained Artifacts
@@ -292,6 +292,61 @@ For the reference you are about to write:
 - This is about **physical placement**, not reference direction.
   The purpose is to maintain a single entrance to the current specification.
 
+## Discipline 5: a design document is read for its decision
+
+A design document exists to make the uncertainty visible before implementation starts,
+and to remove as much of it as the subject allows;
+how much is a property of the subject, not of the template.
+It is read by someone deciding whether to approve it,
+and that reading fails in four ways a correct document can still fail:
+every point at equal weight,
+so the decisive judgement and the obvious premise get the same paragraph;
+the decision at the end, after the survey that led to it;
+template headings (background, glossary, future extensions) filled because they are there;
+and an alternative the requirements already rule out given the same pros and cons as the one adopted.
+
+The shape that survives review:
+
+1. **The decision first, in three lines.** What was adopted and why.
+   Everything after it supports it.
+2. **Non-goals stated.** Generalities outside the scope then have nowhere to go.
+3. **Alternatives as a table**,
+   one row per option with the reason it was rejected,
+   at the length the reason needs.
+   An option the requirements exclude is one row, not a section.
+   A document with no alternatives reads as a document whose author considered none.
+4. **Concerns.** The doubts that remain after the choice,
+   and the questions the author could not answer and wants help with.
+   A reviewer reads this section most carefully,
+   because it is where the author's thinking shows;
+   a document with no concerns has usually not looked.
+5. **Undecided.** What is deliberately not decided now,
+   with why not now and who decides it when.
+   That is what shortens the lead time to implementation,
+   and each item becomes a ticket after approval.
+6. **Template sections only where the reader needs them.** A glossary when the reader may not know the terms,
+   a background when they may not know the situation;
+   otherwise nothing under that heading, and no heading.
+7. **The test per section.** Could the reviewer understand the decision without it?
+   If so, cut it.
+
+In this skill's tables the decision is the which,
+the alternatives the why-not at that moment,
+the concerns the what-if and the undecided the what-next.
+The design document is the record where they are taken together at one date;
+what survives approval moves to the living layer,
+the refusal to design intent, the concern to the risk register,
+the undecided to the roadmap.
+
+When the writing is delegated to a model,
+the instruction has to say what not to write.
+Told only to be thorough,
+a model fills every heading and gives every option both sides:
+the same issue and a byte-identical implementation produced a 284-line design document with 32 headings under "describe the options and their trade-offs in detail",
+and a 41-line one with 6 headings under the list above.
+Put the list in the prompt;
+`unmachine-prose` says the same of its checklists.
+
 ## Sources
 
 - Michael Nygard, "Documenting Architecture Decisions", 2011-11-15,
@@ -299,3 +354,15 @@ For the reference you are about to write:
   read on 2026-08-31.
 - Diátaxis, diataxis.fr, by Daniele Procida — the four types and two axes as stated on the site on 2026-09-04.
   No version is published; the site is the reference.
+- pospome, 「優秀なエンジニアが書くDesign Docは何が違うのか?」,
+  pospome.work/entry/2026/08/24/223309,
+  published 2026-08-24 and read 2026-09-17:
+  the design document as the place uncertainty is made visible,
+  and alternatives,
+  concerns and undecided items as the three sections a reviewer reads.
+- 依田 (take-yoda), 「生成AIが書いたドキュメントを読みたくない」,
+  qiita.com/take-yoda/items/e5d9ce6618523af1ffc5, read 2026-09-17:
+  the four ways a generated design document tires its reader,
+  the decision-first shape with non-goals and an alternatives table,
+  the per-section test,
+  and the 284-to-41-line measurement on one issue with one implementation.
