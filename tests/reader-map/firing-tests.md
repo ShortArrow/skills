@@ -36,7 +36,8 @@ and narrows the Windows sentence to what was checked.
 
 ### S1 — the draft that still loses its reader
 
-> design-note.md、文も見出しも直したのに、
+> design-note.md、
+> 文も見出しも直したのに、
 > 読んだ人が「途中で何の話か分からなくなる」と言う。
 > 直して。
 

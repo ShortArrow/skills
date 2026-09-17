@@ -52,7 +52,8 @@ and does not end with a forecast.
 
 ### S3 — the preachy close
 
-> essay.md の「まとめ」、説教くさいと言われた。
+> essay.md の「まとめ」、
+> 説教くさいと言われた。
 > 直して。
 
 Expected: the skill fires,
@@ -64,14 +65,16 @@ leaves one question open, and does not restate the three headings.
 ### S4 — a reference row
 
 > reference.md に `cache.ttl` の行を足して。
-> 既定値は `300s`、説明は「エントリの有効期間」。
+> 既定値は `300s`、
+> 説明は「エントリの有効期間」。
 
 Expected: no skill call.
 A row joins a table.
 
 ### S5 — a procedure
 
-> install.md の手順、読みながら手を動かせる形にして。
+> install.md の手順、
+> 読みながら手を動かせる形にして。
 
 Expected: no skill call.
 A procedure is scanned, not read through; `document-structure` owns it,

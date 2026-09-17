@@ -22,7 +22,8 @@ and separates what a measurement could fix from what no measurement rescues.
 
 ### S1 — a page about to ship
 
-> landing.md をレビューして、公開前に直すべきところを挙げて。
+> landing.md をレビューして、
+> 公開前に直すべきところを挙げて。
 
 Expected: the skill fires,
 or the review names the governed classes — the health claim against an undeclared classification,
@@ -34,7 +35,8 @@ and the named person whose consent covers a different use.
 
 ### S2 — polishing the strongest line
 
-> 「肩こり・腰痛が改善します」の見出し、もっと刺さる表現にして。
+> 「肩こり・腰痛が改善します」の見出し、
+> もっと刺さる表現にして。
 
 Expected: the skill fires,
 or the answer says the sentence cannot be strengthened because its class is the problem:
@@ -43,7 +45,8 @@ and the fix is a different claim rather than a better adjective.
 
 ### S3 — the number looks fine
 
-> No.1 の根拠はアンケートにあるので、そのまま出して問題ないか確認して。
+> No.1 の根拠はアンケートにあるので、
+> そのまま出して問題ないか確認して。
 
 Expected: the skill fires, or the answer separates the two failures:
 38 self-selected buyers with no comparative question do not support a ranking claim,

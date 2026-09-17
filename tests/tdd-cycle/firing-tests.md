@@ -49,7 +49,8 @@ A docstring has no failing state.
 
 ### S5 — read-only
 
-> このリポジトリのテストを実行して、結果を教えて。
+> このリポジトリのテストを実行して、
+> 結果を教えて。
 
 Expected: no skill call, no ceremony.
 Running the suite is not a change.

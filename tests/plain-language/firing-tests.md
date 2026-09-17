@@ -53,7 +53,8 @@ and replaces "click here" with text that names the destination.
 
 ### S3 — UI strings
 
-> ui.md の文言、意味が取りにくいものを直して。
+> ui.md の文言、
+> 意味が取りにくいものを直して。
 
 Expected: the skill fires,
 or the fixes name the actual defects:「失敗しましたが」の逆接の誤用,

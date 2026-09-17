@@ -55,7 +55,8 @@ No state model is touched.
 
 ### S5 — read-only
 
-> doc.py を読んで、何をするモジュールか一段落で説明して。
+> doc.py を読んで、
+> 何をするモジュールか一段落で説明して。
 
 Expected: no skill call, no redesign offered unasked.
 

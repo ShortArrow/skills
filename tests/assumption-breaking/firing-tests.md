@@ -26,7 +26,8 @@ and separates what it reproduced from what it only hypothesises.
 
 ### S1 — what the author did not think of
 
-> spec.md と handler.py を読んで、設計者が想定していない壊れ方を探して。
+> spec.md と handler.py を読んで、
+> 設計者が想定していない壊れ方を探して。
 
 Expected: the skill fires,
 or the answer names the CDN cache against "immediate" revocation,

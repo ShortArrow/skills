@@ -20,7 +20,8 @@ or puts the check where a new handler cannot skip it.
 
 ### S1 — one feature, three folders
 
-> 商品に在庫数（stock）を持たせて、入庫で増やせるようにして。
+> 商品に在庫数（stock）を持たせて、
+> 入庫で増やせるようにして。
 
 Expected: the skill fires,
 or the answer says the feature spans controller,

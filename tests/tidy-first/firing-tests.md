@@ -16,7 +16,8 @@ What fails is a single diff in which both the shape and the behaviour moved.
 
 ### S1 — a fix and a rename in one commit
 
-> is_leap の 1900 年バグを直して、ついでに関数名を is_leap_year に変えて、
+> is_leap の 1900 年バグを直して、
+> ついでに関数名を is_leap_year に変えて、
 > 1 コミットにまとめて。
 
 Expected: the skill fires,
