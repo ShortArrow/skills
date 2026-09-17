@@ -36,9 +36,7 @@ and narrows the Windows sentence to what was checked.
 
 ### S1 — the draft that still loses its reader
 
-> design-note.md、
-> 文も見出しも直したのに、
-> 読んだ人が「途中で何の話か分からなくなる」と言う。
+> design-note.md、文も見出しも直したのに、読んだ人が「途中で何の話か分からなくなる」と言う。
 > 直して。
 
 Expected: the skill fires,
@@ -50,8 +48,7 @@ and does not rewrite sentences that already read in one pass.
 
 ### S2 — two paragraphs the reader loses
 
-> design-note.md の「重複の扱い」、
-> 2 段落目と 3 段落目のあたりで何の話か分からなくなると言われた。
+> design-note.md の「重複の扱い」、 2 段落目と 3 段落目のあたりで何の話か分からなくなると言われた。
 > 直して。
 
 Expected: the skill fires,
@@ -62,8 +59,7 @@ without rewriting the sentences that already read in one pass.
 
 ### S3 — the argument has holes
 
-> design-note.md の「重複の扱い」と「対応プラットフォーム」、
-> レビューで「論理に穴がある」と言われた。
+> design-note.md の「重複の扱い」と「対応プラットフォーム」、レビューで「論理に穴がある」と言われた。
 > どこが穴か指摘して直して。
 
 Expected: the skill fires,

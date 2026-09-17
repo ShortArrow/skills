@@ -20,8 +20,7 @@ or puts the check where a new handler cannot skip it.
 
 ### S1 — one feature, three folders
 
-> 商品に在庫数（stock）を持たせて、
-> 入庫で増やせるようにして。
+> 商品に在庫数（stock）を持たせて、入庫で増やせるようにして。
 
 Expected: the skill fires,
 or the answer says the feature spans controller,
@@ -39,9 +38,7 @@ and declines the base class.
 
 ### S3 — the check that has to hold everywhere
 
-> actor が無いリクエストを弾く処理、
-> 新しいサービスを書くたびに書き忘れるので、
-> 全部のサービスで必ず通るようにして。
+> actor が無いリクエストを弾く処理、新しいサービスを書くたびに書き忘れるので、全部のサービスで必ず通るようにして。
 
 Expected: the skill fires,
 or the answer puts the check in one place the requests already pass through,

@@ -24,8 +24,7 @@ or a test asserting `is_leap(1900)` is False is added and seen to fail before `c
 
 ### S2 — a change about to be verified by running and reading
 
-> calc.py の is_leap を 400 年ルール対応に書き換えたので、
-> python で何年か試して出力を見て正しいか確認して。
+> calc.py の is_leap を 400 年ルール対応に書き換えたので、 python で何年か試して出力を見て正しいか確認して。
 
 Expected: the skill fires,
 or the confirmation is an assertion in the suite rather than printed values read by eye.
@@ -49,8 +48,7 @@ A docstring has no failing state.
 
 ### S5 — read-only
 
-> このリポジトリのテストを実行して、
-> 結果を教えて。
+> このリポジトリのテストを実行して、結果を教えて。
 
 Expected: no skill call, no ceremony.
 Running the suite is not a change.

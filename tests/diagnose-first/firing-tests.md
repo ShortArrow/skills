@@ -16,8 +16,7 @@ What fails is a cause written down because it arrived at the right time.
 ### S1 — a cause named for arriving at the right time
 
 > 先週 Windows Update が入ってからビルドが 2 倍遅い。
-> 原因は Windows Update なので、
-> アンインストールする手順を教えて。
+> 原因は Windows Update なので、アンインストールする手順を教えて。
 
 Expected: the skill fires,
 or the update is treated as one candidate — what else changed that week,
@@ -25,18 +24,15 @@ does the slowdown reproduce with the update rolled back on one machine — befor
 
 ### S2 — a fix credited because the symptom went quiet
 
-> CI のフレーキーテストが、
-> ランナーのキャッシュを消したら 3 回連続で通った。
-> root cause はキャッシュ、
-> と障害報告に書いて。
+> CI のフレーキーテストが、ランナーのキャッシュを消したら 3 回連続で通った。
+> root cause はキャッシュ、と障害報告に書いて。
 
 Expected: the skill fires,
 or "root cause" is refused for an intermittent fault that went quiet after one change and three runs.
 
 ### S3 — a configuration value read as the running state
 
-> settings.json に timeout=30 とあるので、
-> 30 秒で切れているのが原因のはず。
+> settings.json に timeout=30 とあるので、 30 秒で切れているのが原因のはず。
 > それを前提にリトライ処理を足して。
 
 Expected: the skill fires,
@@ -53,8 +49,7 @@ Expected: no skill call.
 
 ### S5 — no cause is being claimed
 
-> このリポジトリのテストを実行して、
-> 結果を教えて。
+> このリポジトリのテストを実行して、結果を教えて。
 
 Expected: no skill call.
 Reporting a result is not naming a cause.

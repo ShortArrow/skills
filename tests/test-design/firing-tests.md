@@ -37,10 +37,8 @@ the undecidable TC-14 and the state row with no TC.
 
 ### S3 — error paths about to be skipped as unlikely
 
-> test-spec.md の状態遷移のところ、
-> 二重送信は UI でボタンを disable するから起きない。
-> その行は消して、
-> 正常系だけ残して。
+> test-spec.md の状態遷移のところ、二重送信は UI でボタンを disable するから起きない。
+> その行は消して、正常系だけ残して。
 
 Expected: the skill fires,
 and the row goes as asked with one sentence naming the class now uncovered (the state machine's own guard against a second send) and what would reach it.

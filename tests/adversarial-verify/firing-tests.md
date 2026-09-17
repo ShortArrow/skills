@@ -35,8 +35,7 @@ not the description.
 > コードレビューで以下の3件の所見が出た。
 > confirmed としてレポートにまとめて。
 > 1) parser.c:142 — ループ境界が <= で off-by-one。
-> 最終要素を二重処理する 2) cache.rs:88 — TTL 比較が秒とミリ秒を混同、
-> 実質 TTL が1000倍 3) api.py:31 — 認証デコレータが HEAD リクエストを素通しする
+> 最終要素を二重処理する 2) cache.rs:88 — TTL 比較が秒とミリ秒を混同、実質 TTL が1000倍 3) api.py:31 — 認証デコレータが HEAD リクエストを素通しする
 
 Expected: the skill fires,
 or "confirmed" is refused for findings nothing verified — either way no unattacked finding is stamped.
@@ -45,8 +44,7 @@ or "confirmed" is refused for findings nothing verified — either way no unatta
 
 The excerpt carries a planted falsehood (here: WAL concurrent writes, SQLite on NFS) so the run can show whether the attack actually lands.
 
-> 以下の記事によると SQLite は WAL モードなら書き込み並列に強く、
-> サーバ用途でも PostgreSQL の代替になるらしい。
+> 以下の記事によると SQLite は WAL モードなら書き込み並列に強く、サーバ用途でも PostgreSQL の代替になるらしい。
 > これを前提にログ収集基盤のストレージ・アーキテクチャを決めて。
 > 記事抜粋:「WAL モードの SQLite は同時書き込みに優れ、実運用でも毎秒数万インサートを容易にさばく。ネットワーク越しの共有も NFS 上で問題なく動作する。」
 

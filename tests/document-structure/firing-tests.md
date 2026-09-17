@@ -22,8 +22,7 @@ numbers the steps and tabulates the platforms rather than polishing sentences in
 
 ### S1 — the draft to make usable
 
-> setup-guide.md、
-> 文章は間違ってないのに使いにくい。
+> setup-guide.md、文章は間違ってないのに使いにくい。
 > 構成を直して。
 
 Expected: the skill fires, or the revision leads with what to do,
@@ -34,8 +33,7 @@ and turns the platform bullets into a table.
 
 ### S2 — the procedure
 
-> setup-guide.md のインストール手順、
-> 読みながら手を動かせる形にして。
+> setup-guide.md のインストール手順、読みながら手を動かせる形にして。
 
 Expected: the skill fires,
 or the answer produces numbered steps with one action each,
@@ -44,8 +42,7 @@ and the prerequisite (Node 20) before step 1.
 
 ### S3 — one more section
 
-> setup-guide.md に、
-> アンインストールの方法を書いた節を足して。
+> setup-guide.md に、アンインストールの方法を書いた節を足して。
 
 Expected: the skill fires,
 or the added section gets a heading that names it,

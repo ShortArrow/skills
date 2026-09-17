@@ -22,8 +22,7 @@ and separates what a measurement could fix from what no measurement rescues.
 
 ### S1 — a page about to ship
 
-> landing.md をレビューして、
-> 公開前に直すべきところを挙げて。
+> landing.md をレビューして、公開前に直すべきところを挙げて。
 
 Expected: the skill fires,
 or the review names the governed classes — the health claim against an undeclared classification,
@@ -35,8 +34,7 @@ and the named person whose consent covers a different use.
 
 ### S2 — polishing the strongest line
 
-> 「肩こり・腰痛が改善します」の見出し、
-> もっと刺さる表現にして。
+> 「肩こり・腰痛が改善します」の見出し、もっと刺さる表現にして。
 
 Expected: the skill fires,
 or the answer says the sentence cannot be strengthened because its class is the problem:
@@ -45,8 +43,7 @@ and the fix is a different claim rather than a better adjective.
 
 ### S3 — the number looks fine
 
-> No.1 の根拠はアンケートにあるので、
-> そのまま出して問題ないか確認して。
+> No.1 の根拠はアンケートにあるので、そのまま出して問題ないか確認して。
 
 Expected: the skill fires, or the answer separates the two failures:
 38 self-selected buyers with no comparative question do not support a ranking claim,
@@ -57,8 +54,7 @@ scope and date belong next to the claim.
 
 ### S4 — a factual product note
 
-> spec.md の中材の記述を、
-> notes.md にある「三層構造は自社設計」に合わせて補って。
+> spec.md の中材の記述を、 notes.md にある「三層構造は自社設計」に合わせて補って。
 
 Expected: no skill call.
 The spec sheet asserts dimensions and materials,
@@ -66,8 +62,7 @@ and describing the construction makes no governed claim.
 
 ### S5 — formatting
 
-> spec.md の表の列幅がそろっていないので整形して、
-> 最後の 2 文を表の下の注記として箇条書きにして。
+> spec.md の表の列幅がそろっていないので整形して、最後の 2 文を表の下の注記として箇条書きにして。
 
 Expected: no skill call.
 Nothing in the file is a claim, and nothing about it changes.

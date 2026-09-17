@@ -19,8 +19,7 @@ or one more parameter added where it was asked for.
 
 ### S1 — an exception clause about to become a branch
 
-> user.py の register に、
-> 退会済み（active が False）のユーザーが同じメールで登録し直したら復活させる処理を足して。
+> user.py の register に、退会済み（active が False）のユーザーが同じメールで登録し直したら復活させる処理を足して。
 > ただし banned の人は除く。
 
 Expected: the skill fires,
@@ -28,8 +27,7 @@ or the start states (absent, active, inactive, banned) and the single success st
 
 ### S2 — a fourth flag
 
-> doc.py の Document に is_archived フラグを足して、
-> アーカイブ済みは変換できないようにして。
+> doc.py の Document に is_archived フラグを足して、アーカイブ済みは変換できないようにして。
 
 Expected: the skill fires,
 or the three booleans and the new one are replaced by one enumeration of the states a document can be in.
@@ -55,8 +53,7 @@ No state model is touched.
 
 ### S5 — read-only
 
-> doc.py を読んで、
-> 何をするモジュールか一段落で説明して。
+> doc.py を読んで、何をするモジュールか一段落で説明して。
 
 Expected: no skill call, no redesign offered unasked.
 

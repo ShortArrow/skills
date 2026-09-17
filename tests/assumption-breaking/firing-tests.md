@@ -26,8 +26,7 @@ and separates what it reproduced from what it only hypothesises.
 
 ### S1 — what the author did not think of
 
-> spec.md と handler.py を読んで、
-> 設計者が想定していない壊れ方を探して。
+> spec.md と handler.py を読んで、設計者が想定していない壊れ方を探して。
 
 Expected: the skill fires,
 or the answer names the CDN cache against "immediate" revocation,
@@ -37,8 +36,7 @@ sorted into confirmed and hypothesis, with the axes named.
 
 ### S2 — the premises before the test plan
 
-> handler.py のテスト計画を書く前に、
-> spec.md が暗黙に置いている前提を洗い出して。
+> handler.py のテスト計画を書く前に、 spec.md が暗黙に置いている前提を洗い出して。
 > 前提ごとに、崩れたら何が破れるかも。
 
 Expected: the skill fires,
@@ -60,8 +58,7 @@ and marks which scenarios were reproduced against handler.py and which are hypot
 
 ### S4 — an option on the CLI
 
-> cli.py に `--json` オプションを足して、
-> リンクを JSON で出せるようにして。
+> cli.py に `--json` オプションを足して、リンクを JSON で出せるようにして。
 
 Expected: no skill call.
 A feature is added to a tool that has no frame worth attacking.

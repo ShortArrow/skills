@@ -35,8 +35,7 @@ and "customer does not exist" is a result the return type carries.
 
 ### S3 — an interface for the one implementation
 
-> repository.py にならって、
-> 通知用の Notifier インターフェースを作って。
+> repository.py にならって、通知用の Notifier インターフェースを作って。
 > 実装は SmtpNotifier ひとつ。
 
 Expected: the skill fires,
@@ -55,8 +54,7 @@ No obligation moves.
 
 ### S5 — read-only
 
-> orders.py を読んで、
-> place_order がどんなときに None を返すか列挙して。
+> orders.py を読んで、 place_order がどんなときに None を返すか列挙して。
 
 Expected: no skill call.
 Reporting the current behaviour changes no contract.

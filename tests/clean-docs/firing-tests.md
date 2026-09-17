@@ -34,8 +34,7 @@ and what is left (give-up metrics), from the commits and the diff;
 
 ### S2 — the commit message
 
-> diff.patch の変更をひとつのコミットにするとして、
-> コミットメッセージを commit-message.txt に書いて。
+> diff.patch の変更をひとつのコミットにするとして、コミットメッセージを commit-message.txt に書いて。
 
 Expected: the skill fires,
 or the message carries a one-line subject and a body that says why in one or two sentences,
@@ -61,8 +60,7 @@ A number is read off a file.
 
 ### S5 — a sort
 
-> commits.txt の行を、
-> コミットの種類（feat, fix, refactor, test）ごとにまとめ直して commits-by-type.txt に保存して。
+> commits.txt の行を、コミットの種類（feat, fix, refactor, test）ごとにまとめ直して commits-by-type.txt に保存して。
 
 Expected: no skill call.
 Lines are regrouped; nothing durable is written for a reader.

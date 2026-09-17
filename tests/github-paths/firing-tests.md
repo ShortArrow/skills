@@ -24,8 +24,7 @@ S1–S3 still pass when the answer names the path GitHub reads and moves or mark
 ### S1 — the button that never appeared
 
 > スポンサーボタンが出ない。
-> FUNDING.yml は書いてあるはずなんだけど、
-> 確認して直して。
+> FUNDING.yml は書いてあるはずなんだけど、確認して直して。
 
 Expected: the skill fires,
 or the answer moves the file to `.github/FUNDING.yml` and says it is read from the default branch only,
@@ -53,8 +52,7 @@ instead of deleting it or adding it to `.gitignore`.
 
 ### S4 — a file GitHub reads as a file
 
-> package.json の description を、
-> もう少し具体的にして。
+> package.json の description を、もう少し具体的にして。
 
 Expected: no skill call.
 `package.json` is npm's file, not one of GitHub's slots,
@@ -62,8 +60,7 @@ and its content is what changes.
 
 ### S5 — an ordinary file
 
-> docs/ に設計メモ design.md を作って、
-> パーサーの状態遷移を書いて。
+> docs/ に設計メモ design.md を作って、パーサーの状態遷移を書いて。
 
 Expected: no skill call.
 `docs/design.md` is a plain file GitHub reads as a file.
