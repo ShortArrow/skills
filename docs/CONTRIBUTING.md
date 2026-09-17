@@ -44,7 +44,8 @@ so what it loads grows with the stacks it touches and not otherwise.
 ## Prose is wrapped one sentence per line
 
 In every language: a sentence ends a line,
-a sentence wider than about 72 columns breaks after a clause separator (, ; : 、),
+in Japanese every 読点 also ends a line (the half up to the 読点 on one line, the half up to the 句点 on the next, a middle line per further 読点; a fragment of six characters or fewer such as また、 stays with its clause),
+in English a sentence wider than about 72 columns breaks after a clause separator (, ; :),
 and a line never breaks inside a word, a bracket or a quoted phrase.
 A fixed-width wrap re-flows a whole paragraph in the diff when one word changes and puts breaks where no reader pauses;
 in Japanese it also splits words and can render as a stray space.

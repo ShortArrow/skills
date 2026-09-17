@@ -3,9 +3,14 @@
     python tests/reflow-prose.py [--check] <file>...
 
 The rule is the same for every language: a sentence ends a line, a
-sentence wider than LIMIT display columns also breaks after a clause
-separator, and a line never breaks inside a word, a bracket, a code span
-or a quoted phrase. Headings, tables, code, frontmatter and horizontal rules are left
+clause ends a line where the language's convention says so, and a line
+never breaks inside a word, a bracket, a code span or a quoted phrase.
+In English a clause separator ends a line only when the sentence is
+wider than LIMIT display columns. In Japanese every 読点 ends a line
+(the technical-writing convention: the half up to the 読点 on one line,
+the half up to the 句点 on the next, a middle line per further 読点),
+except after a fragment narrower than MIN_JA_PIECE columns, so a bare
+conjunction such as また、 or したがって、 stays with its clause. Headings, tables, code, frontmatter and horizontal rules are left
 alone. Inside a blockquote, lines are joined only when the previous line
 is an unfinished sentence, so quoted headings, key: value lines and
 deliberate breaks stay.
@@ -30,6 +35,7 @@ import unicodedata
 
 LIMIT = 72
 MIN_PIECE = 24
+MIN_JA_PIECE = 14
 JA = re.compile('[\u3040-\u30ff\u4e00-\u9fff]')
 ASCII = re.compile(r'[A-Za-z0-9`*_\-]')
 KEYLINE = re.compile(r'^[A-Za-z_]+:')
@@ -153,6 +159,11 @@ def split_sentences(text):
             out.append(cur)
             cur, last_sep = '', -1
             i = j
+            continue
+        if not enclosed and separator_ja(text, i) and width(cur) >= MIN_JA_PIECE:
+            out.append(cur)
+            cur, last_sep = '', -1
+            i += 1
             continue
         if not enclosed and separator(text, i) and width(cur) >= MIN_PIECE:
             if width(cur) > LIMIT and last_sep > 0:
