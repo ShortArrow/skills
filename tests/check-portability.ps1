@@ -62,6 +62,7 @@ $hostBranchSkills = @(
     'pdf-transcribe',
     'peer-sessions',
     'plan-delegate-verify',
+    'repair-skill',
     'request-approval',
     'tool-call-syntax'
 )
@@ -80,6 +81,7 @@ $claudeInvariants = @(
     @{ Skill = 'plan-delegate-verify'; Text = 'Agent(prompt: "...", model: "opus")' }
     @{ Skill = 'tool-call-syntax'; Text = 'antml:function_calls' }
     @{ Skill = 'peer-sessions'; Text = 'scripts/peer-sessions.sh' }
+    @{ Skill = 'repair-skill'; Text = 'scripts/session-steps.py' }
     @{ Skill = 'pdf-transcribe'; Text = 'Read(file_path="spec.pdf", pages="1-5")' }
     @{ Skill = 'any-screenshot'; Text = 'Claude in Chrome' }
     @{ Skill = 'codex'; Text = 'codex exec --full-auto --sandbox read-only' }
@@ -107,6 +109,7 @@ $codexInvariants = @(
     @{ Skill = 'plan-delegate-verify'; Text = 'do not pretend a subagent ran' }
     @{ Skill = 'tool-call-syntax'; Text = 'Never print `antml` tags, XML wrappers, or a guessed JSON envelope' }
     @{ Skill = 'peer-sessions'; Text = 'Do not fall back to the Claude script' }
+    @{ Skill = 'repair-skill'; Text = "Do not read Codex's session storage by a guessed path" }
     @{ Skill = 'pdf-transcribe'; Text = 'Do not emit it as a Codex tool call' }
     @{ Skill = 'grill-me'; Text = 'a dedicated user-input tool when' }
 )

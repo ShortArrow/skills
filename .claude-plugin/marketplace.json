@@ -89,6 +89,7 @@
         "./skills/state-first",
         "./skills/assurance-case",
         "./skills/agent-harness",
+        "./skills/repair-skill",
         "./skills/timed-wait"
       ]
     },
