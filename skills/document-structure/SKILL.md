@@ -1,7 +1,7 @@
 ---
 name: document-structure
 description: |
-  The shape of one document, triggered by the moments that flatten it: about to put a second topic into a paragraph, about to end every paragraph after one sentence or put a blank line between every list item, about to write a heading called Overview, Notes or Miscellaneous, about to open with background and reach the point last, about to write a procedure as prose or put two actions in one step, about to bullet a set of items that have three fields each, about to use a term before defining it or call one thing by two names, about to nest a fourth heading level or skip one, or about to explain the abstraction before showing an instance. A reader scans a page before reading it, and headings that do not read as an outline hide the content from that pass. Use when writing or revising a README, a guide, a specification, a runbook, a report, a pull request body or a long message in any language, and when a draft is correct sentence by sentence and still hard to use.
+  The shape of one document, triggered by the moments that flatten it: about to put a second topic into a paragraph, about to put a blank line after every sentence or between every list item, about to write a heading called Overview, Notes or Miscellaneous, about to open with background and reach the point last, about to write a procedure as prose or put two actions in one step, about to bullet a set of items that have three fields each, about to use a term before defining it or call one thing by two names, about to nest a fourth heading level or skip one, or about to explain the abstraction before showing an instance. A reader scans a page before reading it, and headings that do not read as an outline hide the content from that pass. Use when writing or revising a README, a guide, a specification, a runbook, a report, a pull request body or a long message in any language, and when a draft is correct sentence by sentence and still hard to use.
 allowed-tools: Read, Edit, Write, Grep, Glob
 ---
 
@@ -21,7 +21,7 @@ and every rule here follows from one fact:
 | About to… | Instead |
 |---|---|
 | put a second topic into a paragraph | one idea per paragraph; the first sentence states it and the rest supports it. The second idea is the next paragraph |
-| end every paragraph after one sentence | a blank line goes where the idea changes; a run of one-line paragraphs has no first line left to carry the unit |
+| put a blank line after every sentence, the support cut from its claim | a blank line goes where the claim changes; one claim sentence with its support in a list or a table is a paragraph, and short by design |
 | put a blank line between list items, or a hard break inside a sentence | keep the list tight, since the blank line makes every item a paragraph; a hard break is for an address or a verse |
 | write a heading called Overview, Notes, Details, Miscellaneous | name what is under it. Read the headings alone, top to bottom: if that is not an outline of the document, the headings are labels, not headings |
 | open with background, history or motivation | put the conclusion, the result or the action first; the reader who needs the background will keep reading |
@@ -101,15 +101,19 @@ Single-step procedures are not numbered; one step is a sentence.
 In Markdown a blank line ends a paragraph and nothing else does.
 A single line ending inside a paragraph renders as a space (CommonMark calls it a soft break),
 so a sentence may take a line of its own without becoming a paragraph.
-The habit that breaks documents is the blank line after every sentence.
+The habit that breaks documents is the blank line after every sentence,
+whether or not the claim changed there.
 Rendered, the page is a column of one-line paragraphs,
 and the unit the first-line rule depends on has disappeared:
-there is no first sentence, because every sentence is first.
-The habit comes from platforms whose editors reward it (a Japanese technical article on Zenn or Qiita is routinely written one sentence per paragraph),
-and a model reproduces it in a README,
-where it reads as a page that never commits to a paragraph.
-A paragraph is one idea and its support,
-and the blank line goes where the idea changes.
+a claim's own support has become the next paragraph,
+and there is no first sentence because every sentence is first.
+Short paragraphs are not the fault.
+In technical writing a paragraph is often one claim sentence with its support in a list,
+a table or a block of code,
+and the long paragraph belongs to the paper and the novel;
+the fault is the blank line that does not fall where the claim changes.
+A paragraph is one claim and its support,
+and the blank line goes where the claim changes.
 
 Lists have the same fault in a smaller unit.
 A blank line between items makes the list loose:

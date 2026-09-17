@@ -148,7 +148,7 @@ unless the project already differs.
 More than one per paragraph is a rhythm, and the rhythm is the tell.
 
 **Blank lines by rule.** A blank line after every sentence,
-and between every list item.
+the support cut from its claim, and between every list item.
 The page becomes a column of one-line paragraphs;
 `document-structure` has the rule,
 and here it counts as a tell for the same reason bold does:
