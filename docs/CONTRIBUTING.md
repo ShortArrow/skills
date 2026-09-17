@@ -124,15 +124,16 @@ and that is where pull request bodies go sloppy.
 The writing-skills entry in `.claude-plugin/marketplace.json` declares a PreToolUse hook on `gh pr *` that injects the rule as context before the command runs:
 the body is written from the commits and the diff, says what changed,
 why and what is left, carries no conversation-local labels,
-and is checked against `clean-docs`,
+and is checked against `pull-request`, `clean-docs`,
 `document-structure` and `plain-language`.
 The hook is written inline in the marketplace entry,
 because that is the only form a marketplace entry accepts:
 a file path is silently ignored,
 and a `hooks/hooks.json` at the shared plugin root would register once per plugin.
 The script it runs, `hooks/pr-body-context.sh`, prints one JSON object.
-Hooks are Claude Code's mechanism and no other host runs them,
-so the descriptions still carry the moment for Codex and Copilot;
+Codex, Copilot, Cursor and Gemini CLI document a pre-tool hook of their own (`pull-request` lists each, checked 2026-09-17),
+but a marketplace entry can wire only Claude Code's,
+so on those hosts the descriptions still carry the moment and a project wires the same script itself;
 the hook is the backstop for the one place a description is blind.
 
 ## Sources

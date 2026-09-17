@@ -41,6 +41,7 @@ the defect does not.
    If it needs the conversation log or your memory, rewrite it.
 3. **Labels are fine inside the conversation.** What is forbidden is carrying them across.
 4. **PR bodies are where this leaks most.** They tend to be written from a summary of the conversation rather than from the commits.
+   Which of the reader's questions a pull request body may answer at all is `pull-request`'s.
 5. **Deixis fails the same test.** "on this machine", "in our setup",
    "here" — the writer knows which one, and the artifact never says.
    A measurement qualified this way cannot be judged by anyone else:

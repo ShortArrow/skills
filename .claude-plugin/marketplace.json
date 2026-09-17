@@ -46,6 +46,7 @@
       },
       "skills": [
         "./skills/clean-docs",
+        "./skills/pull-request",
         "./skills/unmachine-prose",
         "./skills/plain-language",
         "./skills/document-structure",
