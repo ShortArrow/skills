@@ -22,6 +22,7 @@ and that is the whole of what the body is for.
 | paste a stack trace, a log excerpt or a "verified" section | one line naming the condition and the observed result; the evidence lives in the commit, the test or a linked run |
 | quote the repository's own code in a code block | link the line at the commit it was read at; a code block is for output that came from outside the repository |
 | write "this breaks the parser" | name the function and the line and say how it breaks there; if that cannot be named yet, the cause has not been found |
+| put a blank line after every sentence, or break a line inside an English paragraph | a blank line only where the claim changes; on GitHub a newline in a body is a visible break, so Japanese takes one sentence per line and English keeps its paragraph on one line |
 | send the body straight from the command | show the whole text first; a body typed inside a command is never read as a document |
 | rewrite the body after one review comment | change what the comment named and nothing else |
 
@@ -72,6 +73,25 @@ On GitHub, pressing `y` on a file view rewrites the URL to the pinned form.
 A code block is reserved for what did not come from the repository:
 the output of a command, an error message, a response body.
 
+## Line breaks are visible here
+
+A pull request body is not a Markdown file.
+GitHub renders a single newline in an issue,
+a pull request or a comment as a line break,
+where the same newline in a `.md` file renders as a space (docs.github.com, read 2026-09-17).
+So the source convention for repository files, one sentence per line,
+changes meaning in a body:
+every line ending the writer types is a line ending the reviewer sees.
+
+Place them where the reviewer should see them.
+In Japanese that is the technical-writing layout `unmachine-prose`'s Japanese layer describes:
+one sentence per line, and a sentence over 120 characters broken at its 読点.
+In English a paragraph stays on one line,
+because a break after each sentence renders as a column of short lines and reads as verse.
+In both, a blank line goes only where the claim changes (`document-structure`),
+a list stays tight, and no sentence is broken with two trailing spaces or a backslash to make it fit;
+a body has no width to fit.
+
 ## Name the target
 
 "The parser breaks on empty input" is a sentence that can be written before the cause is known.
@@ -116,5 +136,6 @@ The rules here rest on practice.
 - The host table above cites each host's own documentation for its pre-tool hook,
   all read on 2026-09-17: learn.chatgpt.com/docs/hooks (Codex),
   docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/use-hooks (Copilot),
-  cursor.com/docs/agent/hooks (Cursor) and geminicli.com/docs/hooks (Gemini CLI).
+  cursor.com/docs/agent/hooks (Cursor) and geminicli.com/docs/hooks (Gemini CLI). docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax,
+  read 2026-09-17, for the rendering of a single newline in a pull request body against a `.md` file.
   No standard stands behind the body rules themselves.
