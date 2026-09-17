@@ -120,7 +120,11 @@ Coarsened to two layers, this is the familiar table:
 | Layer | Documents | Nature |
 |---|---|---|
 | Upper — specifications, present tense | Design intent, principles, PRD and specifications, README, source code and schemas | Describe how things *are*; edited as they evolve |
-| Lower — records, past tense | ADR, CHANGELOG, release notes, PR, issue, commit | Append-only; frozen when written |
+| Lower — records, past tense | ADR, design document (a proposal, frozen at approval), CHANGELOG, release notes, PR, issue, commit | Append-only; frozen when written |
+
+The design in the upper row is the living description of how the system is arranged;
+the design document in the lower row is the proposal that was approved on a date,
+and Discipline 5 is about the latter.
 
 The order is fractal: records have their own gradient (commit < PR < CHANGELOG < ADR),
 and the theorems apply across every level of it,
@@ -294,56 +298,53 @@ For the reference you are about to write:
 
 ## Discipline 5: a design document is read for its decision
 
-A design document exists to make the uncertainty visible before implementation starts,
-and to remove as much of it as the subject allows;
-how much is a property of the subject, not of the template.
-It is read by someone deciding whether to approve it,
+A design document is a proposal:
+it makes the uncertainty visible before implementation starts and removes as much of it as the subject allows,
+and how much that is depends on the subject, not on the template.
+Its reader is deciding whether to approve it,
 and that reading fails in four ways a correct document can still fail:
 every point at equal weight,
 so the decisive judgement and the obvious premise get the same paragraph;
-the decision at the end, after the survey that led to it;
-template headings (background, glossary, future extensions) filled because they are there;
+the decision after the survey that led to it;
+template headings filled because they are there;
 and an alternative the requirements already rule out given the same pros and cons as the one adopted.
 
-The shape that survives review:
+The shape is the shape any document has (`document-structure`: the conclusion first, headings that name their content),
+plus four sections that carry the proposal's own content:
 
-1. **The decision first, in three lines.** What was adopted and why.
-   Everything after it supports it.
-2. **Non-goals stated.** Generalities outside the scope then have nowhere to go.
-3. **Alternatives as a table**,
-   one row per option with the reason it was rejected,
+1. **Non-goals.** What this does not decide,
+   so generalities outside the scope have nowhere to go.
+2. **Alternatives**, as a table with one row per option and the reason it was rejected,
    at the length the reason needs.
    An option the requirements exclude is one row, not a section.
-   A document with no alternatives reads as a document whose author considered none.
-4. **Concerns.** The doubts that remain after the choice,
+   If none was considered, say so in one line;
+   that is a finding the reviewer needs, not a gap to fill.
+3. **Concerns.** The doubts that remain after the choice,
    and the questions the author could not answer and wants help with.
-   A reviewer reads this section most carefully,
-   because it is where the author's thinking shows;
-   a document with no concerns has usually not looked.
-5. **Undecided.** What is deliberately not decided now,
+   This is the section a reviewer reads most carefully,
+   because it is where the author's thinking shows.
+4. **Undecided.** What is deliberately not decided now,
    with why not now and who decides it when.
-   That is what shortens the lead time to implementation,
+   Naming it shortens the lead time to implementation,
    and each item becomes a ticket after approval.
-6. **Template sections only where the reader needs them.** A glossary when the reader may not know the terms,
-   a background when they may not know the situation;
-   otherwise nothing under that heading, and no heading.
-7. **The test per section.** Could the reviewer understand the decision without it?
-   If so, cut it.
+
+The reviewer's test from Discipline 2 applies per section:
+if the reviewer could understand the decision without it, cut it.
 
 In this skill's tables the decision is the which,
 the alternatives the why-not at that moment,
 the concerns the what-if and the undecided the what-next.
-The design document is the record where they are taken together at one date;
-what survives approval moves to the living layer,
+The design document is the record that takes them together at one date;
+what survives approval moves to the living layer:
 the refusal to design intent, the concern to the risk register,
 the undecided to the roadmap.
 
 When the writing is delegated to a model,
 the instruction has to say what not to write.
 Told only to be thorough,
-a model fills every heading and gives every option both sides:
-the same issue and a byte-identical implementation produced a 284-line design document with 32 headings under "describe the options and their trade-offs in detail",
-and a 41-line one with 6 headings under the list above.
+a model fills every heading and gives every option both sides. 依田's experiment (Sources) ran one issue with a byte-identical implementation under two instructions:
+「メリット・デメリットなどを詳しく記載」 produced a 284-line design document with 32 headings,
+and a seven-line instruction close to the list above produced 41 lines with 6 headings.
 Put the list in the prompt;
 `unmachine-prose` says the same of its checklists.
 
@@ -355,7 +356,7 @@ Put the list in the prompt;
 - Diátaxis, diataxis.fr, by Daniele Procida — the four types and two axes as stated on the site on 2026-09-04.
   No version is published; the site is the reference.
 - pospome, 「優秀なエンジニアが書くDesign Docは何が違うのか?」,
-  pospome.work/entry/2026/08/24/223309,
+  www.pospome.work/entry/2026/08/24/223309,
   published 2026-08-24 and read 2026-09-17:
   the design document as the place uncertainty is made visible,
   and alternatives,

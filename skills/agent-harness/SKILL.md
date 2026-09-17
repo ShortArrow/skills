@@ -111,7 +111,8 @@ That procedure raised five-of-five success by 16 points on the same tasks and 13
 The moment to write the guideline is the one the resampling found,
 not the one that happened to fail.
 
-Two things practice adds.
+Two things Kadowaki's report of running that procedure on his own skills adds (Sources),
+both from runs against local test data.
 A fix has to land everywhere the same instruction is stated:
 one repair fixed the script a skill ran and left the same defect in the example command in the skill's prose,
 and only a second check step caught it.
@@ -142,6 +143,8 @@ Sensors are an investment repaid per session, so the tiers differ:
   never speculatively.
   A sensor built for a violation that never occurs is upkeep with no revenue,
   and the deliberate-violation test cannot justify it — only a real miss can.
+  One observed miss licenses the repair of every step its trajectory shows to be brittle;
+  that is the reaction to the miss, not speculation.
 - **Nothing is frozen mid-exploration.** A sensor is policy compiled into a gate;
   while the architecture is still moving,
   every gate built on it is rebuilt with it.
@@ -161,12 +164,13 @@ Sensors are an investment repaid per session, so the tiers differ:
   Shashanka Ubaru and Malgorzata Zimon,
   "Closing the Consistency Gap: Self-Evolving Agents That Learn to Stay on Course",
   arXiv 2609.08832, submitted 2026-09-08; abstract read 2026-09-17:
-  the consistency gap,
-  the analyser that finds low-consistency steps by resampling,
+  the consistency gap, the analyser that finds low-consistency steps,
   and the guideline generator that writes memory for them.
-- ナレッジセンス, 「SKILL.md を良くする技術。AIのブレをなくす。」,
+- Atsushi Kadowaki (ナレッジセンス),
+  「SKILL.md を良くする技術。AIのブレをなくす。」,
   zenn.dev/knowledgesense/articles/9adf1e9b17ffd6,
   published 2026-09-15 and read 2026-09-17:
+  the per-step resampling as the paper's method,
   the repair procedure as a skill of its own,
   the fix that missed the prose copy of the command,
   and the rerun at three record counts.

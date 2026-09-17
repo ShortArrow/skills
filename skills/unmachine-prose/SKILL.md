@@ -11,19 +11,22 @@ Nothing here is about disguising authorship.
 Every pattern below is a way of saying less than it appears to,
 and technical writing is worse for it regardless of who wrote it.
 
-**The general choice is the tell.** A model's default at every word is the choice that fits the most readers and the most subjects at once;
-a person writes for one reader about one subject,
-and their choices are uneven.
-Every pattern below is the general choice showing through,
-and the fix is always the specific one: the fact, the number, the name.
+**The general choice is the tell.** Where a writer chose for this reader and this subject,
+a model chose what fits any reader and any subject,
+and the difference shows as a sentence that could sit in any document.
+Every shape below is that default made visible,
+and the repair is always to put the specific thing back: the fact,
+the number, the name.
 
-**The tells stack, and word lists rot.** A corpus of 7,600 catalogued signals concludes that prose becomes recognisable when signals co-occur,
+**The tells stack, and word lists rot.** Prose becomes recognisable when signals co-occur,
 not from any one of them,
 and the words in fashion change with every model release while the shapes persist.
-Fix the density, not the dictionary; and of the shapes,
-five justify an edit on one sighting (they are marked below),
-because a careful writer almost never makes them on purpose.
-The rest count only with company.
+Fix the density, not the dictionary.
+Five shapes are marked below as acting alone: the trailer,
+the manufactured contrast, the closer,
+the run-up and the argument with no one.
+A careful writer produces any of them by accident about never,
+so one sighting is enough; everything else counts only with company.
 
 **The two languages barely overlap.** English tells are syntactic — trailing participles,
 `not X but Y`, em dashes.
@@ -72,10 +75,12 @@ Acts alone.
 > This is **not just** a config change, **it is** a change in ownership.
 > The problem is **not** the syntax, **but** the assumption behind it.
 
-The construction manufactures a reveal:
-the negative half names something nobody claimed,
-so the positive half sounds larger than it is.
-It survives being split across two sentences ("This does not mean X. It means Y.") and being clipped to a tail (", no guessing").
+The construction manufactures a reveal.
+Nobody had claimed the first half,
+so denying it costs nothing and lends the second half a weight it did not earn.
+It has a two-sentence form,
+a denial followed by the point it was staging ("This is not a refactor. It is a rewrite."),
+and a clipped form where a bare negative hangs off the end (", not a workaround").
 A real contrast, one where the reader did hold the belief being corrected,
 occasionally needs it; three on one page means none of them are real.
 
@@ -83,49 +88,54 @@ occasionally needs it; three on one page means none of them are real.
 
 Acts alone.
 
-> The cache is invalidated on write, and readers take the lock.
+> Writes go through the queue, and readers see each write in order.
 >
-> That is the whole design.
+> Order is everything here.
 
-A one-sentence paragraph that restates the paragraph before it asks the reader to pause on a claim instead of adding to it.
-The same closer after every section is the same tell at document scale,
-and so is a row of fragments ("No retries. No queue. No surprises.").
-A short sentence carries emphasis when it carries a new fact;
-cut the one that repeats.
+The second paragraph adds no fact;
+it asks the reader to stop and admire the first.
+Its cousins are the identical last line under every section,
+and the sequence of sentence fragments where one sentence would do ("No lock. No queue. No surprises.").
+A short sentence earns its emphasis by carrying something new;
+the one that repeats is cut.
 
 ## The run-up and the aphorism
 
 Acts alone.
 
-> Let's dive into how the cache works.
-> Here's the thing: the real question is whether it scales.
+> Before we get to the numbers, some context.
+> At the end of the day, latency is the product.
 
-The first sentence announces the point instead of making it;
-the second dresses an ordinary point as a hidden truth ("the real question", "at its core", "X is the Y of Z").
-Delete the run-up, and replace the aphorism with the claim it was standing in for.
+The first sentence promises the point instead of making it;
+the second inflates an ordinary observation into a maxim.
+Both leave the reader waiting for the sentence that says what the numbers are.
+Delete the run-up, and write the claim the maxim was standing in for:
+"p99 latency is what the customer notices, so it is the number we report".
 
 ## Arguing with no one
 
 Acts alone.
 
-> To be clear, this is not about prompt length.
-> A tempting approach would be to restart the service on a schedule,
-> but that would drop every session.
+> It would be easy to blame the cache here.
+> One option is to shard by tenant, but that doubles the operational cost.
 
-The text answers an objection or rejects an option that appears nowhere else,
-usually a leftover from an earlier draft.
-Cut the defence; if a real claim is inside it, state the claim.
-Keep an objection the text attributes to someone,
-and an option a reader would actually weigh.
-Several unrelated rejections in a row are a stronger sign than one.
+Nobody blamed the cache, and nobody proposed sharding;
+the paragraph is defending against a draft that was thrown away.
+Delete the phantom objection.
+If the sentence was carrying a real claim (the cache is not the cause; sharding was priced and declined),
+state the claim without the opponent.
+Keep an objection when the text names who raised it,
+and an option when a reader would weigh it themselves.
+When several of these stack in one section,
+the section is arguing with its own outline.
 
 ## Significance inflation
 
 > This **plays a crucial role** in the build.
 > The change **underscores the importance** of validation.
 
-`underscores` runs about 11× its pre-2022 rate, `delve` 28×,
-`showcasing` 10× (Kobak et al., 2025).
+In biomedical abstracts `delve` runs about 28× its 2022 rate,
+`underscores` 14× and `showcasing` 11× (Kobak et al., 2025).
 The vocabulary follows the habit:
 asserting that something matters instead of showing what it does.
 
@@ -147,21 +157,6 @@ unless the project already differs.
 **Em dashes.** Not forbidden, overused.
 More than one per paragraph is a rhythm, and the rhythm is the tell.
 
-**Blank lines by rule.** A blank line after every sentence,
-the support cut from its claim, and between every list item.
-The page becomes a column of one-line paragraphs;
-`document-structure` has the rule,
-and here it counts as a tell for the same reason bold does:
-it is applied to everything at once.
-
-**Fixed-width wrapping.** Lines broken at 72 or 80 columns wherever the count falls,
-mid-sentence and mid-phrase.
-It changes nothing on the rendered page and everything in the diff,
-where one edited word re-flows a paragraph,
-and it is the shape of a source file a tool wrote.
-One sentence per line, with a blank line only where the paragraph ends,
-keeps both the diff and the page readable.
-
 ## Content
 
 **Elegant variation.** Swapping synonyms to avoid repetition damages technical writing specifically:
@@ -169,31 +164,24 @@ a `cache`, a `store` and a `layer` are three things.
 Repeat the noun.
 
 **Vague attribution.** `Industry reports suggest`, `best practice is`,
-`experts argue`,
-and the list of outlets that stands in for what any of them said.
+`experts argue`.
 Cite it, measure it, or own it as your judgement.
 
-**Vague association.** `associated with`, `linked to`,
-`in connection with`: two things connected without saying how.
-Name the relation the source gives (founded, maintains, was part of),
-and if the source does not say,
-leave it vague rather than invent a role.
-
-**The guess dressed as a gap.** "Not widely documented, but likely established in the 1990s" admits there was no source and fills the hole anyway.
-Say what the sources do not show, or cut the sentence;
-never present the fill as a fact.
+**The guess dressed as a gap.** "The origin of the setting is unclear, but it was probably added for performance" concedes that nothing was found and then invents the answer.
+Write the gap as a gap ("nothing in the history says why the setting exists"),
+or leave it out; a guess is not made true by the admission in front of it.
 
 **Hedging without information.** `This may potentially help in some cases` says nothing.
 `This helps when the working set exceeds RAM` does.
-A stack of qualifiers is usually the residue of repeated editing,
-each one repairing an earlier overstatement;
-keep the one the source supports.
+Two hedges on one claim usually mean an earlier overstatement was softened twice instead of corrected once;
+keep the one condition the evidence supports.
 
-**Chat residue.** `Great question`, `I hope this helps`,
-`Would you like me to`,
-`Here is an overview of` inside a durable artifact.
-The most certain tell on this page and the easiest to miss when it wraps real content;
-remove the wrapper and keep the content.
+**Chat residue.** `Great question`, `Here is an overview`,
+`I hope this helps`,
+`Let me know if you want` inside a README or a PR body.
+The document was written as a reply and shipped as a page.
+Nothing here needs rewording: delete the greeting and the offer,
+and keep what they were wrapped around.
 
 ---
 
@@ -253,16 +241,17 @@ Count per 200 words:
 both are in `references/japanese.md`.
 
 **Rewrite around the point,
-not phrase by phrase.** Mark every tell first, strongest first,
-at paragraph scale as well as sentence scale;
-then rewrite the passage around what it was saying.
-Patching each flagged phrase leaves the shape that produced it.
-The rewrite keeps every supported claim and adds no fact, name, number,
-date or citation the source lacks;
-a shape edit is where a fact is most often lost or invented,
-so the check after the rewrite is a diff of claims, not of words.
-A writing sample from the author overrides every rule here,
-dashes included.
+not phrase by phrase.** First read the whole passage and note every shape it shows,
+worst first, including the ones that only appear at paragraph scale (the same closer three times, three parallel examples).
+Then write the passage again from what it was saying.
+Replacing each flagged phrase in place leaves the shape that produced it,
+and the result reads as edited rather than written.
+Two checks afterwards: every claim the original supported is still there,
+and nothing was added, no fact, figure,
+date or source the original did not carry,
+because a rewrite that changes shape is where a fact most often slips out or slips in.
+If the author has written elsewhere,
+their own prose outranks every rule here, dashes included.
 
 **Thinness does not show in a count.** Formal Japanese ends most sentences in ます・です,
 and that ratio passes ninety percent in prose that is perfectly good;
@@ -290,12 +279,15 @@ Consistent formatting.
 Structure that follows the shape of the content.
 Plain writing that is correct is not a target.
 
-Nor is a watched phrase inside a quotation, a title or a proper name,
-or a passage that discusses the phrase rather than uses it.
-Nor is anything written before late 2022.
-And the details that mark a writer are kept even when a rule above would touch them:
-the unusual specific, the mixed feeling left unresolved, the aside,
-the self-correction, the first-person choice the writer can explain.
+Nor is a flagged phrase when it is being quoted,
+when it is part of a title or a name,
+or when the sentence is about the phrase rather than using it.
+Nor is text that predates the models that produced the habit.
+And what marks a particular writer stays even where a rule above would touch it:
+the odd concrete detail nobody would invent,
+a judgement left undecided because the writer is undecided,
+a digression, a correction made in the open,
+a first-person choice they can account for.
 
 Nor are the ordinary errors of a language: a doubled honorific,
 a subject that never meets its predicate, の stacked three deep,
@@ -308,13 +300,16 @@ Apply both in turn; mixing them dulls each check.
 - blader/humanizer v3.0.0 (MIT, commit 9862685 of 2026-09-06),
   read 2026-09-17,
   which rests on Wikipedia's "Signs of AI writing" maintained by WikiProject AI Cleanup:
-  the ranking of tells by how rarely a careful writer makes one on purpose,
+  the observation that a tell counts by how rarely a careful writer makes it on purpose,
   the general choice as the cause, the closer, the run-up, the aphorism,
-  the argument with no one, vague association, the guess dressed as a gap,
-  chat residue, the rewrite that keeps every claim and adds none,
-  and the exemptions for quotation, discussion and pre-2022 text.
-  Its own text was not copied;
-  the shapes were re-derived here with new examples.
-- Kobak et al., 2025, for the frequency multipliers on `underscores`,
-  `delve` and `showcasing`;
-  cited in the body and not re-read for this revision.
+  the argument with no one, the guess dressed as a gap, chat residue,
+  and the rewrite that keeps every claim and adds none.
+  The shapes are restated here in this catalogue's words with its own examples;
+  humanizer's ranking of its own patterns is not reproduced,
+  and the five marked as acting alone are this catalogue's choice.
+- Dmitry Kobak, Rita González-Márquez, Emőke-Ágnes Horvát and Jan Lause,
+  "Delving into LLM-assisted writing in biomedical publications through excess vocabulary",
+  Science Advances 11(27), 2025-07-02 (arXiv 2406.07016):
+  the excess-frequency ratios for `delves`,
+  `underscores` and `showcasing`,
+  checked against the published version on 2026-09-17.

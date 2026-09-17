@@ -34,7 +34,7 @@ and a named path the directory lacks.
 
 A stack takes the same shape.
 `architect`'s body is the placement rule that holds in every language,
-and `references/<stack>.md` (today `references/csharp.md`, with its longer material in files prefixed `csharp-`) holds what one language,
+and `references/<stack>.md` (today `references/csharp.md`, with its longer material in files prefixed `csharp-`, and `references/go.md`) holds what one language,
 a framework or a binary boundary spells differently,
 named from a section called **Stack layers**.
 A session reads the layer for the stack in hand and no other,

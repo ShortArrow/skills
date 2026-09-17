@@ -1,7 +1,7 @@
 ---
 name: state-first
 description: |
-  Designing from states rather than operations, triggered by the moments that skip it: about to add an operation, a branch or an "except when" clause for a case the state model never named, about to add a boolean flag beside the flags already there, about to write a function whose parameters mix what an object is with what it is currently in or to add one more such parameter to a function that already does, about to let a value that fails validation travel further than the boundary it crossed, or about to describe a feature by what it does before saying what must be true afterwards. An if added for an overlooked state hides the state; a fourth flag multiplies the cases every branch and every test must cover. Use when specifying or implementing a feature, when a conditional is about to grow, when reviewing a signature, and whenever the Given of a test cannot be written down.
+  Designing from states rather than operations, triggered by the moments that skip it: about to add an operation, a branch or an "except when" clause for a case the state model never named, about to add a boolean flag beside the flags already there, about to write a function whose parameters mix what an object is with what it is currently in or to add one more such parameter to a function that already does, about to let a value that fails validation travel further than the boundary it crossed, about to add a lock, a delay or a retry so two screens stop colliding, or about to describe a feature by what it does before saying what must be true afterwards. An if added for an overlooked state hides the state; a fourth flag multiplies the cases every branch and every test must cover. Use when specifying or implementing a feature, when a conditional is about to grow, when reviewing a signature, and whenever the Given of a test cannot be written down.
 allowed-tools: Read, Grep, Glob, Edit, Write
 ---
 
@@ -86,7 +86,7 @@ rules are counted over states, not over bits.
 A screen that is "sending" in one variable,
 "selecting" in another and "visible" in a third is this set of flags with a user attached.
 A second keypress lands between two flags and the screen stops answering,
-or a cancel key has to be pressed twice because one flag was cleared and the other was not.
+or a close key has to be pressed again because one flag was cleared and the other was not.
 The screen's states are one enumeration held in one place,
 and a keypress that does not fit the current state is ignored by rule,
 not by a lock added after the first collision.
@@ -144,3 +144,13 @@ the decision table and state table in `test-design` are counted over the states 
 `assurance-case` writes the same precondition and postcondition at system scale.
 When the states cannot be listed, none of those can start,
 and that is the moment to stop and list them.
+
+## Sources
+
+- nrs, 「バイブコーディングで GUI が壊れていく理由とその対策プロンプト」,
+  zenn.dev/nrs/articles/9ba91aea587bf5,
+  published 2026-09-15 and read 2026-09-17:
+  the screen whose modes live in separate variables, the lock,
+  the delay and the retry added after the first collision,
+  and the state machine that ignores an input its current state does not admit.
+  The rest of this skill rests on practice.

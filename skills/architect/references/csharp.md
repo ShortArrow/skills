@@ -66,9 +66,17 @@ When the dispatch, the pipeline or the folder layout is the question,
 the rule is in `slice-first` and `design-by-contract`;
 the code above only shows how this stack spells it.
 
-MediatR left the Apache licence at v13.0.0 (2025-07-02) for a dual commercial and open-source licence and requires a licence key at registration (release notes read 2026-09-17).
+MediatR left the Apache licence at v13.0.0 (2025-07-02) for a dual commercial and open-source licence and asks for a licence key at registration;
+a missing key logs a warning,
+and production use requires one under the licence (release notes and the licensing source read 2026-09-17).
 A solution adopting it after that date chooses its licence first;
 Mediator.SourceGenerator and a direct call to the handler are the routes that do not ask.
+
+## Refactoring moves
+
+Extract method or class, move a type to the layer it belongs in,
+introduce a value object, replace a conditional with polymorphism;
+each with every test green before and after (`tidy-first`).
 
 ## Analyzer codes
 
@@ -110,26 +118,29 @@ Presentation/
 ```
 src/
   Features/
-    Orders/
-      PlaceOrder.cs        endpoint mapping, request record, handler
-      CancelOrder.cs
-      GetOrderDetail.cs
-    Shipping/
-      CreateShipment.cs
+    Invoices/
+      IssueInvoice.cs      endpoint mapping, request record, handler
+      VoidInvoice.cs
+      GetInvoice.cs
+    Payments/
+      RecordPayment.cs
   Shared/
-    Persistence/AppDbContext.cs
-    Behaviors/RequestLogging.cs
+    Persistence/BillingDbContext.cs
+    Pipeline/RequestLogging.cs
 ```
 
-One file per feature: the endpoint mapping,
+The shape follows the one 株式会社一創 draws for C# (Sources in `SKILL.md`):
+one file per feature, the endpoint mapping,
 the request record and the handler together,
 so a change to the feature touches one file,
-and the number of files a change touches is the measure of whether the cut is right.
-`Shared/` holds the persistence context and the pipeline behaviours,
+and whether a change's files stay under `Features/` is the measure of whether the cut is right.
+`Shared/` holds the persistence context and the pipeline,
 the two things every slice passes through;
 anything else placed there takes `slice-first`'s scrutiny.
-The cross-cutting goes in ASP.NET Core middleware or an endpoint filter,
-never as a line at the top of each handler.
+Cross-cutting has one home per solution:
+the mediator pipeline when requests go through a mediator,
+ASP.NET Core middleware or an endpoint filter when handlers are called directly.
+Never both, and never a line at the top of each handler.
 Which of the two layouts a solution uses is `slice-first`'s call;
 both are spelled here so that either answer has a shape.
 

@@ -13,14 +13,6 @@ Group by technical role and every feature is spread across every folder;
 group by feature and a change stays where it was made.
 The axis that matters is the one the code actually changes on.
 
-"Vertical slice" arrives in three senses, and only one is this skill's.
-In game development it is a playable demo cut through every system so that funding can be decided;
-in agile planning it is a user story cut through every layer so that it ships on its own;
-in code it is the arrangement where one feature's endpoint,
-logic and data access sit together.
-The first two say what to build next.
-This skill is the third.
-
 ## The moments this replaces
 
 | About to… | Instead |
@@ -96,9 +88,12 @@ The handler written next week omits it, and nothing fails.
 
 Put it in the pipeline the requests already pass through,
 so the check binds by construction rather than by memory.
-The test for what belongs there is the feature's specification:
-what it does not mention (who may call, that it is logged, that it runs in a transaction, that the input is well-formed) is cross-cutting,
-and what it mentions is the slice's.
+What belongs there is what every request needs regardless of which feature it is:
+who may call, that it is logged, that it runs in a transaction,
+that the input is well-formed.
+A rule that exists because of one feature,
+that an order must exist before it is cancelled,
+is that feature's however general it sounds.
 This is the same argument `agent-harness` makes for gates over prose,
 applied inside the program:
 a convention that has to be remembered is a convention that decays.
@@ -119,17 +114,18 @@ And it does not pay where several features share one complex rule,
 a premium calculation, an allocation of stock,
 that is edited in every copy every time: that rule is one thing,
 and cutting it into slices turns one change into several.
-Sameness that is coincidental stays duplicated;
-a rule that has never been changed in one copy without the others is not duplication but shared domain knowledge,
-and it moves to one place.
-The question is whether a change to one copy alone can be imagined.
+Sameness that is coincidental stays duplicated.
+A rule that has changed in every copy for the same reason,
+and never in one alone,
+is shared domain knowledge and moves to one place;
+until it has that history, it is a copy.
 
 Moving a layered codebase is not a rewrite.
 Add the feature folder, write the next feature as a slice,
 leave the layers where they are,
-and count the files a change touches before and after.
-The count is the measure of whether the cut is right,
-and it also says when to stop.
+and watch whether the files a change touches stay inside the feature folder.
+When they do for every new feature, the migration is done;
+a change that still reaches into the old layers names the next thing to move.
 
 ## The mediator has to earn its keep
 
@@ -158,9 +154,9 @@ whose stack layers spell it per language.
 ## Sources
 
 - 株式会社一創, 「Vertical Slice Architecture」,
-  issoh.co.jp/tech/details/10356, read 2026-09-17:
-  the three senses of the term,
-  the specification as the test for a cross-cutting concern,
+  issoh.co.jp/tech/details/10356,
+  published 2025-12-22 and read 2026-09-17:
   the cases where the cut does not pay,
-  and migration measured by files touched per change.
+  and migration judged by whether a change's files stay under the feature folder.
+  The feature-cut layouts are drawn in `architect`'s stack layers.
   The rest of this skill rests on practice.

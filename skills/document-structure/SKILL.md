@@ -49,15 +49,13 @@ A document that opens with history is a document whose reader has to finish it t
 
 The claim itself is one sentence, two at most.
 A claim that needs a third sentence is two claims,
-and the second one is the next paragraph's first line.
-That is the measurable form of "one idea per paragraph":
-count the sentences before the support begins,
-not the sentences in the paragraph.
+and the second one opens the next paragraph.
 
 Length follows from the rule rather than from a count.
-A paragraph is as long as one idea's support,
-which in practice is three to seven lines;
-a single-line paragraph is fine when the idea is one sentence.
+A paragraph is as long as one claim's support:
+three to seven lines when the support is prose,
+one line when the support is the list,
+the table or the code block beneath it.
 
 ## Headings are the outline, and the outline is read alone
 
@@ -98,7 +96,8 @@ Single-step procedures are not numbered; one step is a sentence.
 
 ## A blank line is a paragraph boundary
 
-In Markdown a blank line ends a paragraph and nothing else does.
+In Markdown a blank line ends a paragraph, and so does a heading,
+a fence or a list that follows it; a line ending inside prose does not.
 A single line ending inside a paragraph renders as a space (CommonMark calls it a soft break),
 so a sentence may take a line of its own without becoming a paragraph.
 The habit that breaks documents is the blank line after every sentence,
@@ -120,14 +119,14 @@ A blank line between items makes the list loose:
 CommonMark wraps each item in a paragraph,
 and the rendered list spreads out until it reads as a stack of one-line paragraphs with bullets.
 Keep the items tight unless an item itself holds two paragraphs.
-Two blank lines around a heading render as one and add nothing.
+Two blank lines where one would do render as nothing and add nothing to the source.
 A trailing double space or a backslash at a line end is a hard break (`<br>`),
 a line break the writer chose in the source and imposed on the reader;
 it is for an address or a verse, not for a sentence that felt long.
 
-The opposite habit, breaking every line at a fixed width,
-does not change the rendered page, only the source and its diff,
-and `unmachine-prose` treats it as a tell.
+Where a source line ends inside a paragraph is a convention of the source,
+not of the page: one sentence per line keeps a diff to the sentence that changed,
+and a fixed column width re-flows the paragraph around one edited word.
 
 ## A procedure is one action per step, with its result
 
