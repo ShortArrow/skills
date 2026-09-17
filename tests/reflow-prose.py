@@ -6,7 +6,8 @@ The rule is the same for every language: a sentence ends a line, a
 clause ends a line where the language's convention says so, and a line
 never breaks inside a word, a bracket, a code span or a quoted phrase.
 In English a clause separator ends a line only when the sentence is
-wider than LIMIT display columns. In Japanese every 読点 ends a line
+wider than LIMIT display columns. In Japanese a sentence of JA_LIMIT
+characters or fewer stays on one line; a longer one breaks at every 読点
 (the technical-writing convention: the half up to the 読点 on one line,
 the half up to the 句点 on the next, a middle line per further 読点),
 except after a fragment narrower than MIN_JA_PIECE columns, so a bare
@@ -36,6 +37,7 @@ import unicodedata
 LIMIT = 72
 MIN_PIECE = 24
 MIN_JA_PIECE = 14
+JA_LIMIT = 120
 JA = re.compile('[\u3040-\u30ff\u4e00-\u9fff]')
 ASCII = re.compile(r'[A-Za-z0-9`*_\-]')
 KEYLINE = re.compile(r'^[A-Za-z_]+:')
@@ -130,42 +132,67 @@ def join_for(text):
 
 # --- the language-neutral rule -------------------------------------------
 
-def split_sentences(text):
-    out, cur, last_sep = [], '', -1
-    stack = []
-    straight = 0
-    code = 0
+class _Enclosure:
+    """Tracks brackets, straight quotes and code spans so a mark inside them is not a boundary."""
+
+    def __init__(self):
+        self.stack, self.straight, self.code = [], 0, 0
+
+    def feed(self, c):
+        if c == '"':
+            self.straight ^= 1
+        elif c == '`':
+            self.code ^= 1
+        elif c in OPENERS:
+            self.stack.append(OPENERS[c])
+        elif self.stack and c == self.stack[-1]:
+            self.stack.pop()
+        return bool(self.stack) or self.straight or self.code
+
+
+def sentences(text):
+    out, cur, enc = [], '', _Enclosure()
     i = 0
     while i < len(text):
         c = text[i]
         cur += c
-        if c == '"':
-            straight ^= 1
-        elif c == '`':
-            code ^= 1
-        elif c in OPENERS:
-            stack.append(OPENERS[c])
-        elif stack and c == stack[-1]:
-            stack.pop()
-        enclosed = bool(stack) or straight or code
+        enclosed = enc.feed(c)
         if not enclosed and sentence_end(text, i):
             j = i + 1
             while j < len(text) and text[j] in CLOSERS and text[j] != '*':
                 cur += text[j]
                 j += 1
-            if width(cur) > LIMIT and last_sep > 0:
-                out.append(cur[:last_sep])
-                cur = cur[last_sep:].lstrip()
             out.append(cur)
-            cur, last_sep = '', -1
+            cur = ''
             i = j
             continue
-        if not enclosed and separator_ja(text, i) and width(cur) >= MIN_JA_PIECE:
+        i += 1
+    if cur.strip():
+        out.append(cur)
+    return out
+
+
+def split_ja(sentence):
+    if len(sentence.strip()) <= JA_LIMIT:
+        return [sentence]
+    out, cur, enc = [], '', _Enclosure()
+    for i, c in enumerate(sentence):
+        cur += c
+        enclosed = enc.feed(c)
+        if not enclosed and separator_ja(sentence, i) and width(cur) >= MIN_JA_PIECE:
             out.append(cur)
-            cur, last_sep = '', -1
-            i += 1
-            continue
-        if not enclosed and separator(text, i) and width(cur) >= MIN_PIECE:
+            cur = ''
+    if cur.strip():
+        out.append(cur)
+    return out
+
+
+def split_en(sentence):
+    out, cur, last_sep, enc = [], '', -1, _Enclosure()
+    for i, c in enumerate(sentence):
+        cur += c
+        enclosed = enc.feed(c)
+        if not enclosed and separator(sentence, i) and width(cur) >= MIN_PIECE:
             if width(cur) > LIMIT and last_sep > 0:
                 out.append(cur[:last_sep])
                 cur = cur[last_sep:].lstrip()
@@ -174,12 +201,25 @@ def split_sentences(text):
                 cur, last_sep = '', -1
             else:
                 last_sep = len(cur)
-        i += 1
     if cur.strip():
         if width(cur) > LIMIT and last_sep > 0:
             out.append(cur[:last_sep])
             cur = cur[last_sep:].lstrip()
         out.append(cur)
+    return out
+
+
+LATIN = re.compile('[A-Za-z]')
+
+
+def mostly_japanese(sentence):
+    return len(JA.findall(sentence)) >= len(LATIN.findall(sentence))
+
+
+def split_sentences(text):
+    out = []
+    for s in sentences(text):
+        out.extend(split_ja(s) if mostly_japanese(s) else split_en(s))
     return [s.strip() for s in out if s.strip()]
 
 
