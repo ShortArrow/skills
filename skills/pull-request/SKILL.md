@@ -1,7 +1,7 @@
 ---
 name: pull-request
 description: |
-  The body of a pull request, triggered by the moments that pad it: about to describe what the diff already shows, about to explain the change by the author's own circumstances, about to list what the pull request does not include, about to paste a stack trace, a log excerpt or a "verified" section, about to quote the repository's own code in a code block, about to write "X breaks" without naming the function and the line, or about to send a body nobody has seen in full. The body says only what the diff cannot: why this choice, how it stays consistent with the code around it, and under which conditions the change shows and does not. Its length follows the diff, code from the same repository is linked at a commit-pinned line rather than quoted, and a review comment is answered by changing what it named and nothing else. Use when writing or revising a pull request body or a reply to a review, on your own repository or someone else's.
+  The body of a pull request, triggered by the moments that pad it or starve it: about to describe what the diff already shows, about to explain the change by the author's own circumstances, about to paste a stack trace, a log excerpt or a "verified" section, about to quote the repository's own code in a code block, about to write "X breaks" without naming the function and the line, about to send a body nobody has seen in full, or about to send a large project's template with a section left thin. The scale decides the coverage: a large open-source project's template, issue link, test plan, breaking changes and checklist are filled in full, and a small project or a team's own repository gets only what the diff cannot say, why this choice, the convention it follows, when the change shows. In both, repository code is linked at a commit-pinned line rather than quoted, a review comment is answered by changing what it named, and a newline renders as a visible break. Use when writing or revising a pull request body or a reply to a review.
 allowed-tools: Read, Grep, Glob, Bash, Edit, Write
 ---
 
@@ -18,13 +18,55 @@ and that is the whole of what the body is for.
 |---|---|
 | describe what the diff already shows | delete it; the reviewer is reading the diff, not a summary of it |
 | explain the change by the author's own circumstances (a deadline, a downstream project, a preference) | the body is for the receiving repository; say what the change does for it, or say nothing |
-| list what the pull request does not include | delete the list; what is not in the diff is not in the pull request |
+| list what the pull request does not include | on a small project delete it, since what is not in the diff is not in the pull request; on a large project write it under the template's follow-up or out-of-scope heading, and nowhere else |
+| send a large project's template with a section left thin | fill every section the template asks for, at the depth its maintainers review at; a thin section costs a review round |
 | paste a stack trace, a log excerpt or a "verified" section | one line naming the condition and the observed result; the evidence lives in the commit, the test or a linked run |
 | quote the repository's own code in a code block | link the line at the commit it was read at; a code block is for output that came from outside the repository |
 | write "this breaks the parser" | name the function and the line and say how it breaks there; if that cannot be named yet, the cause has not been found |
 | put a blank line after every sentence, or break a line inside an English paragraph | a blank line only where the claim changes; on GitHub a newline in a body is a visible break, so Japanese takes one sentence per line and English keeps its paragraph on one line |
 | send the body straight from the command | show the whole text first; a body typed inside a command is never read as a document |
 | rewrite the body after one review comment | change what the comment named and nothing else |
+
+## Two scales
+
+The body's coverage is set by who reads it and how many.
+Decide the scale before writing, from the receiving repository,
+not from the size of the diff.
+
+**A large open-source project.** Many maintainers,
+none of whom know the author, a pull request template,
+release notes generated from merged pull requests,
+and a review queue where a body that makes the reviewer ask one question costs a round trip.
+Coverage is required, and the template is the specification:
+
+- The title in the form the project uses (a conventional-commit prefix, an issue number, a component tag),
+  read from the last twenty merged pull requests.
+- The issue it closes, with the closing keyword the project uses (`Fixes #123`),
+  or the discussion it came from.
+- Motivation: the problem as the user of the software meets it,
+  before the change.
+- What changed, at the depth the release notes will need: the behaviour,
+  not the files.
+- How it was tested: the commands, the platforms, the cases added,
+  and what was not tested and why.
+- Breaking changes and the migration, under that heading,
+  even when the answer is "none".
+- Documentation, changelog entry and screenshots for a visible change,
+  where the project keeps them.
+- Every checklist item the template carries, ticked or explained;
+  a sign-off or CLA where the project requires one.
+- Follow-ups and out of scope, under the template's own heading,
+  so the reviewer does not ask.
+
+A section the template asks for is filled even when the answer is short;
+a section it does not ask for is not invented.
+`github-paths` says where the template lives.
+
+**A small project or a team's own repository.** Reviewers who know the codebase and the author,
+no template or a short one, and release notes written by hand.
+Here the body says only what the diff cannot,
+and everything below this section is the rule for that scale.
+Applying the large-project coverage here produces the padded body the moments table refuses.
 
 ## Only what the diff cannot say
 
@@ -46,9 +88,11 @@ Everything else in a body is either in the diff or about the author.
 - The author's side.
   A pull request to someone else's repository carries none of the sender's circumstances;
   the receiving project owes nothing to them and cannot act on them.
-- The list of things not included.
+- The list of things not included, on a small project.
   Written down, it reads as a promise or an apology, and it is neither;
   what the diff lacks, the pull request lacks.
+  A large project's template asks for it under its own heading,
+  and there it is filled.
 - Long evidence: a full stack trace, a log excerpt,
   a section headed "verified" or "confirmed".
   A reviewer who doubts the fix wants the test, not the transcript.
@@ -125,6 +169,8 @@ so it is covered per host:
 
 ## How this connects
 
+`github-paths` says where a project's pull request template and CONTRIBUTING live,
+and both outrank every rule here on that project.
 `clean-docs` keeps conversation-local labels out of the body and makes it answer the reader,
 not the reviewer; this skill says which of the reader's questions the body may answer at all.
 `document-structure` shapes whatever remains.
