@@ -109,4 +109,12 @@ so it is covered per host:
 not the reviewer; this skill says which of the reader's questions the body may answer at all.
 `document-structure` shapes whatever remains.
 `unmachine-prose` catches the closer and the "verified" section on their way in.
-The rules here rest on practice and cite no standard.
+The rules here rest on practice.
+
+## Sources
+
+- The host table above cites each host's own documentation for its pre-tool hook,
+  all read on 2026-09-17: learn.chatgpt.com/docs/hooks (Codex),
+  docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/use-hooks (Copilot),
+  cursor.com/docs/agent/hooks (Cursor) and geminicli.com/docs/hooks (Gemini CLI).
+  No standard stands behind the body rules themselves.
