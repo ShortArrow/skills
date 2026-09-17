@@ -1,7 +1,7 @@
 ---
 name: document-structure
 description: |
-  The shape of one document, triggered by the moments that flatten it: about to put a second topic into a paragraph, about to write a heading called Overview, Notes or Miscellaneous, about to open with background and reach the point in the last section, about to write a procedure as prose or put two actions in one step, about to bullet a set of items that have three fields each, about to use a term before defining it or call one thing by two names, about to nest a fourth heading level or skip one, or about to explain the abstraction before showing an instance. A reader scans a page before reading it, and a document whose headings do not read as an outline has hidden its content from that pass. Use when writing or revising a README, a guide, a specification, a runbook, a report, a pull request body or a long message in any language, and when a draft is correct sentence by sentence and still hard to use.
+  The shape of one document, triggered by the moments that flatten it: about to put a second topic into a paragraph, about to end every paragraph after one sentence or put a blank line between every list item, about to write a heading called Overview, Notes or Miscellaneous, about to open with background and reach the point last, about to write a procedure as prose or put two actions in one step, about to bullet a set of items that have three fields each, about to use a term before defining it or call one thing by two names, about to nest a fourth heading level or skip one, or about to explain the abstraction before showing an instance. A reader scans a page before reading it, and headings that do not read as an outline hide the content from that pass. Use when writing or revising a README, a guide, a specification, a runbook, a report, a pull request body or a long message in any language, and when a draft is correct sentence by sentence and still hard to use.
 allowed-tools: Read, Edit, Write, Grep, Glob
 ---
 
@@ -21,6 +21,8 @@ and every rule here follows from one fact:
 | About to… | Instead |
 |---|---|
 | put a second topic into a paragraph | one idea per paragraph; the first sentence states it and the rest supports it. The second idea is the next paragraph |
+| end every paragraph after one sentence | a blank line goes where the idea changes; a run of one-line paragraphs has no first line left to carry the unit |
+| put a blank line between list items, or a hard break inside a sentence | keep the list tight, since the blank line makes every item a paragraph; a hard break is for an address or a verse |
 | write a heading called Overview, Notes, Details, Miscellaneous | name what is under it. Read the headings alone, top to bottom: if that is not an outline of the document, the headings are labels, not headings |
 | open with background, history or motivation | put the conclusion, the result or the action first; the reader who needs the background will keep reading |
 | write a procedure as a paragraph, or two actions in a step | numbered steps, one action each, the expected result stated after the action |
@@ -86,6 +88,35 @@ Introduce a list with a full sentence that says what the items are,
 so a reader arriving from a heading knows what they are looking at.
 
 Single-step procedures are not numbered; one step is a sentence.
+
+## A blank line is a paragraph boundary
+
+In Markdown a blank line ends a paragraph and nothing else does.
+A single line ending inside a paragraph renders as a space (CommonMark calls it a soft break),
+so a sentence may take a line of its own without becoming a paragraph.
+The habit that breaks documents is the blank line after every sentence.
+Rendered, the page is a column of one-line paragraphs,
+and the unit the first-line rule depends on has disappeared:
+there is no first sentence, because every sentence is first.
+The habit comes from platforms whose editors reward it (a Japanese technical article on Zenn or Qiita is routinely written one sentence per paragraph),
+and a model reproduces it in a README,
+where it reads as a page that never commits to a paragraph.
+A paragraph is one idea and its support,
+and the blank line goes where the idea changes.
+
+Lists have the same fault in a smaller unit.
+A blank line between items makes the list loose:
+CommonMark wraps each item in a paragraph,
+and the rendered list spreads out until it reads as a stack of one-line paragraphs with bullets.
+Keep the items tight unless an item itself holds two paragraphs.
+Two blank lines around a heading render as one and add nothing.
+A trailing double space or a backslash at a line end is a hard break (`<br>`),
+a line break the writer chose in the source and imposed on the reader;
+it is for an address or a verse, not for a sentence that felt long.
+
+The opposite habit, breaking every line at a fixed width,
+does not change the rendered page, only the source and its diff,
+and `unmachine-prose` treats it as a tell.
 
 ## A procedure is one action per step, with its result
 
@@ -153,5 +184,9 @@ via `clean-docs`; this skill applies inside whichever one it is.
   lead paragraphs and headings with the keyword,
   three to seven lines per paragraph,
   parallel structure for compared things.
+- CommonMark Spec, version 0.31.2 (2024-01-28),
+  spec.commonmark.org/0.31.2, read on 2026-09-17:
+  "Lists" (a list is loose if any items are separated by blank lines, and a loose list's items are wrapped in paragraphs),
+  "Hard line breaks" (two or more spaces or a backslash before the line ending) and "Soft line breaks" (a line ending inside a paragraph renders as a space).
 - Diátaxis (Daniele Procida) is named for the four reader needs only;
   `clean-docs` carries that citation.

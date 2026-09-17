@@ -147,6 +147,21 @@ unless the project already differs.
 **Em dashes.** Not forbidden, overused.
 More than one per paragraph is a rhythm, and the rhythm is the tell.
 
+**Blank lines by rule.** A blank line after every sentence,
+and between every list item.
+The page becomes a column of one-line paragraphs;
+`document-structure` has the rule,
+and here it counts as a tell for the same reason bold does:
+it is applied to everything at once.
+
+**Fixed-width wrapping.** Lines broken at 72 or 80 columns wherever the count falls,
+mid-sentence and mid-phrase.
+It changes nothing on the rendered page and everything in the diff,
+where one edited word re-flows a paragraph,
+and it is the shape of a source file a tool wrote.
+One sentence per line, with a blank line only where the paragraph ends,
+keeps both the diff and the page readable.
+
 ## Content
 
 **Elegant variation.** Swapping synonyms to avoid repetition damages technical writing specifically:
@@ -232,6 +247,7 @@ Count per 200 words:
 - `not X but Y`
 - `- **Bold**:` lines
 - em dashes
+- one-sentence paragraphs in a row
 
 **Japanese** — two reads, and a different count;
 both are in `references/japanese.md`.
