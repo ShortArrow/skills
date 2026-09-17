@@ -47,6 +47,13 @@ The first paragraph of a section states what the section establishes;
 the first section of a document states what the document is for and what the reader will be able to do afterwards.
 A document that opens with history is a document whose reader has to finish it to learn whether it was for them.
 
+The claim itself is one sentence, two at most.
+A claim that needs a third sentence is two claims,
+and the second one is the next paragraph's first line.
+That is the measurable form of "one idea per paragraph":
+count the sentences before the support begins,
+not the sentences in the paragraph.
+
 Length follows from the rule rather than from a count.
 A paragraph is as long as one idea's support,
 which in practice is three to seven lines;
