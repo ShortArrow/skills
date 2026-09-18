@@ -133,6 +133,62 @@ a skill whose body names a standard or a paper (ISTQB, ISO/IEC, RFC, SemVer, SLS
 and that block must contain a check date in `YYYY-MM-DD`.
 Deleting the block, or the date, makes the script exit 1.
 
+## A term read in two senses is pinned to a criterion
+
+**Protects.** A skill is an instruction to a model,
+and a model reads a term in the sense most of its training text gave it.
+For the terms this catalogue leans on,
+that is often not the sense of the source: "refactoring" as any rework,
+"CI" as a build server, "technical debt" as poor code.
+An instruction written in the source's sense is then carried out in the looser one,
+and nothing in the transcript shows it,
+because both sides used the same word.
+A criterion that is answered yes or no gives the same result whichever sense the reader started from.
+`tidy-first` does not ask what a structural change is;
+it says every test stays green with none of them edited.
+
+**In tension.** The field talks in these terms,
+and a body that avoids them is neither found nor recognised.
+"Use the original sense" is the shortest rule and the one that cannot work:
+the model recalls the original sense from the same text that loosened it,
+and answers with the looser sense under the source's name.
+Pinning costs words in a body,
+and a pin written from memory is the restatement the section above refuses.
+A table of terms also sits close to the glossary that the section on contracts refuses;
+it stays a rule only while every row is a test with an action attached.
+
+**Refused, while these reasons hold.**
+
+- "Use the term in its original sense", in any wording, as the whole rule.
+  It asks the reader's memory to correct the reader's memory.
+- A pin written from memory.
+  The criterion is read in the source,
+  the quotation is matched against the page, and the date is recorded.
+- A pin that cannot be answered yes or no.
+  A source that states a preference yields no criterion,
+  and the term goes unpinned; microservices has no row for that reason.
+- Calling one sense the original or the correct one.
+  The pin names whose usage it is.
+  Which usage came first is a dispute the document does not need.
+- Pinning a term whose looser sense has replaced the source's.
+  There the source's sense is the one that would be misread.
+- A pointer to a definition in place of the criterion.
+  The reader who needs the pin does not doubt its own sense and does not follow the pointer,
+  so the criterion sits where the term is used and only the quotations sit behind a link.
+
+**The next case.** A skill body that leans on such a term states the criterion where the term is used,
+as `tidy-first` does for a structural change.
+A term with no skill of its own gets a row in `plain-language` under One sense per term,
+with its quotation, source and read date in that skill's `references/pinned-senses.md`.
+A term whose source is a paid book is pinned by a criterion the skill states as practice.
+
+**Gate.** None mechanical for the sense:
+a script can find the word and cannot tell which sense the sentence used.
+`tests/plain-language/firing-tests.md` S1 and S2 carry a new retry reported as a refactoring,
+and pass only when the revision drops the term.
+The sources of the pinned senses do not match the pattern of the gate above,
+so their read dates are kept by review.
+
 ## Language-neutral rules, with language layers
 
 **Protects.** A writing rule that holds in every language is written once,

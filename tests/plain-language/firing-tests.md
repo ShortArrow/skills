@@ -4,13 +4,16 @@ The description is the implementation; these scenarios are its tests.
 Each runs in a fresh session inside a copy of `tests/fixtures/announce`.
 `announce.md` is a Japanese release note whose sentences join two claims with が and ので,
 whose 目的は…ためです never closes, whose の stacks three deep,
-and which spells ユーザー two ways and links に こちら.
+which spells ユーザー two ways and links に こちら,
+and which reports a new retry, a change in behaviour,
+as リファクタリング.
 `release-notes.md` is its English counterpart,
 drafted separately from the same facts,
 with the same classes of defect in English forms:
 claims joined by "but" and "so", "the purpose is so that",
 four genitives in a row, "please kindly", "click here",
-"log-in" beside "login", and "first of all initially".
+"log-in" beside "login", "first of all initially",
+and "refactored" for the same new retry.
 `ui.md` holds a handful of Japanese UI strings with the same defects at sentence scale.
 Run them with `tests/run-firing-tests.sh plain-language`.
 
@@ -22,7 +25,8 @@ The Skill call is the strong signal; without it,
 S1–S3 still pass when the sentences are split at the claim boundary,
 the subject is made to meet its predicate,
 the doubled courtesy is reduced, the spelling is fixed one way,
-and the link text names its destination.
+the link text names its destination,
+and the retry is no longer called a refactoring.
 For S1 and S3 the session should also open `references/japanese.md`;
 for S2 it should not need to.
 
@@ -36,7 +40,9 @@ Expected: the skill fires,
 or the revision splits the multi-claim sentences, fixes 目的は…ためです,
 reduces お伺いさせていただきます and ご覧になられて,
 settles ユーザー / ユーザ one way,
-and replaces こちら with text that names the destination.
+replaces こちら with text that names the destination,
+and reports the new retry as a change in behaviour,
+without リファクタリング.
 
 ### S2 — an English draft to tidy
 
@@ -49,7 +55,9 @@ closes "the purpose is so that", opens the four genitives into a verb,
 reduces "please kindly" and "we would like to kindly ask that you please",
 settles "log-in" / "login" one way,
 drops "first of all initially" and "approximately about",
-and replaces "click here" with text that names the destination.
+replaces "click here" with text that names the destination,
+and reports the new retry as a change in behaviour,
+without "refactored".
 
 ### S3 — UI strings
 

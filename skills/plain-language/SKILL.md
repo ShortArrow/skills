@@ -1,7 +1,7 @@
 ---
 name: plain-language
 description: |
-  Sentences that read one way, triggered by the moments that produce ones that do not: about to join two claims with "but" or "so" (が, ので) in one sentence, about to let a subject and its predicate disagree across a long modifier, about to place a modifier where it could attach to two heads, about to stack three genitives ("the X of the Y of the Z", の three deep), about to spell the same term two ways in one document, about to add a second courtesy marker to a request, about to write "here" (こちら) as the text of a link, or about to say a thing twice in one phrase ("first of all initially", 約 10 分程度). A reader scans before reading, and a sentence whose parse is ambiguous is wrong even when every word is right. Use when writing or revising prose in any language — a README, an announcement, a UI string, an email, an article — and when reviewing a translation. Japanese has its own forms of each of these, and the body says where they are.
+  Sentences that read one way, triggered by the moments that produce ones that do not: about to join two claims with "but" or "so" (が, ので) in one sentence, about to let a subject and its predicate disagree across a long modifier, about to place a modifier where it could attach to two heads, about to stack three genitives ("the X of the Y of the Z", の three deep), about to spell the same term two ways in one document, about to write a term whose popular sense has left its source ("refactored" for a change in behaviour, "CI" over week-old branches), about to add a second courtesy marker to a request, about to write "here" (こちら) as the text of a link, or about to say a thing twice in one phrase ("first of all initially", 約 10 分程度). A sentence whose parse is ambiguous is wrong even when every word is right. Use when writing or revising prose in any language — a README, an announcement, a UI string, an email, an article — and when reviewing a translation.
 allowed-tools: Read, Edit, Write, Grep, Glob
 ---
 
@@ -18,6 +18,9 @@ This skill takes the sentence; `document-structure` takes the page.
 The rules below are practice, and the same in every language.
 What differs by language is in the layer files,
 which carry their own sources.
+The one exception is the set of senses pinned under One sense per term:
+each was read in its source,
+and `references/pinned-senses.md` says where and when.
 
 ## Language layers
 
@@ -37,6 +40,7 @@ A draft in another language uses the body alone.
 | place a modifier where it can attach to two heads | put it next to the head it belongs to. Long modifiers first, short ones last |
 | add a second courtesy marker ("we would like to kindly ask that you please") | one marker per sentence. Most sentences need none |
 | spell one term two ways ("log in" / "login", ユーザー / ユーザ) | pick one, apply it everywhere, and record the choice in the repository |
+| write a term whose popular sense has left its source ("refactored" for a change in behaviour, "technical debt" for poor code) | test the sentence against the criterion under One sense per term. If it fails, drop the term and write what was observed |
 | put the conclusion in the last paragraph | first. The reader decides after the conclusion whether to read the reasons (`document-structure`) |
 | write "here" (こちら) as the text of a link | the link text names its destination. A scanning reader picks up only the links |
 | double a meaning ("first of all initially", "approximately about ten minutes") | drop the duplicate. If the meaning did not shrink, the word was spare |
@@ -123,6 +127,50 @@ Either choice is fine; **not choosing is the only error**.
 Record the choice in the repository's documents and keep it in the present tense,
 as `clean-docs` says.
 
+## One sense per term
+
+Some terms are read in two senses at once:
+the one their source gave them, and a looser one that spread later.
+One reader takes "refactoring" as a change that keeps behaviour,
+the next as any rework,
+and the writer cannot tell which of them is reading.
+A model that writes is in the second group by default,
+because the looser sense is the larger share of the text it learned from.
+So the check cannot be "do I mean the original sense":
+memory answers that question in the looser sense too. **The check is the criterion below,
+and it is answered yes or no.**
+
+| Term | The sentence is true only if |
+|---|---|
+| refactoring | observable behaviour did not change (Fowler) |
+| continuous integration, CI | every member of the team merges into the shared codebase at least daily, and an automated build with tests verifies each merge (Fowler) |
+| technical debt | the code was shipped before it was right in order to move sooner, and a rewrite is what repays it (Cunningham) |
+| REST, RESTful | a client enters with one URI and standard media types, and hypertext in the responses drives it from there (Fielding) |
+| minimum viable product, MVP | the version was chosen to learn the most about customers for the least effort (Ries) |
+
+If the answer is yes, keep the term.
+If it is no, drop the term and write what was observed.
+
+> We refactored the sync engine,
+> which now retries a failed upload three times.
+
+A retry the engine did not make before is a change in behaviour,
+so the sentence fails the first row.
+Without the term it says more:
+
+> The sync engine now retries a failed upload three times.
+> We restructured it first.
+> That part changes nothing a user can see.
+
+The same criterion reads a request.
+When the work asked for as a "refactoring" has to change behaviour,
+say so before starting, and do not carry the change out under that name.
+
+The quotations behind each row,
+their sources and the dates they were read are in `references/pinned-senses.md`,
+with the rule for adding a row.
+Read it before adding a term or when a row is doubted.
+
 ## Built to be scanned
 
 Conclusion first, headings that carry the thread on their own,
@@ -141,6 +189,8 @@ A colloquial sentence whose meaning is single.
 The vocabulary of the field.
 A term repeated on purpose,
 because the synonym would read as a different thing.
+A term whose looser sense has replaced the source's, as "hacker" has:
+there the source's sense is the one that would be misread.
 A long sentence that says one thing and never crosses a connective.
 
 **Plain is not short.** Plain is not misread.

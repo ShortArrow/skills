@@ -9,6 +9,7 @@ so please check before you upgrade.
 
 The purpose of this feature is so that work on several devices can continue without interruption.
 The review of the settings of the new sync platform of our company makes it run faster than before.
+We also refactored the sync engine, which now retries a failed upload three times.
 
 Administrators can change the sync interval from the settings screen,
 but for details please kindly refer to the documentation.

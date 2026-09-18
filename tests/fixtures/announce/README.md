@@ -3,6 +3,7 @@ Fixture for the plain-language firing tests.
 sentences that join two claims with が and ので,
 a subject that never meets its predicate, の stacked three deep,
 an honorific doubled, the same term spelled two ways,
+a change in behaviour reported as リファクタリング,
 the conclusion in the last paragraph, and a link whose text is こちら.
 `release-notes.md` is the English counterpart,
 drafted from the same facts,
