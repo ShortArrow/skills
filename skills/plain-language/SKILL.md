@@ -18,8 +18,7 @@ This skill takes the sentence; `document-structure` takes the page.
 The rules below are practice, and the same in every language.
 What differs by language is in the layer files,
 which carry their own sources.
-The exception is the senses pinned under One sense per term,
-which rest on the sources listed in `references/pinned-senses.md`.
+The exception: the senses pinned under One sense per term rest on the sources in `references/pinned-senses.md`.
 
 ## Language layers
 
@@ -129,18 +128,17 @@ as `clean-docs` says.
 ## One sense per term
 
 Some terms are read in two senses at once:
-the one their source gave them, and a looser one that spread later.
+the one their source gave them, and a looser one.
 The writer cannot tell which sense the reader holds,
 and memory cannot tell which one the writer holds:
 a model learned the looser sense from the larger share of its text.
 
-**So the check is the criterion below, answered yes or no.** On a no,
-the term goes and what was observed is written.
+**So the check is the criterion below, answered yes or no.**
 
 | Term | The sentence is true only if |
 |---|---|
 | refactoring | observable behaviour did not change (Fowler) |
-| continuous integration, CI | every member of the team merges into the shared codebase at least daily, and an automated build with tests verifies each merge (Fowler) |
+| continuous integration, CI | every team member merges into the shared codebase at least daily, and an automated build with tests verifies each merge (Fowler) |
 | technical debt | the code shipped before it was right in order to move sooner, and a rewrite repays it (Cunningham) |
 | REST, RESTful | a client enters with one URI and standard media types, and hypertext in the responses drives it from there (Fielding) |
 | minimum viable product, MVP | the version was chosen to learn the most about customers for the least effort (Ries) |
@@ -157,9 +155,7 @@ The same criterion reads a request.
 When the work asked for as a "refactoring" has to change behaviour,
 say so before starting, and do not carry the change out under that name.
 
-`references/pinned-senses.md` holds each row's quotation,
-source and read date, and the rule for adding a row.
-Read it before adding a term or when a row is doubted.
+Read `references/pinned-senses.md` before adding a term or when a row is doubted.
 
 ## Built to be scanned
 
@@ -179,8 +175,7 @@ A colloquial sentence whose meaning is single.
 The vocabulary of the field.
 A term repeated on purpose,
 because the synonym would read as a different thing.
-A term whose looser sense has replaced the source's, as "hacker" has:
-there the source's sense is the one that would be misread.
+A term whose looser sense has replaced the source's, as "hacker" has.
 A long sentence that says one thing and never crosses a connective.
 
 **Plain is not short.** Plain is not misread.

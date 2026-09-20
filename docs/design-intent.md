@@ -144,7 +144,7 @@ and the transcript does not show it,
 because both sides used the same word.
 A yes-or-no criterion gives the same result from either sense:
 `tidy-first` does not ask what a structural change is;
-it says every test stays green with none of them edited.
+it says every test stays green with none edited.
 
 **In tension.** The field talks in these terms,
 and a body that avoids them is neither found nor recognised.
@@ -155,33 +155,31 @@ and stays a rule only while every row is a test with an action attached.
 **Refused, while these reasons hold.**
 
 - "Use the term in its original sense", in any wording, as the whole rule.
-  The model recalls the original sense from the same text that loosened it,
+  The model recalls the source's sense from the same text that loosened it,
   and answers with the looser sense under the source's name.
 - A pin written from memory,
   which is the restatement the section above refuses.
   The criterion is read in the source,
   the quotation matched against the page, the date recorded.
 - A pin that cannot be answered yes or no.
-  A source that states a preference yields no criterion;
-  microservices has no row for that reason.
+  A source that states a preference yields no criterion.
 - Calling one sense the original or the correct one.
   The pin names whose usage it is;
   which came first is a dispute the document does not need.
 - Pinning a term whose looser sense has replaced the source's.
-  There the source's sense is the one that would be misread.
+  There the source's sense would be misread.
 - A pointer to a definition in place of the criterion.
-  A reader that does not doubt its own sense does not follow the pointer,
-  so the criterion sits where the term is used and only the quotations sit behind a link.
+  A reader that does not doubt its own sense does not follow the pointer.
 
-**The next case.** A skill body that leans on such a term states the criterion where the term is used,
-as `tidy-first` does for a structural change.
+**The next case.** A skill body that leans on such a term states the criterion where the term is used.
 A term with no skill of its own gets a row in `plain-language` under One sense per term,
 with its quotation, source and read date in that skill's `references/pinned-senses.md`.
 
 **Gate.** None mechanical for the sense:
 a script can find the word and cannot tell which sense the sentence used.
-`tests/plain-language/firing-tests.md` S1 and S2 carry a new retry reported as a refactoring,
-and pass only when the revision drops the term.
+`tests/plain-language/firing-tests.md` S1 and S2 carry a new retry reported as a refactoring;
+a run passes on the Skill call alone,
+so whether the term was dropped is read in the transcript.
 The sources of the pinned senses do not match the pattern of the gate above,
 so their read dates are kept by review.
 

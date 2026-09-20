@@ -1,8 +1,7 @@
 # Pinned senses
 
-Each row of the table under One sense per term in `SKILL.md` is this catalogue's yes-or-no criterion.
-Here is the quotation each row rests on,
-and a note wherever the row says more than the quotation.
+The quotation each row under One sense per term in `SKILL.md` rests on,
+with notes on how the row reads it.
 
 ## The rows
 
@@ -17,18 +16,15 @@ The row keeps the last clause.
 > each member of a team merges their changes into a codebase together with their colleagues changes at least daily.
 > Each of these integrations is verified by an automated build (including test) to detect integration errors as quickly as possible.
 
-A build server over branches that live for weeks fails the first half of the row.
-
 **Technical debt.**
 
 > Shipping first time code is like going into debt.
 > A little debt speeds development so long as it is paid back promptly with a rewrite.
 > […] Every minute spent on not-quite-right code counts as interest on that debt.
 
-The passage describes a loan: shipping sooner is what was borrowed,
-and a rewrite repays it.
-That merely poor code, with nothing gained in exchange,
-is not debt is this catalogue's reading and not the passage's words.
+The passage describes a loan: shipping sooner is what was borrowed.
+This catalogue's reading, not the passage's words:
+poor code with nothing gained in exchange is not debt.
 
 **REST.**
 
@@ -45,17 +41,16 @@ JSON over HTTP with URLs the client builds from documentation fails the row.
 
 > MVP, despite the name, is not about creating minimal products.
 
-Whether the phrase appeared before this post was not checked.
+Whether the phrase predates this post was not checked.
 
 ## Adding a row
 
-A row needs three things: two senses that coexist,
+A row needs three things: two coexisting senses,
 so that one sentence is read both ways; a source anyone can open;
-and a criterion in that source that is answered yes or no.
+and a criterion in that source answered yes or no.
 Microservices fails the third.
 "Microservices prefer letting each service manage its own database" (Lewis and Fowler) states a preference,
 and the article does not say that services sharing a database stop being microservices.
-A paid source gives a row stated as practice, with no source named.
 `docs/design-intent.md` carries the reasons.
 
 ## Sources
