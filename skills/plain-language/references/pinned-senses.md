@@ -1,50 +1,62 @@
 # Pinned senses
 
-The quotations behind the table under One sense per term in `SKILL.md`,
-with the source of each and the date it was read.
-A row of that table is this catalogue's criterion,
-written so it can be answered yes or no;
-the quotation is what the criterion rests on.
-Where a row says more than its quotation, this file says so.
+Each row of the table under One sense per term in `SKILL.md` is this catalogue's yes-or-no criterion.
+Here is the quotation each row rests on,
+and a note wherever the row says more than the quotation.
 
 ## The rows
 
-**Refactoring.** "a change made to the internal structure of software to make it easier to understand and cheaper to modify without changing its observable behavior",
-and as a verb, "to restructure software by applying a series of refactorings without changing its observable behavior".
+**Refactoring.**
+
+> a change made to the internal structure of software to make it easier to understand and cheaper to modify without changing its observable behavior
+
 The row keeps the last clause.
 
-**Continuous integration.** "each member of a team merges their changes into a codebase together with their colleagues changes at least daily. Each of these integrations is verified by an automated build (including test) to detect integration errors as quickly as possible." A build server over branches that live for weeks fails the first half of the row.
+**Continuous integration.**
 
-**Technical debt.** "Shipping first time code is like going into debt. A little debt speeds development so long as it is paid back promptly with a rewrite. […] Every minute spent on not-quite-right code counts as interest on that debt." The source describes a loan:
-something was gained by shipping, and a rewrite repays it.
-That code which is merely poor, with nothing gained in exchange,
-is not debt is this catalogue's reading of the passage;
-the passage does not say it in those words.
+> each member of a team merges their changes into a codebase together with their colleagues changes at least daily.
+> Each of these integrations is verified by an automated build (including test) to detect integration errors as quickly as possible.
 
-**REST.** "if the engine of application state (and hence the API) is not being driven by hypertext, then it cannot be RESTful and cannot be a REST API." And,
-from the same post: "A REST API should be entered with no prior knowledge beyond the initial URI (bookmark) and set of standardized media types".
+A build server over branches that live for weeks fails the first half of the row.
+
+**Technical debt.**
+
+> Shipping first time code is like going into debt.
+> A little debt speeds development so long as it is paid back promptly with a rewrite.
+> […] Every minute spent on not-quite-right code counts as interest on that debt.
+
+The passage describes a loan: shipping sooner is what was borrowed,
+and a rewrite repays it.
+That merely poor code, with nothing gained in exchange,
+is not debt is this catalogue's reading and not the passage's words.
+
+**REST.**
+
+> if the engine of application state (and hence the API) is not being driven by hypertext,
+> then it cannot be RESTful and cannot be a REST API.
+
+> A REST API should be entered with no prior knowledge beyond the initial URI (bookmark) and set of standardized media types
+
 JSON over HTTP with URLs the client builds from documentation fails the row.
 
-**Minimum viable product.** "the minimum viable product is that version of a new product which allows a team to collect the maximum amount of validated learning about customers with the least effort." And:
-"MVP, despite the name, is not about creating minimal products." The row pins the sense of this post.
-Whether the words appeared earlier elsewhere was not checked.
+**Minimum viable product.**
+
+> the minimum viable product is that version of a new product which allows a team to collect the maximum amount of validated learning about customers with the least effort.
+
+> MVP, despite the name, is not about creating minimal products.
+
+Whether the phrase appeared before this post was not checked.
 
 ## Adding a row
 
-A term is pinned when its two senses coexist,
-so that one sentence is read both ways.
-A term whose looser sense has replaced the source's is left alone.
-
-The criterion is read in a source anyone can open,
-and it has to be answerable yes or no.
-A source that states a preference gives no criterion.
-"Microservices prefer letting each service manage its own database" (Lewis and Fowler, 2014) is why microservices has no row:
-services that share a database depart from what the article describes,
-and the article does not say they stop being microservices.
-
-Where the source is a paid book,
-the row says the criterion is practice and names no source,
-as `docs/design-intent.md` decides for every rule here.
+A row needs three things: two senses that coexist,
+so that one sentence is read both ways; a source anyone can open;
+and a criterion in that source that is answered yes or no.
+Microservices fails the third.
+"Microservices prefer letting each service manage its own database" (Lewis and Fowler) states a preference,
+and the article does not say that services sharing a database stop being microservices.
+A paid source gives a row stated as practice, with no source named.
+`docs/design-intent.md` carries the reasons.
 
 ## Sources
 

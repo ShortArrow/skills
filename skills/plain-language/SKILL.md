@@ -18,9 +18,8 @@ This skill takes the sentence; `document-structure` takes the page.
 The rules below are practice, and the same in every language.
 What differs by language is in the layer files,
 which carry their own sources.
-The one exception is the set of senses pinned under One sense per term:
-each was read in its source,
-and `references/pinned-senses.md` says where and when.
+The exception is the senses pinned under One sense per term,
+which rest on the sources listed in `references/pinned-senses.md`.
 
 ## Language layers
 
@@ -131,44 +130,35 @@ as `clean-docs` says.
 
 Some terms are read in two senses at once:
 the one their source gave them, and a looser one that spread later.
-One reader takes "refactoring" as a change that keeps behaviour,
-the next as any rework,
-and the writer cannot tell which of them is reading.
-A model that writes is in the second group by default,
-because the looser sense is the larger share of the text it learned from.
-So the check cannot be "do I mean the original sense":
-memory answers that question in the looser sense too. **The check is the criterion below,
-and it is answered yes or no.**
+The writer cannot tell which sense the reader holds,
+and memory cannot tell which one the writer holds:
+a model learned the looser sense from the larger share of its text.
+
+**So the check is the criterion below, answered yes or no.** On a no,
+the term goes and what was observed is written.
 
 | Term | The sentence is true only if |
 |---|---|
 | refactoring | observable behaviour did not change (Fowler) |
 | continuous integration, CI | every member of the team merges into the shared codebase at least daily, and an automated build with tests verifies each merge (Fowler) |
-| technical debt | the code was shipped before it was right in order to move sooner, and a rewrite is what repays it (Cunningham) |
+| technical debt | the code shipped before it was right in order to move sooner, and a rewrite repays it (Cunningham) |
 | REST, RESTful | a client enters with one URI and standard media types, and hypertext in the responses drives it from there (Fielding) |
 | minimum viable product, MVP | the version was chosen to learn the most about customers for the least effort (Ries) |
-
-If the answer is yes, keep the term.
-If it is no, drop the term and write what was observed.
 
 > We refactored the sync engine,
 > which now retries a failed upload three times.
 
-A retry the engine did not make before is a change in behaviour,
-so the sentence fails the first row.
-Without the term it says more:
+The retry is new behaviour, so the first row says no.
 
 > The sync engine now retries a failed upload three times.
-> We restructured it first.
-> That part changes nothing a user can see.
+> The restructuring before it changes nothing a user can see.
 
 The same criterion reads a request.
 When the work asked for as a "refactoring" has to change behaviour,
 say so before starting, and do not carry the change out under that name.
 
-The quotations behind each row,
-their sources and the dates they were read are in `references/pinned-senses.md`,
-with the rule for adding a row.
+`references/pinned-senses.md` holds each row's quotation,
+source and read date, and the rule for adding a row.
 Read it before adding a term or when a row is doubted.
 
 ## Built to be scanned
