@@ -1,7 +1,7 @@
 ---
 name: pull-request
 description: |
-  The body of a pull request, triggered by the moments that pad it or starve it: about to describe what the diff already shows, about to explain the change by the author's own circumstances, about to paste a stack trace, a log or a "verified" section, about to quote the repository's own code in a code block, about to write "X breaks" without naming the function and the line, about to send a body nobody has seen in full, or about to send a large project's template with a section left thin. The scale sets the coverage: a large open-source project's template, issue link, test plan, breaking changes and checklist are filled in full; a small project or a team's own repository gets only what the diff cannot say. In both, repository code is linked at a commit-pinned line, a review comment is answered by changing what it named, and a newline renders as a visible break. Use when writing or revising a pull request body or a reply to a review.
+  The body of a pull request, triggered by the moments that pad it or starve it: about to describe what the diff already shows, about to explain the change by the author's own circumstances, about to paste a stack trace, a log or a "verified" section, about to quote the repository's own code in a code block, about to write "X breaks" without naming the function and the line, about to send a body nobody has seen in full, about to open a pull request with its whole body in one command, or about to send a large project's template with a section left thin. The scale sets the coverage: a large open-source project's template, issue link, test plan, breaking changes and checklist are filled in full; a small project or a team's own repository gets only what the diff cannot say. In both, repository code is linked at a commit-pinned line and a newline renders as a visible break. Use when writing or revising a pull request body or a reply to a review.
 allowed-tools: Read, Grep, Glob, Bash, Edit, Write
 ---
 
@@ -25,6 +25,7 @@ and that is the whole of what the body is for.
 | write "this breaks the parser" | name the function and the line and say how it breaks there; if that cannot be named yet, the cause has not been found |
 | put a blank line after every sentence, or break a line inside an English paragraph | a blank line only where the claim changes; on GitHub a newline in a body is a visible break, so Japanese takes one sentence per line and English keeps its paragraph on one line |
 | send the body straight from the command | show the whole text first; a body typed inside a command is never read as a document |
+| open a pull request with its whole body in one command | open it as a draft with a body of at most 120 characters, then write the body as a file and put it in with `gh pr edit --body-file` (Procedure) |
 | rewrite the body after one review comment | change what the comment named and nothing else |
 
 ## Two scales
@@ -145,18 +146,39 @@ locate it, then write.
 
 ## Procedure
 
-1. Show the whole body before it is sent.
+1. Open the pull request as a draft,
+   with the title in the form the receiving repository uses and a body of at most 120 characters:
+   the one thing the diff cannot say, or the issue it closes.
+   A draft cannot be merged and requests no review from code owners (docs.github.com, read 2026-09-22),
+   so nobody reads it before the body exists,
+   and the checks run meanwhile.
+   The title is settled here because it travels in notifications and mail subjects,
+   which a later edit does not reach.
+   120 is a detector, not a target:
+   a summary of the diff does not fit in it,
+   so a first body that overflows is describing what the diff shows.
+   Some repositories refuse the draft flag;
+   when `gh pr create --draft` fails for that reason,
+   open it without the flag and with the same short body.
+2. Read the checks.
+   On a large project the test plan is written from what ran,
+   not from what was meant to run.
+3. Write the body to a file and read it as the reviewer will.
    A body composed inside `gh pr create --body` is written without the pause in which a document is read,
    and that is where the material above creeps in.
-   Write it to a file, read it as the reviewer will, then send it.
-2. After a review comment, change what the comment named.
+4. Put it in with `gh pr edit --body-file <file>`,
+   then mark the pull request ready.
+   Marking it ready is what requests review from the code owners.
+5. After a review comment, change what the comment named.
    A comment on one paragraph is not a request to rewrite the body,
    and a rewrite hands the reviewer a new document to read from the top.
 
 ## Host branches
 
-The moment inside `gh pr create --body` is one no description can see,
-so it is covered per host:
+The moment inside `gh pr create --body` is one no description can see.
+The procedure removes it,
+since a body that arrives through `--body-file` was a file first,
+and each host covers the command for the session that skips the procedure:
 
 | Host | Cover |
 |---|---|
@@ -165,7 +187,7 @@ so it is covered per host:
 | Copilot | `preToolUse` in `.github/hooks/<name>.json` for Copilot agents (docs.github.com, checked 2026-09-17); whether Copilot CLI reads it is not stated there. Not wired by this catalogue; step 1 of the procedure covers the command |
 | Cursor | `beforeShellExecution` or `preToolUse` in `.cursor/hooks.json` (cursor.com/docs/agent/hooks, checked 2026-09-17). Not wired by this catalogue; step 1 of the procedure covers the command |
 | Gemini CLI | `BeforeTool` under `hooks` in `settings.json` (geminicli.com/docs/hooks, checked 2026-09-17). Not wired by this catalogue; step 1 of the procedure covers the command |
-| Any other host | Write the body to a file, read it in full, then pass the file to the command |
+| Any other host | Open the draft with the short body, write the body to a file, read it in full, then pass the file to `gh pr edit --body-file` |
 
 ## How this connects
 
@@ -183,5 +205,8 @@ The rules here rest on practice.
   all read on 2026-09-17: learn.chatgpt.com/docs/hooks (Codex),
   docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/use-hooks (Copilot),
   cursor.com/docs/agent/hooks (Cursor) and geminicli.com/docs/hooks (Gemini CLI). docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax,
-  read 2026-09-17, for the rendering of a single newline in a pull request body against a `.md` file.
+  read 2026-09-17, for the rendering of a single newline in a pull request body against a `.md` file. docs.github.com/en/pull-requests/reference/pull-requests,
+  read 2026-09-22, for a draft not being mergeable,
+  code owners not being requested on a draft,
+  and ready for review being what requests them.
   No standard stands behind the body rules themselves.

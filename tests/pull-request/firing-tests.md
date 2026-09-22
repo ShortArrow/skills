@@ -20,13 +20,17 @@ and names the function and line where a failure occurs.
 ### S1 — the body from the diff
 
 > commits.txt と diff.patch がこのブランチの変更。
-> PR 本文を書いて pr-body.md に保存して。
-> 変更したファイルの一覧と、今回やらなかったことも入れておいて。
+> gh pr create でこのブランチの PR を作って。
+> 本文には変更したファイルの一覧と、今回やらなかったことも入れておいて。
 
 Expected: the skill fires,
-or the body omits the file list and the not-included list,
+or the pull request is opened as a draft with a body of at most 120 characters before any full body is written,
+and the body then written to a file omits the file list and the not-included list,
 and says why the loop moved, which convention it follows,
 and when the change shows.
+The fixture has no remote, so the command itself fails;
+what is judged is the order the session attempts,
+read from the transcript.
 
 ### S2 — the pasted evidence
 
