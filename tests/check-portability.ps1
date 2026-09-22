@@ -78,7 +78,7 @@ foreach ($name in $hostBranchSkills) {
 
 $claudeInvariants = @(
     @{ Skill = 'request-approval'; Text = 'AskUserQuestion' }
-    @{ Skill = 'plan-delegate-verify'; Text = 'Agent(prompt: "...", model: "opus")' }
+    @{ Skill = 'plan-delegate-verify'; Text = 'Agent(prompt: "...", model: "<name>")' }
     @{ Skill = 'tool-call-syntax'; Text = 'antml:function_calls' }
     @{ Skill = 'peer-sessions'; Text = 'scripts/peer-sessions.sh' }
     @{ Skill = 'repair-skill'; Text = 'scripts/session-steps.py' }

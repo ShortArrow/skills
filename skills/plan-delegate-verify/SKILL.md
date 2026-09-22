@@ -1,7 +1,7 @@
 ---
 name: plan-delegate-verify
 description: |
-  Split multi-step work across model tiers: the session model writes the plan, subagents on a chosen model carry out the items, and the session model verifies the result against the plan it wrote. Use when about to plan an implementation, when a task decomposes into items that could run in parallel, or when work will be handed to subagents at all, and when a read or a run is about to put into the session's context a large output that is needed once. Covers keeping the planner's context for the plan and the evidence so the verdict is made on a session that has not filled up, delegating the fact-gathering without delegating the judgement, what the plan must contain for an implementer that never saw the conversation, why a subagent's "done" is not evidence, what changes when the plan is a test plan and the artefact is itself the pass mark, and when the overhead costs more than the work.
+  Keep the judgement in the session and send the bulk out: the session writes the plan, subagents carry out the items, and the session verifies the result against the plan it wrote, on whatever model each of them runs. Use when about to plan an implementation, when a task decomposes into items that could run in parallel, or when work will be handed to subagents at all, and when a read or a run is about to put into the session's context a large output that is needed once. Covers keeping the planner's context for the plan and the evidence so the verdict is made on a session that has not filled up, delegating the fact-gathering without delegating the judgement, what the plan must contain for an implementer that never saw the conversation, why a subagent's "done" is not evidence, what changes when the plan is a test plan and the artefact is itself the pass mark, and when the overhead costs more than the work.
 allowed-tools: Agent, Read, Bash, PowerShell, Edit, Write, TodoWrite
 ---
 
@@ -17,7 +17,7 @@ Four roles, and they are roles rather than models:
 | **Verifier** | Whether the result meets the plan — not whether the diff looks reasonable |
 
 Planner and verifier are the same session.
-That is the point: the tier trusted with judgement decides what to build and whether it was built,
+That is the point: the context trusted with judgement decides what to build and whether it was built,
 and never does the typing.
 
 ## What the split protects
@@ -31,10 +31,12 @@ Conventions decay the same way (`agent-harness` builds gates because prose held 
 and so does the reading of a diff.
 A planner that gathered its own facts verifies on a context that is mostly material it needed once.
 
-So the split protects two things,
-and the second holds even when every role runs on the same model:
-the judgement tier is not spent on typing,
-and the judgement's context is not spent on bulk.
+So the split protects two things:
+the judgement's context is not spent on bulk, and,
+where a cheaper model exists for a role,
+the judgement tier is not spent on typing.
+The first holds on any model,
+and it is why the split happens when the session and the subagent run on the same one.
 Whatever is large and needed once goes out to a subagent and comes back as a conclusion with citations,
 and what stays in the session is the plan, the evidence,
 and the verdict.
@@ -62,18 +64,20 @@ an "Ask questions" tool, a Task tool and a Browser tool mean Cursor;
 `read_file` and subagents exposed as tools of their own name mean Gemini CLI.
 A host that matches none of these takes the last row.
 
-In Claude Code, preserve the existing assignment, overridable per call:
+In Claude Code, the session is planner and verifier and does neither the reading nor the typing:
 
 ```
-Agent(prompt: "...", model: "opus")     # scout
-Agent(prompt: "...", model: "opus")     # implementer
+Agent(prompt: "...")                    # scout or implementer, on the session's model
+Agent(prompt: "...", model: "<name>")   # the same role, moved to another model
 ```
 
-The session model is planner and verifier and does neither the reading nor the typing.
-Scouts and implementers default to `opus`;
-set `model` on the Agent call to move either.
-Without it the subagent inherits the session model,
-which spends the judgement tier on enumeration.
+Without `model` the subagent runs on the session's model,
+and that is still the split:
+the read lands in the subagent's context and the session keeps only the conclusion.
+Set `model` when the tier rule under Gathering the facts puts a role on a different model;
+the names the parameter accepts are listed in the tool's own description,
+and none is written here,
+because a name written here goes stale and reads as a condition for delegating at all.
 
 In Codex, use the runtime's subagent tools only when the user or governing repository instructions explicitly authorize delegation.
 Prefer the inherited model unless the user asked for a particular model or tier.
@@ -84,7 +88,7 @@ do not pretend a subagent ran.
 
 | Host | Delegation |
 |---|---|
-| Copilot in VS Code | `runSubagent`. The model is the explicit parameter, else the agent's `.agent.md` `model`, else the main model. Put scouts and implementers on a cheaper model with that parameter |
+| Copilot in VS Code | `runSubagent`. The model is the explicit parameter, else the agent's `.agent.md` `model`, else the main model. Move a role to another model with that parameter when the tier rule asks for it |
 | Copilot CLI | The built-in Explore agent as scout and the Task agent as implementer, selected with `/agent` or by name in the prompt. A custom agent's `model` frontmatter picks the tier. Agent-to-agent delegation goes only through the `agent` tool alias in a custom agent's tools |
 | Cursor | The Task tool, with `/name` to force a particular subagent. The subagent's `model` frontmatter picks the tier, `inherit` by default |
 | Gemini CLI | Each subagent is a tool named after itself, and `@name` at the start of the prompt forces one. `model` in `.gemini/agents/*.md` picks the tier, default `inherit` |
@@ -128,9 +132,13 @@ Tier by the cost of that role being wrong, not by the role's name:
 the closer a role sits to a verdict (the planner, the verifier, a reviewer whose finding will be acted on),
 the higher the tier; the closer it sits to producing facts (a scout, an implementer holding a written plan and a failing test),
 the lower.
+The rule can put every role on the same model,
+and the split still stands,
+since the context is the other thing it protects.
 A cast written as names,
 this model for the developer and that one for the reviewer,
-goes stale with the model list; the rule does not.
+goes stale with the model list and reads as a condition;
+the rule does not.
 
 ## The plan is an artifact, not a conversation
 
