@@ -79,6 +79,7 @@
         "./skills/tui-debug",
         "./skills/windows-sandbox",
         "./skills/hyperv-clean-vm",
+        "./skills/dockur-windows",
         "./skills/peer-sessions",
         "./skills/grill-me",
         "./skills/tool-call-syntax",
