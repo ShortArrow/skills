@@ -226,6 +226,51 @@ and every `references/` path a body names must exist.
 one neutral rule,
 and the sentence ends and separators of each language chosen from the characters in the paragraph.
 
+## A skill does not say "ask the user"
+
+**Protects.** The user's attention.
+A question stops the work and costs a context switch,
+and it returns one fact.
+A skill that writes "confirm with the user" at a step turns every session that reaches the step into a questionnaire:
+each item is cheap for the author to write,
+and the person answering pays for all of them before anything is built.
+The model can start on what the repository,
+the history and the running system tell it;
+the question is for the one thing only the user knows.
+
+**In tension.** Some steps do need the user.
+A PDF that is not attached,
+a failing run that only the user's transcript holds, a production path,
+a preference between two valid designs.
+Leaving those out produces a guess dressed as a result.
+And "ask when unsure" is the shortest instruction to write,
+which is why it is the one that gets written.
+
+**Refused, while these reasons hold.**
+
+- "Ask the user" or "confirm with the user" as a step, in any wording,
+  without naming what only the user can supply.
+- A step that asks for what the repository could answer.
+  The convention is in the code; the history is in `git log`.
+- A question written without candidates.
+  A question that offers three answers and a default costs a click;
+  an open one costs a composed reply.
+- A list of questions.
+  The second is usually answered by the first,
+  and a list is what a questionnaire looks like.
+
+**The next case.** A step that needs the user names the thing:
+"ask the user to attach the PDF",
+"ask the user for the production path".
+Every other gap is closed by reading,
+or carried forward as a stated assumption where being wrong is cheap.
+`grill-me` holds the three checks a question passes before it is asked and the form it takes,
+and a skill that would say "ask" points there instead.
+
+**Gate.** None mechanical.
+`tests/grill-me/firing-tests.md` S3 asks the session for every question it has before starting,
+and passes only when the reply is at most one question with candidates.
+
 ## A negative scenario stands clear of the trigger
 
 **Protects.** The two "should not fire" scenarios are what prove a skill is not always-on.
