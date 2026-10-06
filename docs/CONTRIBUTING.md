@@ -93,7 +93,7 @@ The whole listing is also capped at 1% of the context window in characters,
 Over that, the skills with the fewest recorded uses lose their descriptions first and are listed by name only,
 so a skill that has never fired cannot fire on its description,
 and a new skill starts at the back of that queue.
-This catalogue's forty-one descriptions total about 28,000 characters,
+This catalogue's forty-five descriptions total about 34,000 characters,
 so with two or more of its plugins installed the default budget is exceeded.
 `tests/skill-doctor.py` prints the per-plugin totals and the fraction that would hold this catalogue alone;
 the README tells installers to raise `skillListingBudgetFraction` (0.05 holds the whole catalogue) or to install one plugin.
@@ -114,6 +114,35 @@ an undocumented capability is written as `not documented (checked <date>)` and f
 The Claude Code and Codex rows are pinned by string invariants in the portability check,
 so a later edit that generalises them into host-neutral prose fails the run.
 Prose-only skills need none of this.
+
+Where each host reads skills from,
+which is what `npx skills add -g` resolves for the reader:
+
+| Host | User directory | Project directory |
+|---|---|---|
+| Claude Code | `~/.claude/skills` | `.claude/skills` |
+| Codex | `~/.codex/skills`, `~/.agents/skills` | `.agents/skills` |
+| Copilot in VS Code | `~/.copilot/skills`, `~/.agents/skills`, and `~/.claude/skills` | `.github/skills`, `.claude/skills`, `.agents/skills` |
+| Copilot CLI | `~/.copilot/skills`, `~/.agents/skills` | `.github/skills`, `.claude/skills`, `.agents/skills`; `/add-dir` loads `.github/skills` |
+| Cursor | `~/.cursor/skills`, `~/.agents/skills`, `~/.claude/skills`, `~/.codex/skills` | `.agents/skills`, `.cursor/skills`, `.claude/skills`, `.codex/skills` |
+| Gemini CLI | `~/.gemini/skills`, `~/.agents/skills` (the alias wins ties) | `.gemini/skills`, `.agents/skills` |
+
+The directories above were checked against official documentation on 2026-08-28.
+
+The format itself is not specific to one host.
+The same folder-with-a-manifest shape is used across agents,
+and each states its own in its documentation:
+
+| | |
+|---|---|
+| [agentskills.io](https://agentskills.io) | The specification |
+| [claude.com/skills](https://claude.com/skills) | Claude |
+| [docs.github.com — about agent skills](https://docs.github.com/en/copilot/concepts/agents/about-agent-skills) | GitHub Copilot |
+| [developers.openai.com — tools and skills](https://developers.openai.com/api/docs/guides/tools-skills) | OpenAI, from the API |
+| [developers.openai.com — skills in the API](https://developers.openai.com/cookbook/examples/skills_in_api) | The same, worked through |
+| [learn.chatgpt.com — build skills](https://learn.chatgpt.com/docs/build-skills) | ChatGPT |
+| [geminicli.com — skills](https://geminicli.com/docs/cli/skills/) | Gemini CLI |
+| [skills.sh](https://www.skills.sh/) | Directory of published skills |
 
 ## A hook for the moment a description cannot see
 

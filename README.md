@@ -15,7 +15,7 @@ Then install whichever set applies.
 
 Claude Code sends the model one listing of every loaded skill and caps it at 1% of the context window (8,000 characters at 200k).
 The descriptions here are deliberately long,
-about 28,000 characters across the four plugins,
+about 34,000 characters across the four plugins (`python tests/skill-doctor.py` prints the current total),
 so with more than one plugin installed the least-used skills are listed by name only and never fire on their description.
 Raise the cap in `~/.claude/settings.json`, or install one plugin:
 
@@ -55,105 +55,44 @@ npx skills add ShortArrow/skills -g
 Copilot (CLI, coding agent, VS Code),
 Cursor and Gemini CLI read as a user-level location.
 Without `-g` it writes the project's `.agents/skills/` instead.
+Each host's own directories,
+and how a skill that names a host's tools stays correct on the others,
+are in [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md).
 
-| Host | User directory | Project directory |
-|---|---|---|
-| Claude Code | `~/.claude/skills` | `.claude/skills` |
-| Codex | `~/.codex/skills`, `~/.agents/skills` | `.agents/skills` |
-| Copilot in VS Code | `~/.copilot/skills`, `~/.agents/skills`, and `~/.claude/skills` | `.github/skills`, `.claude/skills`, `.agents/skills` |
-| Copilot CLI | `~/.copilot/skills`, `~/.agents/skills` | `.github/skills`, `.claude/skills`, `.agents/skills`; `/add-dir` loads `.github/skills` |
-| Cursor | `~/.cursor/skills`, `~/.agents/skills`, `~/.claude/skills`, `~/.codex/skills` | `.agents/skills`, `.cursor/skills`, `.claude/skills`, `.codex/skills` |
-| Gemini CLI | `~/.gemini/skills`, `~/.agents/skills` (the alias wins ties) | `.gemini/skills`, `.agents/skills` |
+## Other collections
 
-The directories above were checked against official documentation on 2026-08-28.
-How a skill that names a host's tools stays correct on the others is in [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md).
-Copilot CLI also rejects a skill whose description exceeds 1,024 characters,
-so every description here is kept under 1,000.
-
-## Other marketplaces
-
-Third-party collections are added the same way rather than copied in.
-Vendoring them would mean carrying their licences and their release cadence.
+Added rather than copied in:
+vendoring would mean carrying their licences and their release cadence.
+`find-skills` has the same list by owner, for searching one.
 
 ```
 claude plugin marketplace add anthropics/skills
-```
-
-These carry `.claude-plugin/marketplace.json`,
-so `marketplace add` takes them directly.
-
-| Repository | Covers |
-|---|---|
-| [anthropics/skills](https://github.com/anthropics/skills) | Document formats, artifact building, skill creation |
-| [blader/humanizer](https://github.com/blader/humanizer) | A rewrite pass over finished prose in any language: twenty-five tells ranked by strength, resting on Wikipedia's "Signs of AI writing". Overlaps `unmachine-prose`, which constrains at the moment of writing and restates most of the same shapes; run one or the other on a draft, not both |
-| [coji/natural-japanese](https://github.com/coji/natural-japanese) | Japanese business documents: a writing constitution, corpus-calibrated catalogues of machine tells and translationese, document types, and a morphological linter. Overlaps this catalogue's Japanese layers; run one or the other on a draft, not both |
-| [nanaism/yomiyasu](https://github.com/nanaism/yomiyasu) | A rewrite pass over machine-generated Japanese: breaks up inanimate subjects and figurative verbs, strips emoji, sentence-final colons, aside parentheses and the half-width spaces around English words, and flattens excess bold, bullets and negated contrasts, with a standard-library Python linter. Overlaps this catalogue's Japanese layers and coji/natural-japanese; run one of them on a draft, not several |
-| [google/skills](https://github.com/google/skills) | Google products and technologies |
-| [microsoft/skills](https://github.com/microsoft/skills) | Grounding coding agents in Microsoft SDKs |
-| [NVIDIA/skills](https://github.com/NVIDIA/skills) | Physical AI, robotics, simulation, CUDA, RAG |
-| [amd/skills](https://github.com/amd/skills) | AMD's optimised software stack |
-| [cloudflare/skills](https://github.com/cloudflare/skills) | Building on Cloudflare |
-| [android/skills](https://github.com/android/skills) | Android development |
-| [MicrosoftDocs/Agent-Skills](https://github.com/MicrosoftDocs/Agent-Skills) | Microsoft documentation |
-
-In Claude Code, every installed skill costs always-on tokens in every session,
-and the listing budget above decides which descriptions the model sees at all,
-so take the plugin that matches the work rather than the whole catalogue.
-
-## Collections that are not marketplaces
-
-These hold skills but declare no marketplace,
-so `marketplace add` will not resolve them.
-[vercel-labs/skills](https://github.com/vercel-labs/skills) installs from any git source into Claude Code,
-Codex, Cursor, OpenCode and some seventy other agents.
-
-```
 npx skills add openai/skills
 ```
 
 | Repository | Covers |
 |---|---|
+| [anthropics/skills](https://github.com/anthropics/skills) | Document formats, artifact building, skill creation |
 | [openai/skills](https://github.com/openai/skills) | Catalogue for Codex |
+| [google/skills](https://github.com/google/skills) | Google products and technologies |
+| [microsoft/skills](https://github.com/microsoft/skills) | Grounding coding agents in Microsoft SDKs |
+| [MicrosoftDocs/Agent-Skills](https://github.com/MicrosoftDocs/Agent-Skills) | Microsoft documentation |
+| [NVIDIA/skills](https://github.com/NVIDIA/skills) | Physical AI, robotics, simulation, CUDA, RAG |
+| [amd/skills](https://github.com/amd/skills) | AMD's optimised software stack |
+| [cloudflare/skills](https://github.com/cloudflare/skills) | Building on Cloudflare |
+| [android/skills](https://github.com/android/skills) | Android development |
 | [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) | React, Next.js and deployment practice |
-| [github/awesome-copilot](https://github.com/github/awesome-copilot/tree/main/skills) | Community collection |
 | [remotion-dev/skills](https://github.com/remotion-dev/skills) | Remotion — programmatic video in React |
+| [github/awesome-copilot](https://github.com/github/awesome-copilot/tree/main/skills) | Community collection |
 
-`--skill` takes one entry instead of the collection,
-which matters when the collection is large.
+Three overlap this catalogue's Japanese layers.
+Run one of them on a draft, not several.
 
-```
-npx skills add https://github.com/vercel-labs/agent-skills --skill vercel-react-best-practices
-```
-
-The name it resolves is the one the skill declares,
-not its directory — above,
-`vercel-react-best-practices` lives in `skills/react-best-practices`.
-
-The command shown under **Install in Codex** reaches this repository the same way,
-which is also how to use these skills from an agent that has no plugin system.
-
-By default it writes to `.agents/skills/` in the current project and symlinks Claude Code at it;
-`--agent claude-code` writes to `.claude/skills/` instead.
-Either way it records what it took in `skills-lock.json`.
-
-## The format elsewhere
-
-`SKILL.md` is not specific to Claude Code.
-The same folder-with-a-manifest shape is used across agents.
-Instructions that name tools or approval mechanisms are still host-specific:
-these skills retain Claude Code's existing paths and branch to each host's documented capability,
-with a last row for hosts that expose none.
-
-| | |
+| Repository | Covers |
 |---|---|
-| [agentskills.io](https://agentskills.io) | The specification |
-| [claude.com/skills](https://claude.com/skills) | Claude |
-| [docs.github.com — about agent skills](https://docs.github.com/en/copilot/concepts/agents/about-agent-skills) | GitHub Copilot |
-| [developers.openai.com — tools and skills](https://developers.openai.com/api/docs/guides/tools-skills) | OpenAI, from the API |
-| [developers.openai.com — skills in the API](https://developers.openai.com/cookbook/examples/skills_in_api) | The same, worked through |
-| [learn.chatgpt.com — build skills](https://learn.chatgpt.com/docs/build-skills) | ChatGPT |
-| [geminicli.com — skills](https://geminicli.com/docs/cli/skills/) | Gemini CLI |
-| [skills.sh](https://www.skills.sh/) | Directory of published skills |
+| [blader/humanizer](https://github.com/blader/humanizer) | A rewrite pass over finished prose in any language: twenty-five tells ranked by strength, resting on Wikipedia's "Signs of AI writing". Overlaps `unmachine-prose`, which constrains at the moment of writing and restates most of the same shapes |
+| [coji/natural-japanese](https://github.com/coji/natural-japanese) | Japanese business documents: a writing constitution, corpus-calibrated catalogues of machine tells and translationese, document types, and a morphological linter |
+| [nanaism/yomiyasu](https://github.com/nanaism/yomiyasu) | A rewrite pass over machine-generated Japanese: breaks up inanimate subjects and figurative verbs, strips emoji, sentence-final colons, aside parentheses and the half-width spaces around English words, and flattens excess bold, bullets and negated contrasts, with a standard-library Python linter |
 
 ## Contributing
 
