@@ -34,15 +34,35 @@ Every host-side call in this skill — `Get-VM`, `Start-VM`,
 and a non-elevated token, even an administrator's,
 is refused with an error that names "the authorization policy".
 `sudo` on every call is one answer.
-The durable one is the local group made for this:
+The durable one is the local group made for this.
+
+**Read the state before changing it.** There are three cases and only one of them needs the group command.
+The group is `S-1-5-32-578`,
+a well-known SID ([Security Identifiers](https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/understand-security-identifiers), read 2026-10-07),
+so none of this depends on `whoami` being on PATH or on the group's localised name.
 
 ```powershell
-sudo pwsh -c "Add-LocalGroupMember -Group 'Hyper-V Administrators' -Member $env:USERNAME"
+$sid = 'S-1-5-32-578'
+[Security.Principal.WindowsIdentity]::GetCurrent().Groups.Value -contains $sid   # the token you hold
+Get-LocalGroupMember -SID $sid -ErrorAction SilentlyContinue                     # what the group says
 ```
 
-**Then sign out and sign back in.** Group membership is written into the logon token,
+| Token | Group | Do |
+|---|---|---|
+| has it | — | Nothing. The calls below work as they are |
+| lacks it | lists you | **Sign out and back in.** The membership is already there |
+| lacks it | does not list you | Join, then sign out and back in |
+
+```powershell
+sudo pwsh -c "Add-LocalGroupMember -SID 'S-1-5-32-578' -Member $env:USERNAME"
+```
+
+Run that only in the third case.
+What `Add-LocalGroupMember` does when the member is already in the group is not stated in its documentation,
+so do not use it to find out.
+
+**Signing out is what makes it take effect.** Group membership is written into the logon token,
 and the current session keeps the old token — the same command keeps failing with the same error until the account logs on again.
-`whoami /groups | findstr /i hyper-v` shows whether the token you are holding has it.
 After that, none of the `sudo` below is needed,
 and the quoting problems that come with `sudo pwsh -c` do not arise.
 
