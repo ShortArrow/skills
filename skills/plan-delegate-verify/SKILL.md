@@ -229,6 +229,32 @@ The verifier runs the plan's commands in its own session.
 A subagent reporting that the tests pass is not the tests passing;
 it is a sentence about the tests.
 
+**The mechanical gates run first,
+and all of them.** The repository's formatter, linter,
+type check and tests run on the result before the verifier reads a line of it,
+whatever the change looks like.
+They are cheap and they do not tire.
+A finding a formatter would have printed, raised by the verifier,
+is the verifier's context spent on something a tool computes;
+the verifier's reading is for what no tool computes,
+whether the result meets the plan.
+
+**A selector may add checks,
+never remove one.** Between the gates and the verifier,
+something cheaper — a rule over the changed paths, a smaller model,
+a classifier that returns probabilities — can read the diff for what it means and add the checks its paths do not reveal:
+a public surface changed,
+so the compatibility check and the documentation; prose added,
+so the prose lint; credentials or outbound calls touched,
+so the security review.
+Deciding that a gate can be skipped this time is a different role.
+A missed addition costs one check, with the gates still standing;
+a wrong skip lets a defect through to the verifier or past it.
+By the tiering rule above, that decision sits next to the verdict,
+so it belongs to the verifier and not to the cheap tier.
+The selector may also send a result back for an item of the plan it cannot find in the diff,
+but its pass is not evidence; only the verifier's own run is.
+
 Where the work was split across worktrees,
 the verification happens after the merge, on the combined result.
 Items that pass alone and fail together are the reason the phase exists.

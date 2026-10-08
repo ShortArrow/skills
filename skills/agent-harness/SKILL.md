@@ -69,6 +69,14 @@ and spends iterations guessing at what the message only laments.
 "Domain code must not read the clock; inject the Clock port from application" repairs itself;
 "invalid dependency" does not.
 
+**What runs on a change is chosen by adding.** The fast command runs whole after every change;
+nothing about a change makes one of its members optional.
+The slower bundle and the inferential review below may be chosen per change by what the diff touches,
+by a rule over paths or by a cheaper model reading the diff,
+and that choice only adds.
+A selector that skips a sensor because this change looks safe has turned a gate into a guess,
+and the violation it waves through is the one the sensor was built for.
+
 ## The inferential sensor
 
 Judgments no rule can compute — naming, granularity,
