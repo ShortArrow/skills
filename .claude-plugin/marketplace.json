@@ -82,6 +82,7 @@
         "./skills/dockur-windows",
         "./skills/peer-sessions",
         "./skills/grill-me",
+        "./skills/own-the-call",
         "./skills/tool-call-syntax",
         "./skills/codex",
         "./skills/find-skills",
