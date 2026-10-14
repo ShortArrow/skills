@@ -1,7 +1,8 @@
 ---
 name: repair-skill
 description: |
-  Repairing a skill from the session that failed, triggered by the moments that patch it instead: about to type "fix it" at a failure without opening the transcript, about to edit the skill at the step that failed and not at the steps that only happened to pass, about to fix the script and leave the same command in the body's example, about to accept one green rerun as the verdict, about to write a guideline for a step whose answers never scattered, or about to apply a repair whose before and after was never recorded. The procedure: read the steps of the failed run, name the defect and its line, sample the uncertain decision in fresh contexts, fix every copy of the instruction on a candidate, run the input that failed, a similar one and one that used to pass before and after, and apply only on improvement without regression. Use when a skill that ran yesterday fails today, when a user hands over a session id, and before writing "improved the skill" anywhere.
+  Repairing a skill from the session that failed, triggered by the moments that patch it instead: about to type "fix it" at a failure without opening the transcript, about to edit the skill at the step that failed and not at the steps that only happened to pass, about to fix the script and leave the same command in the body's example, about to accept one green rerun as the verdict, about to write a guideline for a step whose answers never scattered, or about to apply a repair whose before and after was never recorded. The procedure: read the steps of the failed run, name the defect and its line, sample the uncertain decision in fresh contexts, fix every copy of the instruction on a candidate, run the input that failed, a similar one and one that used to pass before and after, and apply only on improvement without regression. Use when a skill that ran yesterday fails today, when a user hands over a session id, when a skill did not fire, and before writing "improved the skill" anywhere.
+argument-hint: "[skill-name] [session-id]"
 allowed-tools: Read, Grep, Glob, Bash, Edit, Write, Agent
 ---
 
@@ -41,12 +42,29 @@ A host that matches none of these takes the last row.
 
 | Host | The failed run | Fresh contexts for sampling |
 |---|---|---|
-| Claude Code | `python scripts/session-steps.py <session-id>` reads `~/.claude/projects/*/<id>.jsonl` and prints one line per step with its transcript line number | `claude -p "<prompt>" --max-turns 3` in a copy of the project, once per sample |
+| Claude Code | `python scripts/session-steps.py <session-id>` reads `~/.claude/projects/*/<id>.jsonl` and prints one line per step with its transcript line number; this session's id is `${CLAUDE_SESSION_ID}` | `claude -p "<prompt>" --max-turns 3` in a copy of the project, once per sample |
 | Codex | Use the exposed thread or session tools to read the run. Do not read Codex's session storage by a guessed path | `codex exec --full-auto --sandbox read-only` in a copy of the project, once per sample |
 | Copilot | This catalogue names no transcript route for this host; ask the user to paste the failing run | No sampling route is named here; record that sampling was not performed |
 | Cursor | This catalogue names no transcript route for this host; ask the user to paste the failing run | No sampling route is named here; record that sampling was not performed |
 | Gemini CLI | This catalogue names no transcript route for this host; ask the user to paste the failing run | No sampling route is named here; record that sampling was not performed |
 | Any other host | Ask the user to paste the failing run, and diagnose from that | Record that sampling was not performed |
+
+## What the request names
+
+The request names a skill, a session, both or neither;
+on Claude Code they arrive as `/repair-skill <skill-name> <session-id>`,
+in either order, since a session id is a UUID and a skill name is not.
+
+| Named | The run | The skill |
+|---|---|---|
+| a skill and a session | that session | that skill |
+| a session alone | that session | the skills its summary lists as invoked |
+| a skill alone | this session, up to the request | that skill |
+| neither | this session, up to the request | the skill the conversation was about; if none was, the skills this session invoked |
+
+A skill named and absent from the run's invoked skills did not fire.
+That run has no step of the skill to read;
+the defect is in the description, and step 2 sorts it there.
 
 ## 1. Read the run
 
@@ -75,10 +93,11 @@ Sort it into one of four:
 - the instruction is ambiguous, and the run took the other reading;
 - the instruction is wrong, and the run followed it;
 - a script the skill runs has a bug;
+- the description does not name the moment, and the skill never ran;
 - the failure is outside the skill: a service down, a token expired,
   a file missing that day.
 
-Only the first three are repairs.
+Only the first four are repairs.
 The fourth is reported and left;
 a skill patched for a transient failure carries the patch forever.
 If the transcript is truncated or the evidence does not reach a cause,
@@ -118,6 +137,10 @@ Keep the skill's task and its permissions as they were.
 
 Before editing, write the checks down: the input that failed,
 a different input of the same kind, and an input that used to pass.
+For a skill that did not fire, the checks are firing tests:
+the prompt it missed becomes a should-fire scenario beside the existing ones,
+and every should-not-fire scenario runs before and after,
+since a description widened to catch one moment can start catching its neighbours.
 Run every check against the original and against the candidate.
 A stochastic step gets three trials each side.
 Keep the expected result out of the context that produces the candidate's behaviour,

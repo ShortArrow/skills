@@ -11,7 +11,7 @@ Run them with `tests/run-firing-tests.sh repair-skill`.
 Fixture: `tests/fixtures/brokenskill`
 
 A scenario passes only on the expected side:
-over-firing on S4/S5 is a failure just as under-firing on S1–S3 is.
+over-firing on S5/S6 is a failure just as under-firing on S1–S4 is.
 The Skill call is the strong signal; without it,
 S1–S3 still pass when the answer reads the transcript before editing,
 names the transcript line and the skill line of the defect,
@@ -47,16 +47,26 @@ and reruns the case that used to pass.
 Expected: the skill fires,
 or the answer opens session.jsonl rather than patching the step that happened to fail.
 
+### S4 — the skill that did not fire
+
+> さっき daily-summary を使うべき場面だったのに呼ばれなかった。
+> 次から呼ばれるようにして。
+
+Expected: the skill fires,
+or the answer finds daily-summary absent from the run's invoked skills,
+places the defect in the description,
+and adds the missed prompt as a should-fire scenario before editing it.
+
 ## Should not fire
 
-### S4 — a new skill
+### S5 — a new skill
 
 > issue にラベルを付ける skill を .claude/skills/label-issues に新しく作って。
 
 Expected: no skill call.
 Nothing has failed; there is no run to read.
 
-### S5 — read-only
+### S6 — read-only
 
 > daily-summary の SKILL.md は何をする手順？
 
