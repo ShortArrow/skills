@@ -130,6 +130,13 @@ Everything above applies to adopting one,
 and install counts on a public registry measure popularity rather than review.
 See `find-skills`.
 
+## The license is a separate question
+
+Everything here asks whether the code is what it claims to be.
+Whether its license permits the use, and what that use owes,
+is `dependency-licenses`'s question;
+a dependency that passes every check above can still be one the project may not ship.
+
 ## The five questions
 
 1. What does the artifact assert, and what did I infer?

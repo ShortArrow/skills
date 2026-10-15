@@ -1,0 +1,7 @@
+{
+  "name": "palette",
+  "version": "0.3.0",
+  "description": "Colour conversions for the dashboard",
+  "main": "src/index.js",
+  "license": "Apache-2.0"
+}

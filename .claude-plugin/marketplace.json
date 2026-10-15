@@ -189,6 +189,7 @@
         "./skills/codex",
         "./skills/find-skills",
         "./skills/adopt-dependency",
+        "./skills/dependency-licenses",
         "./skills/library-design",
         "./skills/state-first",
         "./skills/assurance-case",
