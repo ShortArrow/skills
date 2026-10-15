@@ -64,4 +64,33 @@ The code's licensing does not change.
 
 ## Recorded runs
 
-None yet.
+2026-10-15, claude-opus-5-5,
+`MAX_TURNS=10 tests/run-firing-tests.sh dependency-licenses`,
+first attempt: invalid.
+The marketplace had been updated but the installed plugin was still 8e7ec81,
+so the sessions had no `dependency-licenses`,
+and the new hook commands named a script that cache lacked:
+Python exited 2 and Bash calls were blocked in every scenario.
+That led to a4c6a80 (a hook whose script is missing lets the call through).
+
+2026-10-15, claude-opus-5-5,
+the same command after `claude plugin update` to 12b55db,
+with the skill listed with its description (checked in a fresh `claude -p`):
+
+- S1, S2, S3: no Skill call (39 s / 58 s / 35 s, $0.30 / $0.38 / $0.31).
+  The behaviour matched each expectation anyway.
+  S1 named GPL-2.0-only against Apache-2.0 and the FSF's reading,
+  changed nothing and proposed its own parser.
+  S2 wrote `MIT OR Apache-2.0`, explained `OR` against `AND`,
+  added `LICENSE-MIT`,
+  and named the vendored GPL file and the badge-only directory as open issues.
+  S3 refused to copy, named the missing license file and the badge as no grant,
+  and noted that the upstream `fastq` it resembles is ISC.
+- S4, S5: no Skill call.
+
+5/5 on the expected side by the weak signal; 0/3 by the strong one.
+The model answers these cases from what it already knows,
+so the description is not what decides them;
+the body's weight is in the cases this fixture does not reach:
+a declared license that disagrees with the files, CC0 or NYSL,
+an SBOM's `NOASSERTION` count, REUSE in CI.
