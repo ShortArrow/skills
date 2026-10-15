@@ -25,6 +25,7 @@ the stack layer holds the spelling.
 | resolve an analyzer warning or a build error by editing around the architecture | read the whole message, find the layer the fix belongs to, fix it there, run the affected tests |
 | refactor across layers | one move at a time with the tests green between moves (`tidy-first`); the stack layer lists the usual moves |
 | let a receive callback, a timer or a file watcher write the state a screen shows | it posts a message to the one queue the arbiter reads; only the update changes state (below) |
+| check a value's syntax and its business rule in the same place, or both checks in both places | the syntax is checked where the value enters, the rule where the domain type is made; each check has one home (below) |
 | build a feature from the view inward | start at the domain and work outward (below) |
 | review by reading top to bottom | review layer by layer: dependency direction, domain logic in the domain, one operation per handler, tests that name their intent |
 
@@ -43,6 +44,24 @@ and whether a type has earned an interface at all,
 is `design-by-contract`'s.
 Whether the layer or the feature is the outer folder is `slice-first`'s,
 and each stack layer draws both layouts.
+
+## Two checks, two places
+
+A value from outside passes two different checks,
+and each has one place.
+
+| Check | Asks | Where | On failure |
+|---|---|---|---|
+| Format | does it parse: a number where a number goes, a well-formed TOML file, a CSV row with its columns, a frame whose checksum matches | where the value enters: the adapter right after the read, the slice's entry right after the user typed | a failure message or result; nothing reaches the domain |
+| Invariant | may it exist: a baud rate the port supports, a voltage inside the range, a pin map with no pin used twice | where the domain type is constructed or changed, through the one route that makes it | the type is not made; no invalid object is ever in memory |
+
+The format check turns text into typed values and knows nothing of the business;
+the invariant check knows the business and never sees text.
+A rule written in both places drifts until the two disagree,
+and a rule written in the adapter is skipped by the next adapter.
+`state-first`'s "validation lives at the boundary" is the two together:
+the boundary is where the value enters and where the type is made,
+and past both nothing checks again.
 
 ## Presentation: the screen has one arbiter
 

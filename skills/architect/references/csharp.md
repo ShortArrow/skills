@@ -21,6 +21,44 @@ and holds no reference to a sibling.
 Code-behind never sets `IsVisible`;
 a view that does is a view deciding.
 
+## Two checks, two places
+
+The format check is the adapter's,
+and it ends in primitives or a failure:
+
+```csharp
+// Infrastructure: does the text parse
+public static Result<int> ParseBaudRate(string raw) =>
+    int.TryParse(raw, NumberStyles.None, CultureInfo.InvariantCulture, out var n)
+        ? Result.Success(n)
+        : Result.Failure<int>($"baud rate '{raw}' is not a number");
+```
+
+The invariant is the value object's, and its factory is the only way in:
+
+```csharp
+// Domain: may this value exist
+public sealed record BaudRate
+{
+    private static readonly int[] Supported = [9600, 19200, 38400, 57600, 115200];
+    public int Value { get; }
+    private BaudRate(int value) => Value = value;
+
+    public static Result<BaudRate> Create(int value) =>
+        Supported.Contains(value)
+            ? Result.Success(new BaudRate(value))
+            : Result.Failure<BaudRate>($"{value} is not a supported baud rate");
+}
+```
+
+The adapter chains the two and posts one message,
+`ConfigLoaded` or `ConfigFailed`;
+the update never sees a string where a `BaudRate` belongs.
+A `with` expression sets an `init` member without passing the factory,
+so a value object's members are get-only, as above.
+A mediator's `ValidationBehavior` (below) holds format checks on the request;
+an invariant placed there is a second home for a rule the domain already holds.
+
 ## The loop on a channel
 
 The body's loop, for a tool that talks to instruments, ports and files.
