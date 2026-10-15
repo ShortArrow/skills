@@ -2,6 +2,12 @@
 
 ## DDD Patterns
 
+The base classes below are the object-oriented spelling:
+an aggregate that changes itself through methods and collects its own events.
+The default in this skill is the decider in `csharp.md` (The pure core),
+records and pure functions with no base class;
+use these where a codebase is already built on them.
+
 ### Entity Base Class
 
 ```csharp
@@ -575,4 +581,16 @@ public class Result<T> : Result
         Value = value;
     }
 }
+
+public static class ResultExtensions
+{
+    public static Result<U> Map<T, U>(this Result<T> result, Func<T, U> f) =>
+        result.IsSuccess ? Result.Success(f(result.Value)) : Result.Failure<U>(result.Error);
+
+    public static Result<U> Bind<T, U>(this Result<T> result, Func<T, Result<U>> f) =>
+        result.IsSuccess ? f(result.Value) : Result.Failure<U>(result.Error);
+}
 ```
+
+`Bind` chains steps that can fail and stops at the first failure;
+`Map` applies a step that cannot.

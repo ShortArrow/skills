@@ -1,7 +1,7 @@
 ---
 name: architect
 description: |
-  Where a piece of code sits in a layered stack, triggered by the moments that misplace it: about to decide which project, package or folder a new type goes in, about to put a framework attribute or a network client on a domain type, about to let a view decide its own visibility or set a sibling's, about to resolve an analyzer warning or a build error by editing around the architecture, about to refactor across layers, about to let an I/O callback write state directly, about to build a feature from the view inward, or about to review code for which layer each piece is in. The body is stack-neutral: what each layer holds and refuses, one arbiter for a screen's state and the loop its I/O joins, the build order, and the checks before done. What a language, framework or binary boundary spells differently is layered on from references/, read only for the stack in hand, today C# (.NET, MVVM, Avalonia, CQRS, DDD) and Go. Dependency direction is design-by-contract's; the cut is slice-first's.
+  Where a piece of code sits in a layered stack, triggered by the moments that misplace it: about to decide which project, package or folder a new type goes in, about to put a framework attribute or a client on a domain type, about to let a view decide its own visibility or set a sibling's, about to resolve an analyzer warning or a build error by editing around the architecture, about to refactor across layers, about to let an I/O callback write state directly, about to build a feature from the view inward, or about to review code for which layer each piece is in. The body is stack-neutral: what each layer holds and refuses, a pure core in a thin shell, one arbiter and one loop per screen, the build order and the checks before done. What a language, framework or binary boundary spells differently is layered on from references/, read only for the stack in hand, today C# (.NET, MVVM, Avalonia, CQRS, DDD) and Go. Dependency direction is design-by-contract's; the cut is slice-first's.
 allowed-tools: Read, Edit, Write, Bash, Grep, Glob, Task
 ---
 
@@ -26,6 +26,7 @@ the stack layer holds the spelling.
 | refactor across layers | one move at a time with the tests green between moves (`tidy-first`); the stack layer lists the usual moves |
 | let a receive callback, a timer or a file watcher write the state a screen shows | it posts a message to the one queue the arbiter reads; only the update changes state (below) |
 | check a value's syntax and its business rule in the same place, or both checks in both places | the syntax is checked where the value enters, the rule where the domain type is made; each check has one home (below) |
+| give a domain type a method that changes it in place, or hand the domain a clock or a repository | decide in a pure function that returns the new value or the events; the clock, the store and every port are the shell's (below) |
 | build a feature from the view inward | start at the domain and work outward (below) |
 | review by reading top to bottom | review layer by layer: dependency direction, domain logic in the domain, one operation per handler, tests that name their intent |
 
@@ -35,7 +36,7 @@ the stack layer holds the spelling.
 |---|---|---|
 | Presentation | views, and the presenters or view models that hold what a view shows | business rules, data access |
 | Application | use cases: commands that change state, queries that read it, one handler each; the pipeline every request passes through | business rules, which are the domain's; knowledge of any adapter |
-| Domain | entities with identity, value objects equal by value, aggregates as transaction boundaries, domain services for rules that belong to no single entity, the ports the domain needs | any framework, any I/O, anything from the layers above |
+| Domain | immutable data: entities with identity, value objects equal by value, aggregates as transaction boundaries; the pure functions that decide and evolve them; the ports the shell must supply | any framework, any I/O, anything from the layers above |
 | Infrastructure | the adapters that implement the ports: repositories, external services, the database context | rules |
 
 Dependencies point inward; the domain depends on nothing.
@@ -44,6 +45,43 @@ and whether a type has earned an interface at all,
 is `design-by-contract`'s.
 Whether the layer or the feature is the outer folder is `slice-first`'s,
 and each stack layer draws both layouts.
+
+## A pure core in an effectful shell
+
+Dependency direction has a sharper form.
+The domain and the application's decisions are pure functions over immutable data:
+the same input gives the same output,
+and nothing outside the arguments is read or written.
+Everything that touches the world sits in a thin shell around them:
+the store, the wire, the file, the clock, randomness, a generated id.
+The core takes values, not interfaces;
+the current time arrives as an argument or inside a message,
+and a port is something the shell holds and the core never calls.
+
+A change of state is two functions and a starting value:
+
+| Function | Takes | Returns |
+|---|---|---|
+| decide | a command and the current state | the events that happen, or the failure that stops them |
+| evolve | a state and one event | the next state |
+
+A handler is then three steps: the shell loads the state,
+the core decides and evolves, the shell saves and publishes.
+The loop's update below is the same shape,
+with the next model as the new state and the commands as the effects it asks for,
+so a screen and an aggregate are read the same way.
+An aggregate that changes itself through methods and collects its own events is the object-oriented spelling of this,
+and a stack layer that shows it says it is the alternative.
+
+A failure the caller is expected to handle is a value:
+a result type composed with `bind` and `map`, so the format check,
+the invariant check and the decision read as one chain that stops at the first failure.
+An exception is left for a precondition that was broken (`design-by-contract`).
+
+The core is tested by tables of state, input and expected result,
+and by properties that hold for every input; its tests need no mock,
+and one that wants a mock has found I/O inside the core.
+A fake appears only where the shell is tested.
 
 ## Two checks, two places
 
@@ -123,8 +161,8 @@ The loop is shared; the transitions are not.
    from each state it can start in (`state-first`).
 2. **Locate the layers that change.**
 3. **Write the test first.**
-4. **Start at the domain and work outward:** the entities and rules,
-   then the port they need, then the use case and its handler,
+4. **Start at the domain and work outward:** the data types and the functions that decide and evolve them,
+   then the port the shell needs, then the use case and its handler,
    then the adapter, then the presenter and the view.
 5. **Add an integration test.**
 
@@ -157,6 +195,8 @@ named here, holding only what differs from the body.
 - [ ] No new warnings
 - [ ] The build succeeds
 - [ ] Dependencies point inward
+- [ ] The core reads no clock, does no I/O and changes nothing in place;
+  its tests use no mock
 - [ ] Naming follows the stack layer's conventions
 - [ ] Everything sits in the layer it belongs to
 

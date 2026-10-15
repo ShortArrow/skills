@@ -21,6 +21,88 @@ and holds no reference to a sibling.
 Code-behind never sets `IsVisible`;
 a view that does is a view deciding.
 
+## The pure core
+
+Data is records; a choice between shapes is a closed hierarchy of records;
+a collection inside a state is `ImmutableArray<T>` or `ImmutableList<T>`,
+and a change is a `with` expression that returns a new value.
+A decider is a static class:
+
+```csharp
+public abstract record LoggerCommand;
+public sealed record StartLogging(string Path, DateTimeOffset At) : LoggerCommand;
+public sealed record StopLogging(DateTimeOffset At) : LoggerCommand;
+
+public abstract record LoggerEvent;
+public sealed record LoggingStarted(string Path, DateTimeOffset At) : LoggerEvent;
+public sealed record LoggingStopped(DateTimeOffset At) : LoggerEvent;
+
+public abstract record LoggerState;
+public sealed record Idle : LoggerState;
+public sealed record Logging(string Path, DateTimeOffset Since) : LoggerState;
+
+public static class Logger
+{
+    public static readonly LoggerState Initial = new Idle();
+
+    public static Result<IReadOnlyList<LoggerEvent>> Decide(LoggerCommand command, LoggerState state) =>
+        (command, state) switch
+        {
+            (StartLogging c, Idle)   => Result.Success<IReadOnlyList<LoggerEvent>>([new LoggingStarted(c.Path, c.At)]),
+            (StartLogging, Logging)  => Result.Failure<IReadOnlyList<LoggerEvent>>("already logging"),
+            (StopLogging c, Logging) => Result.Success<IReadOnlyList<LoggerEvent>>([new LoggingStopped(c.At)]),
+            (StopLogging, Idle)      => Result.Failure<IReadOnlyList<LoggerEvent>>("not logging"),
+            _ => throw new UnreachableException()
+        };
+
+    public static LoggerState Evolve(LoggerState state, LoggerEvent @event) => @event switch
+    {
+        LoggingStarted e => new Logging(e.Path, e.At),
+        LoggingStopped   => new Idle(),
+        _ => throw new UnreachableException()
+    };
+}
+```
+
+C# does not check a record hierarchy for exhaustiveness,
+so the discard arm throws `UnreachableException`:
+a case added without its arm fails in the first test that reaches it instead of falling through.
+Every pair of command and state is a row,
+which is `state-first`'s table written as code.
+
+The handler is the shell,
+and it is the only place the clock and the store are read:
+
+```csharp
+public async Task<Result> Handle(StopLoggingRequest request, CancellationToken ct)
+{
+    var state = await store.Load(request.SessionId, ct);
+    var decided = Logger.Decide(new StopLogging(time.GetUtcNow()), state);
+    if (decided.IsFailure) return decided;
+    await store.Append(request.SessionId, decided.Value, ct);
+    return Result.Success();
+}
+```
+
+`TimeProvider` (`csharp-patterns.md`) is injected into the handler,
+never into a domain type; the domain receives the instant.
+
+The core's tests are a `[Theory]` table per decider and properties over generated input (FsCheck or CsCheck):
+
+```csharp
+[Property]
+public bool Stop_after_start_is_idle(NonEmptyString path, DateTimeOffset at)
+{
+    var started = Logger.Decide(new StartLogging(path.Get, at), Logger.Initial).Value
+        .Aggregate(Logger.Initial, Logger.Evolve);
+    var stopped = Logger.Decide(new StopLogging(at), started).Value
+        .Aggregate(started, Logger.Evolve);
+    return started is Logging && stopped is Idle;
+}
+```
+
+No mock appears in either.
+
 ## Two checks, two places
 
 The format check is the adapter's,
@@ -51,7 +133,8 @@ public sealed record BaudRate
 }
 ```
 
-The adapter chains the two and posts one message,
+The adapter chains the two with `Bind` (`csharp-patterns.md`, Result Pattern),
+`ParseBaudRate(raw).Bind(BaudRate.Create)`, and posts one message,
 `ConfigLoaded` or `ConfigFailed`;
 the update never sees a string where a `BaudRate` belongs.
 A `with` expression sets an `init` member without passing the factory,
