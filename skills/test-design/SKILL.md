@@ -1,7 +1,7 @@
 ---
 name: test-design
 description: |
-  Deriving test cases, triggered by the moments that produce weak ones: about to write a test list that is the happy path restated, about to derive tests by reading the implementation they check, about to test the bound the specification names and not the other one, about to enumerate the roles the specification lists and skip the caller it forgot, about to vary one condition at a time from the happy path, about to draw a state or decision table without tying each row to a test, about to write an expected result with "or" in it, about to skip the error paths as unlikely, or about to grade a suite as adequate by reading it. A test derived from the implementation passes by construction; coverage counts equivalence classes under a named criterion, not tests. Use when writing a test plan, list or specification, when a use case or scenario is the specification in hand, when adding tests to existing code, when reviewing a suite for gaps, and when a suite is all green and proves little.
+  Deriving test cases, triggered by the moments that produce weak ones: about to write a test list that is the happy path restated, about to derive tests by reading the implementation they check, about to test the bound the specification names and not the other one, about to enumerate the roles the specification lists and skip the caller it forgot, about to vary one condition at a time from the happy path, about to draw a state or decision table without tying each row to a test, about to write an expected result with "or" in it, about to skip the error paths as unlikely, about to leave a path unimplemented and untested, or about to grade a suite as adequate by reading it. A test derived from the implementation passes by construction; coverage counts classes, not tests. Use when writing a test plan or list, when a use case is the specification in hand, when adding tests to existing code, when reviewing a suite for gaps, and when a suite is all green and proves little.
 allowed-tools: Bash, PowerShell, Read, Grep, Glob
 ---
 
@@ -24,6 +24,7 @@ the count — only executes that decision.
 | draw a state table and move on | put a test id in every row; the row that says "not allowed" most of all |
 | write "rejected, or accepted provided…" as an expected result | one outcome per case; a specification that cannot decide is an open question, not a test |
 | skip error paths as unlikely | each failure mode is a class: invalid input, missing resource, denied, timeout, half-done |
+| leave a path unimplemented with no test, a skip marker or a stub nobody asserts | write a test that the path is refused as unimplemented today; it passes now and goes red the day someone builds it (below) |
 | test a feature by its main flow | read the alternate and exception flows off the use case; each is a class |
 | grade a suite by reading it | count it against the specification: classes, both bounds, rules, transitions |
 | add a fifth test to a covered class | spend it on an uncovered class — the fifth buys runtime and no coverage |
@@ -244,6 +245,40 @@ Do what was asked, and say in one sentence which class is now uncovered and what
 the state machine still accepts a second send from any caller that is not the button.
 A row deleted with that sentence is a decision;
 a row deleted without it is a gap nobody will find again.
+
+## An unimplemented path has a test that says so
+
+A path left out of this change on purpose,
+a role this release does not support, a format not parsed yet,
+a branch that throws `NotImplementedException` or calls `todo!()`,
+is still a class of the input,
+and the suite records what happens there today.
+Write the test that the path is refused as unimplemented:
+the exception or the error value it raises,
+the menu item that is absent, the request that answers "not supported".
+
+That test passes now and does two jobs.
+It puts the gap in the suite's list,
+where a reader counting classes finds it,
+instead of in a comment or a ticket.
+And it goes red the day someone implements the path,
+which is the moment its real cases have to be written;
+the failing test is the reminder, and it is replaced, not deleted.
+
+A skip marker or a pending test is not this record,
+because it cannot go red:
+it reports the same thing whether the path is missing,
+half-built or done.
+A runner's strict expected failure (`xfail(strict=True)` in pytest) is the same record in another spelling,
+since it fails when the path unexpectedly passes;
+a non-strict one is a skip.
+
+This is not `tdd-cycle`'s red.
+Red is the failing test for the behaviour this change builds;
+this is the passing test for the behaviour this change leaves out.
+Nor is it the unreachable arm `architect` puts in a decider:
+that path must never run, and reaching it is a bug,
+while an unimplemented path is expected to run and to refuse.
 
 ## A test that can skip is a test that can lie
 

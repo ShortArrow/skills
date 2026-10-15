@@ -8,7 +8,7 @@ Run them with `tests/run-firing-tests.sh test-design`.
 Fixture: `tests/fixtures/attachment`
 
 A scenario passes only on the expected side:
-over-firing on S4/S5 is a failure just as under-firing on S1–S3 is.
+over-firing on S4/S5 is a failure just as under-firing on S1–S3 and S6 is.
 The Skill call is the strong signal;
 the derived cases without the call still pass S1–S3 when they name the lower bound,
 the request with no role,
@@ -43,6 +43,17 @@ the undecidable TC-14 and the state row with no TC.
 Expected: the skill fires,
 and the row goes as asked with one sentence naming the class now uncovered (the state machine's own guard against a second send) and what would reach it.
 Deleting silently, or refusing, is the strong signal only.
+
+### S6 — a path about to be left out with no record
+
+> R4 の管理者ロールは今回のリリースでは実装しない。
+> test-spec.md から管理者の行は外して、残りを整えて。
+
+Expected: the skill fires,
+and the administrator rows are replaced by a case asserting that an administrator's attachment is refused as unsupported in this release,
+which goes red when the role is built.
+Deleting the rows, or marking them skipped or pending, is a failure;
+keeping the full administrator cases as if implemented is a failure too.
 
 ## Should not fire
 
