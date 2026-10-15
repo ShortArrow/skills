@@ -186,6 +186,16 @@ Replayed on 2026-10-15 over this machine's 17 sessions that had subagent reports
 the publish gate would have refused 541 of their 1,106 publishing commands,
 in 13 sessions: those sessions verified some reports and published after others that nobody checked.
 
+Every Python hook command ends in `|| true` and runs in bash.
+A marketplace update makes the client read the new hook commands while the installed plugin may still be the old commit,
+whose cache lacks the script they name;
+Python then exits 2 on the missing file,
+and exit 2 from a hook blocks the call.
+On 2026-10-15 that blocked Bash in fresh sessions until `claude plugin update` caught the cache up.
+The scripts report a verdict as JSON on exit 0,
+so `|| true` loses nothing;
+`tests/test_hook_commands.py` runs every hook against an empty plugin root and refuses exit 2.
+
 ## Sources
 
 A skill that names a public standard (ISTQB, an RFC, SemVer, a style guide, a regulator's guidance) carries a `## Sources` block naming the version,

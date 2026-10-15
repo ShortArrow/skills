@@ -70,13 +70,15 @@
             "hooks": [
               {
                 "type": "command",
-                "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/own-the-call-stop.py\"",
+                "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/own-the-call-stop.py\" || true",
+                "shell": "bash",
                 "timeout": 10,
                 "statusMessage": "Closing: checking for a decision left with the user"
               },
               {
                 "type": "command",
-                "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/verify-reports.py\" stop",
+                "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/verify-reports.py\" stop || true",
+                "shell": "bash",
                 "timeout": 10,
                 "statusMessage": "Closing: checking subagent reports were verified"
               }
@@ -90,35 +92,40 @@
               {
                 "type": "command",
                 "if": "Bash(git push*)",
-                "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/verify-reports.py\" publish",
+                "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/verify-reports.py\" publish || true",
+                "shell": "bash",
                 "timeout": 10,
                 "statusMessage": "Publishing: checking every subagent report was verified"
               },
               {
                 "type": "command",
                 "if": "Bash(git -C * push*)",
-                "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/verify-reports.py\" publish",
+                "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/verify-reports.py\" publish || true",
+                "shell": "bash",
                 "timeout": 10,
                 "statusMessage": "Publishing: checking every subagent report was verified"
               },
               {
                 "type": "command",
                 "if": "Bash(gh pr create*)",
-                "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/verify-reports.py\" publish",
+                "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/verify-reports.py\" publish || true",
+                "shell": "bash",
                 "timeout": 10,
                 "statusMessage": "Publishing: checking every subagent report was verified"
               },
               {
                 "type": "command",
                 "if": "Bash(gh pr ready*)",
-                "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/verify-reports.py\" publish",
+                "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/verify-reports.py\" publish || true",
+                "shell": "bash",
                 "timeout": 10,
                 "statusMessage": "Publishing: checking every subagent report was verified"
               },
               {
                 "type": "command",
                 "if": "Bash(gh issue create*)",
-                "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/verify-reports.py\" publish",
+                "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/verify-reports.py\" publish || true",
+                "shell": "bash",
                 "timeout": 10,
                 "statusMessage": "Publishing: checking every subagent report was verified"
               }
@@ -130,35 +137,40 @@
               {
                 "type": "command",
                 "if": "PowerShell(git push*)",
-                "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/verify-reports.py\" publish",
+                "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/verify-reports.py\" publish || true",
+                "shell": "bash",
                 "timeout": 10,
                 "statusMessage": "Publishing: checking every subagent report was verified"
               },
               {
                 "type": "command",
                 "if": "PowerShell(git -C * push*)",
-                "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/verify-reports.py\" publish",
+                "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/verify-reports.py\" publish || true",
+                "shell": "bash",
                 "timeout": 10,
                 "statusMessage": "Publishing: checking every subagent report was verified"
               },
               {
                 "type": "command",
                 "if": "PowerShell(gh pr create*)",
-                "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/verify-reports.py\" publish",
+                "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/verify-reports.py\" publish || true",
+                "shell": "bash",
                 "timeout": 10,
                 "statusMessage": "Publishing: checking every subagent report was verified"
               },
               {
                 "type": "command",
                 "if": "PowerShell(gh pr ready*)",
-                "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/verify-reports.py\" publish",
+                "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/verify-reports.py\" publish || true",
+                "shell": "bash",
                 "timeout": 10,
                 "statusMessage": "Publishing: checking every subagent report was verified"
               },
               {
                 "type": "command",
                 "if": "PowerShell(gh issue create*)",
-                "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/verify-reports.py\" publish",
+                "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/verify-reports.py\" publish || true",
+                "shell": "bash",
                 "timeout": 10,
                 "statusMessage": "Publishing: checking every subagent report was verified"
               }
