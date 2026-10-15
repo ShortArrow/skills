@@ -1,7 +1,7 @@
 ---
 name: architect
 description: |
-  Where a piece of code sits in a layered stack, triggered by the moments that misplace it: about to decide which project, package or folder a new type goes in, about to put a framework attribute or a network client on a domain type, about to let a view decide its own visibility or set a sibling's, about to resolve an analyzer warning or a build error by editing around the architecture, about to refactor across layers, about to build a feature from the view inward, or about to review code for which layer each piece is in. The body is stack-neutral: what each layer is called, holds and refuses, one arbiter for a screen's state, the order a feature is built in, and the checks before calling it done. What a language, framework or binary boundary spells differently is layered on from references/, read only for the stack in hand, today C# (.NET, MVVM, Avalonia, CQRS, DDD) and Go. Dependency direction is design-by-contract; the cut is slice-first; this skill says where the pieces sit.
+  Where a piece of code sits in a layered stack, triggered by the moments that misplace it: about to decide which project, package or folder a new type goes in, about to put a framework attribute or a network client on a domain type, about to let a view decide its own visibility or set a sibling's, about to resolve an analyzer warning or a build error by editing around the architecture, about to refactor across layers, about to let an I/O callback write state directly, about to build a feature from the view inward, or about to review code for which layer each piece is in. The body is stack-neutral: what each layer holds and refuses, one arbiter for a screen's state and the loop its I/O joins, the build order, and the checks before done. What a language, framework or binary boundary spells differently is layered on from references/, read only for the stack in hand, today C# (.NET, MVVM, Avalonia, CQRS, DDD) and Go. Dependency direction is design-by-contract's; the cut is slice-first's.
 allowed-tools: Read, Edit, Write, Bash, Grep, Glob, Task
 ---
 
@@ -24,6 +24,7 @@ the stack layer holds the spelling.
 | let a view decide its own visibility or set a sibling's | the view reports and draws; one arbiter above it decides (below) |
 | resolve an analyzer warning or a build error by editing around the architecture | read the whole message, find the layer the fix belongs to, fix it there, run the affected tests |
 | refactor across layers | one move at a time with the tests green between moves (`tidy-first`); the stack layer lists the usual moves |
+| let a receive callback, a timer or a file watcher write the state a screen shows | it posts a message to the one queue the arbiter reads; only the update changes state (below) |
 | build a feature from the view inward | start at the domain and work outward (below) |
 | review by reading top to bottom | review layer by layer: dependency direction, domain logic in the domain, one operation per handler, tests that name their intent |
 
@@ -64,6 +65,39 @@ Those are three views of one missing arbiter.
 The lock, the delay and the retry that get added after the first collision are `state-first`'s moment;
 this skill says where the arbiter sits.
 
+## When input arrives from more than the user: one loop
+
+A tool that talks to hardware,
+sockets or files has more writers of its state than the user:
+a receive task, a timeout, a file that changed on disk,
+a write that finished.
+Each one that changes the state directly is another owner of it,
+and the arbiter above stops being the only one.
+The loop that keeps a single owner has four parts:
+
+| Part | Is | Refuses |
+|---|---|---|
+| Message | a fact that happened: the user pressed send, a packet arrived, a profile finished loading, a timeout fired | an instruction; a message says what happened, not what to do |
+| Update | a pure function from the current state and one message to the next state and the effects it asks for | I/O, the clock, awaiting anything |
+| Command | an effect the update asked for, carried out through an outbound port: send these bytes, write this batch, load this file | changing the state; its outcome comes back as a message |
+| Subscription | an inbound adapter that turns a stream from outside into messages: a receive task, a file watcher, a scenario reader | changing the state; deciding anything |
+
+Every message goes into one queue with one reader,
+so the update sees them one at a time and in an order the log can show.
+Inbound and outbound are separate adapters,
+the receive side and the send side of the same port are two pieces,
+because their failure, rate and ordering differ.
+The domain under the update knows no file format and no wire:
+the adapters convert a TOML file,
+a CSV row or a frame into domain values before the message is posted.
+The view renders from the state the loop publishes and posts what the user did;
+it is the arbiter above with the I/O brought inside its rule.
+
+A feature cut (`slice-first`) still holds: each slice owns its messages,
+its part of the update and its view,
+and the root update hands a message to the slice that declared it.
+The loop is shared; the transitions are not.
+
 ## Implementing a feature
 
 1. **Clarify the requirement** — what is to be true afterwards,
@@ -83,8 +117,9 @@ Read the layer for the stack in hand before placing or naming anything,
 and no other:
 
 - C#: `references/csharp.md` — the MVVM interfaces and the screen's arbiter,
-  mediator dispatch and its pipeline, analyzer codes,
-  the refactoring moves, the layered and the feature-cut layouts.
+  the loop on a channel, mediator dispatch and its pipeline,
+  analyzer codes, the refactoring moves,
+  the layered and the feature-cut layouts.
   It links onward to `references/csharp-architecture.md` (the layers in detail),
   `references/csharp-patterns.md` (implementation patterns) and `references/csharp-examples.md` (a complete feature),
   read only when the task reaches them.

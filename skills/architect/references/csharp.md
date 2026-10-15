@@ -21,6 +21,91 @@ and holds no reference to a sibling.
 Code-behind never sets `IsVisible`;
 a view that does is a view deciding.
 
+## The loop on a channel
+
+The body's loop, for a tool that talks to instruments, ports and files.
+A message is a record in one closed hierarchy per slice,
+and the state is an immutable record:
+
+```csharp
+public abstract record Msg;
+
+public abstract record ScpiMsg : Msg;
+public sealed record SendClicked(string Command) : ScpiMsg;
+public sealed record ResponseArrived(string Line, DateTimeOffset At) : ScpiMsg;
+public sealed record TimeoutOccurred(string Command) : ScpiMsg;
+
+public abstract record ConfigMsg : Msg;
+public sealed record ConfigLoaded(Profile Profile) : ConfigMsg;
+public sealed record ConfigFailed(string Path, string Reason) : ConfigMsg;
+
+public sealed record Model(Profile? Profile, ScpiState Scpi, LoggerState Logger);
+```
+
+The update is a static function with no injected services,
+so a test is a table of state, message and expected result:
+
+```csharp
+public abstract record Cmd;
+public sealed record SendLine(string Line, TimeSpan Timeout) : Cmd;
+public sealed record AppendSamples(IReadOnlyList<TelemetrySample> Samples) : Cmd;
+
+public static class Update
+{
+    public static (Model, IReadOnlyList<Cmd>) Apply(Model model, Msg msg) => msg switch
+    {
+        ScpiMsg m   => ScpiUpdate.Apply(model, m),
+        ConfigMsg m => ConfigUpdate.Apply(model, m),
+        LoggerMsg m => LoggerUpdate.Apply(model, m),
+        _ => (model, [])
+    };
+}
+```
+
+One `Channel<Msg>` with a single reader is the queue.
+The reader applies the update,
+publishes the new model and hands each command to the interpreter,
+which is the only code that calls an outbound port:
+
+```csharp
+var queue = Channel.CreateUnbounded<Msg>(new() { SingleReader = true });
+
+await foreach (var msg in queue.Reader.ReadAllAsync(ct))
+{
+    (model, var cmds) = Update.Apply(model, msg);
+    models.OnNext(model);
+    foreach (var cmd in cmds) interpreter.Run(cmd, queue.Writer);
+}
+```
+
+`Run` starts the effect and returns;
+the effect posts its outcome (`ResponseArrived`, `TimeoutOccurred`, `CsvExportCompleted`) to the same writer.
+Nothing awaits an effect inside the loop,
+so a slow port never stalls the next keypress.
+
+| Piece | Spelled as | Sits in |
+|---|---|---|
+| Subscription for a port | a `BackgroundService` whose receive loop posts messages to the writer | Infrastructure |
+| Subscription for a file | `FileSystemWatcher`, debounced, posting `ConfigChanged`; the loader reads and validates before `ConfigLoaded` is posted | Infrastructure |
+| Send side | an `IHardwareSender` whose implementation owns a bounded `Channel<Frame>` and one worker that keeps order and paces the rate | port in Domain or Application, worker in Infrastructure |
+| Log writer | an `ITelemetryLogWriter` over a bounded `Channel<LogBatch>`, flushed to disk by its own worker; a full channel is a state the update hears about, not a silent drop | port in Domain or Application, writer in Infrastructure |
+| File formats | `TomlConfigLoader`, `CsvScenarioParser` and the CSV writer convert to and from domain values; the domain has no `[TomlProperty]` and no column index | Infrastructure |
+| The view | binds to the published model (`IObservable<Model>` observed on the UI thread, `ObserveOn(AvaloniaScheduler.Instance)` or `Dispatcher.UIThread.Post`) and posts a message per user action | Presentation |
+
+The receive side and the send side of one instrument are two classes even when they share a `SerialPort`:
+the receive task runs for the life of the connection,
+the send worker for the life of the queue,
+and a fault in one is a message about the other,
+not an exception through it.
+
+In a feature-cut layout each slice holds its messages,
+its part of the update and its view; the channel, the reader,
+the root dispatch and the interpreter are the one shared piece.
+
+Where the loop replaces the mediator,
+a handler is the slice's update and its command interpreter together;
+the two are not both used for one request.
+
 ## Mediator dispatch
 
 A mediator library (MediatR, Mediator.SourceGenerator, Wolverine and the like) dispatches a request to the one handler that declares it:
