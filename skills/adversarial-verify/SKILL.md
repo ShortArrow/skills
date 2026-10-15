@@ -68,6 +68,25 @@ a line count — is checked, not contested.
 A claim that is cheap to reverse is accepted and watched.
 The gate: what does it cost if this is wrong and nobody catches it for a week?
 Below that bar, accept and move on.
+A subagent's report is never below it once it is about to leave the session;
+the gate below holds that line.
+
+## The gate on subagent reports
+
+Every subagent report is verified by another subagent before it is relayed or published.
+In Claude Code the engineering-skills plugin enforces it with two hooks:
+`git push`, `gh pr create`,
+`gh pr ready` and `gh issue create` are refused while any report in the session has no verification completed after it,
+and a turn that would end on a report received since the user last spoke is sent back once.
+
+The hooks know a verifier by its description.
+Start it with "Verify:" ("Re-verify" and the names skeptic, adversarial, refute, fact-check and cross-check are read the same way).
+Give it each claim and how to break it,
+the commands to rerun and the files to read,
+and not the author's conclusion; with "refuted" as its default verdict,
+as above.
+One verifier after a batch of reports covers the batch;
+a report that arrives after it needs another.
 
 ## /adversarial-verify on your own conclusion
 

@@ -175,6 +175,17 @@ and the agent rewrites the closing.
 Replayed over 4,470 turn endings in this machine's transcripts on 2026-10-15 it blocked 205,
 and a sample of 25 were all decisions handed back without a pick.
 
+`hooks/verify-reports.py` holds `adversarial-verify`'s line on subagent reports at the two places a claim leaves the session.
+As a PreToolUse hook, with one `if` filter per command so that no other shell call starts Python,
+it refuses `git push`, `gh pr create`,
+`gh pr ready` and `gh issue create` while the transcript holds a completed Agent or Workflow report with no verifier's report after it;
+as a Stop hook it sends a turn back once when such a report arrived since the user last spoke.
+A verifier is an Agent call whose description starts with "Verify" or names it skeptic,
+adversarial, refute, fact-check or cross-check.
+Replayed on 2026-10-15 over this machine's 17 sessions that had subagent reports,
+the publish gate would have refused 541 of their 1,106 publishing commands,
+in 13 sessions: those sessions verified some reports and published after others that nobody checked.
+
 ## Sources
 
 A skill that names a public standard (ISTQB, an RFC, SemVer, a style guide, a regulator's guidance) carries a `## Sources` block naming the version,
