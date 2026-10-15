@@ -71,6 +71,18 @@ The first is `grill-me`.
 For the second the agent still states its lean, labelled as one,
 so that silence has a default.
 
+## The gate on questions
+
+On Claude Code the engineering-skills plugin checks every question before the user sees it.
+A second, small model reads each `AskUserQuestion` call and each closing,
+and tries to show that it hands a decision back without the four parts above.
+A question it refutes comes back with the missing part named;
+rewrite it into the shape above, or,
+if it really asks for a fact only the user holds,
+make the options concrete candidates.
+The check is a sample, not a proof:
+a question that passes it can still be one the agent should have decided alone.
+
 ## Where this sits
 
 `grill-me` asks for information the user holds;

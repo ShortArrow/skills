@@ -1,4 +1,5 @@
-"""Every plugin hook lets the call through when its script is missing.
+"""Every command hook lets the call through when its script is missing,
+and every prompt hook sees its input and answers in the schema.
 
 A marketplace update reads the new hook commands before the installed plugin
 holds the scripts they name, and exit code 2 from a hook blocks the tool call or
@@ -34,6 +35,17 @@ def shell():
 def test_a_hook_whose_script_is_missing_does_not_block(tmp_path):
     env = {**os.environ, 'CLAUDE_PLUGIN_ROOT': str(tmp_path).replace('\\', '/')}
     for plugin, event, hook in hook_commands():
-        run = subprocess.run([shell(), '-c', hook['command']], input='{}', env=env,
+        if hook['type'] != 'command':
+            continue
+        run =subprocess.run([shell(), '-c', hook['command']], input='{}', env=env,
                              capture_output=True, text=True)
         assert run.returncode != 2, (plugin, event, hook['command'], run.stderr)
+
+
+def test_a_prompt_hook_sees_the_input_and_answers_in_the_schema():
+    prompts = [(p, e, h) for p, e, h in hook_commands() if h['type'] == 'prompt']
+    assert prompts
+    for plugin, event, hook in prompts:
+        assert '$ARGUMENTS' in hook['prompt'], (plugin, event)
+        assert '{"ok": true}' in hook['prompt'] and '{"ok": false, "reason":' in hook['prompt'], (plugin, event)
+        assert '$' not in hook['prompt'].replace('$ARGUMENTS', ''), (plugin, event)

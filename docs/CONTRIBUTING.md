@@ -175,6 +175,22 @@ and the agent rewrites the closing.
 Replayed over 4,470 turn endings in this machine's transcripts on 2026-10-15 it blocked 205,
 and a sample of 25 were all decisions handed back without a pick.
 
+A phrase list catches the words of a hand-back, not its shape:
+a closing can say 「進めてよいですか？」 with only the benefit named and pass it.
+So two prompt hooks (`type: "prompt"`) ask a second,
+small model to refute every question put to the user against `own-the-call`'s four parts.
+One is PreToolUse on `AskUserQuestion` with `continueOnBlock`,
+so a failing question comes back to the agent as the tool's error and is rewritten;
+the other runs at Stop beside the phrase list and reads the closing.
+Both let a question for a fact only the user holds through,
+because that is `grill-me`'s and has no position to take.
+The prompts live inline in the marketplace entry,
+and `tests/own-the-call/judge-prompts.py` replays them on 17 fixed questions and closings,
+three times each; on 2026-10-16 it scored 51 of 51 twice,
+after a first version had failed fact questions for not naming a cost.
+The Stop hook costs one small-model call at every turn end,
+up to its 30-second timeout.
+
 `hooks/verify-reports.py` holds `adversarial-verify`'s line on subagent reports at the two places a claim leaves the session.
 As a PreToolUse hook, with one `if` filter per command so that no other shell call starts Python,
 it refuses `git push`, `gh pr create`,
