@@ -68,5 +68,33 @@ and the edit stays inside the working tree.
 
 ## Recorded runs
 
-None yet.
-The scenarios were written on 2026-10-09 with the skill and have not been run.
+S1–S5 have not been run.
+
+### 2026-10-15 — "お任せします" after a finished step (repair-skill)
+
+The failing run closed a pull request edit with 「マージするかどうかはお任せします。」:
+the decision handed back with CI green, one approval and no position.
+Its transcript is not on this machine;
+the diagnosis rests on the pasted closing turn,
+and the same closing was found in two other sessions here (`a2ecufw` 889d0eef line 30701, `RqmGuiWithMacro` 3707deff line 3482).
+The description names only question forms;
+"it is up to you" is a statement, so no listed moment matches it.
+
+The closing turn was replayed in fresh `claude -p` contexts with no tools,
+three samples per arm, on 2026-10-15:
+
+| Arm | Closing |
+|---|---|
+| no skill | 3/3 hand the merge back ("進めてよければ指示してください") with no position |
+| description only, current | 3/3 report "マージは依頼の範囲外なのでしていません", no proposal |
+| description only, with an "it is up to you" moment added | 3/3 the same as current |
+| body in context, current | 3/3 propose the squash merge with evidence, cost and one go-ahead |
+| body in context, with the added row | 3/3 the same as current |
+
+The body already produces the wanted closing whenever it is in context,
+and the added moment changed nothing; the candidate was not applied.
+The defect is when the skill loads:
+its moment is the last sentence of a turn,
+and nothing in the listing is consulted there.
+Description-only arms approximate the listing and cannot call the skill,
+so a real session's Skill call remains unmeasured.

@@ -64,6 +64,20 @@
       "description": "Working on code: planning that hands work to subagents and verifies it, where code sits in a layered stack, per language, library API contracts, assurance cases that tie claims to evidence, harnesses that compile conventions into gates for AI coding sessions, TUI inspection without a display, isolated desktop test runs, seeing what other sessions hold, resolving ambiguity before implementing, and tool-call syntax",
       "source": "./",
       "strict": false,
+      "hooks": {
+        "Stop": [
+          {
+            "hooks": [
+              {
+                "type": "command",
+                "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/own-the-call-stop.py\"",
+                "timeout": 10,
+                "statusMessage": "Closing: checking for a decision left with the user"
+              }
+            ]
+          }
+        ]
+      },
       "skills": [
         "./skills/plan-delegate-verify",
         "./skills/adversarial-verify",

@@ -165,6 +165,16 @@ but a marketplace entry can wire only Claude Code's,
 so on those hosts the descriptions still carry the moment and a project wires the same script itself;
 the hook is the backstop for the one place a description is blind.
 
+The engineering-skills entry declares a Stop hook for the other blind moment,
+the last sentence of a turn.
+`hooks/own-the-call-stop.py` reads the closing paragraph of the reply,
+skips quoted spans,
+and blocks once when it leaves a decision with the user (「お任せします」, "up to you", "shall I");
+the reason carries `own-the-call`'s rule,
+and the agent rewrites the closing.
+Replayed over 4,470 turn endings in this machine's transcripts on 2026-10-15 it blocked 205,
+and a sample of 25 were all decisions handed back without a pick.
+
 ## Sources
 
 A skill that names a public standard (ISTQB, an RFC, SemVer, a style guide, a regulator's guidance) carries a `## Sources` block naming the version,
