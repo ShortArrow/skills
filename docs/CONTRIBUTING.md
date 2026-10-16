@@ -185,9 +185,16 @@ the other runs at Stop beside the phrase list and reads the closing.
 Both let a question for a fact only the user holds through,
 because that is `grill-me`'s and has no position to take.
 The prompts live inline in the marketplace entry,
-and `tests/own-the-call/judge-prompts.py` replays them on 17 fixed questions and closings,
+and `tests/own-the-call/judge-prompts.py` replays them on 21 fixed questions and closings,
 three times each; on 2026-10-16 it scored 51 of 51 twice,
 after a first version had failed fact questions for not naming a cost.
+Later that day the four bundle cases were added:
+three proposals under one go-ahead, each with all four parts,
+before the one-decision rule the question passed 3 of 3 and the closing failed only 2 of 3;
+after it the question failed 3 of 3 and the closing 8 of 9.
+The same day's full run scored 59 of 63;
+the misses were a bare `{"ok": true}` on a case that should fail,
+about one call in six, which the earlier runs had not shown.
 The Stop hook costs one small-model call at every turn end,
 up to its 30-second timeout.
 

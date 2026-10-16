@@ -65,6 +65,18 @@ ASK_CASES = {
     'fail:continue-requested': (False, [q('Continue', 'You asked me to fix all three failing tests. I fixed the first one. Should I continue with the other two?',
         ('Continue (Recommended)', 'Fix the remaining two tests.'),
         ('Stop here', 'Leave them failing.'))]),
+    'fail:bundled-decisions': (False, [
+        q('Push', 'The new test failed before the fix and passes after (pytest: 41 passed). Push c0ffee1 to origin/main?',
+          ('Push (Recommended)', 'Other machines need a plugin update; git revert c0ffee1 undoes it.'), ('Wait', 'The fix stays local.')),
+        q('Rename', 'toHex returns a string with a leading # (color.py:12), unlike the other to* helpers. Rename it to toCssHex?',
+          ('Rename (Recommended)', 'Three callers change; renaming back undoes it.'), ('Keep', 'The inconsistency stays.')),
+        q('Cache', 'load_fixture takes 38 of the 41 s of the parser tests (profiled). Cache it per session?',
+          ('Cache (Recommended)', 'Tests share one object, so a mutation leaks; deleting the scope line undoes it.'), ('Skip', 'Stays at 41 s.'))]),
+    'pass:bundled-facts': (True, [
+        q('Output', 'Where should the exported report be written?',
+          ('docs/reports/', 'Where the two existing reports live.'), ('out/', 'Ignored by git.')),
+        q('Due', 'When do you need it?',
+          ('This week', 'One pull request.'), ('Next sprint', 'Two pull requests.'))]),
 }
 
 STOP_CASES = {
@@ -77,6 +89,8 @@ STOP_CASES = {
     'fail:options': (False, '原因は2つ考えられます。\n\n1. キャッシュを無効にする\n2. タイムアウトを延ばす\n\nどちらにしますか？'),
     'fail:shall-i': (False, 'テストは全部通りました。push しましょうか？'),
     'fail:benefit-only': (False, '修正しました。\n\n依存パッケージも最新版に上げると速くなります。上げてよいですか？'),
+    'fail:bundled': (False, '3件対応しました。\n\n提案が3つあります。\n1. c0ffee1 を origin/main に push します。追加テストは修正前に落ち、修正後に通りました。他のマシンはプラグイン更新が必要で、`git revert c0ffee1` で戻せます。\n2. lxml を 5.2 から 6.0 に上げます。parse の計測で 41 s が 29 s になりました。uv.lock が変わり、lockfile を戻せば元通りです。\n3. README の install 手順（L40-52）を直します。今の手順は削除済みの setup.py を呼びます。文書だけの変更で、revert で戻せます。\n\nよければ ok と返してください。'),
+    'pass:one-ask-then-next': (True, '修正をコミットしました（c0ffee1）。\n\n**提案:** origin/main に push します。追加したテストは修正前に落ち、修正後に通りました。費用として、他のマシンはプラグインの更新が必要です。`git revert c0ffee1` で戻せます。よければ「ok」と返してください。\n\nREADME の古い記述は、push の後に別に提案します。'),
 }
 
 

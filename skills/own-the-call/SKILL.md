@@ -1,7 +1,7 @@
 ---
 name: own-the-call
 description: |
-  Handing a decision back to the user, triggered by the moments that hand it back unworked: about to end a report with "shall I…?" or "do you want me to…?", about to lay out options and ask which one the user prefers, about to ask for a go-ahead that names only the benefit, about to recommend without the evidence that decided it, or about to ask "should I continue?" for a step the request already covers. Within the agent's remit the agent makes the call; what it asks for is the go-ahead, and the request says what will be done, why, and what it costs: the downside, what it locks in, how it is undone. Use when a turn is about to end with a question, when proposing a change, a tool, a design or a next step, and when asking permission for anything. Information only the user holds is grill-me; the mechanism for an irreversible action is request-approval.
+  Handing a decision back to the user, triggered by the moments that hand it back unworked: about to end a report with "shall I…?" or "do you want me to…?", about to lay out options and ask which one the user prefers, about to ask for a go-ahead that names only the benefit, about to recommend without the evidence that decided it, about to ask "should I continue?" for a step the request already covers, or about to put several proposals under one go-ahead. Within the agent's remit the agent makes the call; what it asks for is the go-ahead, and the request says what will be done, why, and what it costs: the downside, what it locks in, how it is undone. Use when a turn is about to end with a question, when proposing a change, a tool, a design or a next step, and when asking permission for anything. Information only the user holds is grill-me; the mechanism for an irreversible action is request-approval.
 ---
 
 # Own the call
@@ -27,6 +27,7 @@ made in the time it takes to read it.
 | ask for a go-ahead that names only the benefit | name the downside as well: what it costs, what it breaks or locks in, how it is undone |
 | recommend with "I think" and nothing behind it | cite the file, the measurement or the output that decided it; a lean with no evidence is labelled a lean |
 | ask "should I continue?" for a step the request already covers | continue; the request was the go-ahead, and the question only stops the work |
+| put several proposals under one go-ahead | ask the decision that blocks the next step, in full; decide and report what the request covers, and hold the rest for a later turn |
 | ask a question whose only answer is a fact the user holds | ask it as `grill-me` says; a path or a deadline has no position to take |
 
 ## The shape of a proposal
@@ -52,6 +53,22 @@ Four parts, in this order, short enough to read in one pass.
    with the one fact that would change the plan named:
    "Go ahead, or say so if this branch is shared."
 
+## One decision per ask
+
+Proposals asked together are each worked less.
+The agent writes the second and third with what attention the first left,
+and the user answers all of them with one "ok" that weighed none of them.
+Each item of a bundle can carry the four parts and still be thinner than it would be alone.
+
+So an ask carries one decision.
+When several are pending, the agent sorts them:
+what the request already covers it decides and reports; of the rest,
+it asks the one that blocks the next step, in the full shape above;
+the others wait for a later turn, named in a line as coming next,
+not asked.
+Facts only the user holds are not decisions,
+and several of them may be asked together.
+
 ## Whose call it is
 
 The agent decides alone, and reports,
@@ -75,7 +92,8 @@ so that silence has a default.
 
 On Claude Code the engineering-skills plugin checks every question before the user sees it.
 A second, small model reads each `AskUserQuestion` call and each closing,
-and tries to show that it hands a decision back without the four parts above.
+and tries to show that it hands a decision back without the four parts above,
+or puts more than one decision under a single ask.
 A question it refutes comes back with the missing part named;
 rewrite it into the shape above, or,
 if it really asks for a fact only the user holds,
