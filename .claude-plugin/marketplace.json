@@ -241,8 +241,8 @@
       "name": "yomiyasu",
       "description": "nanaism/yomiyasu (MIT) from the fork ShortArrow/yomiyasu, branch shortarrow: upstream unchanged except one paragraph that reads the owner's own rules from references/local/",
       "source": {
-        "source": "github",
-        "repo": "ShortArrow/yomiyasu",
+        "source": "url",
+        "url": "https://github.com/ShortArrow/yomiyasu.git",
         "ref": "shortarrow"
       }
     }
