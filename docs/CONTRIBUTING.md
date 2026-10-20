@@ -193,8 +193,16 @@ three proposals under one go-ahead, each with all four parts,
 before the one-decision rule the question passed 3 of 3 and the closing failed only 2 of 3;
 after it the question failed 3 of 3 and the closing 8 of 9.
 The same day's full run scored 59 of 63;
-the misses were a bare `{"ok": true}` on a case that should fail,
-about one call in six, which the earlier runs had not shown.
+the misses were a bare `{"ok": true}` on a case that should fail.
+Six runs per case put that at 2 of 60 calls on the failing cases,
+about 3%, with no passing case blocked (124 of 126 right).
+Two changes were measured against it and not taken.
+Asking for the reason before the verdict scored 120 of 126,
+with 4 false passes and 2 false blocks.
+Judging with `sonnet` instead of the default model passed nothing that should fail (0 of 30),
+but blocked a fact question whose closing named the likely answer 3 times of 3,
+and it would put a larger model's call at every turn end;
+the hooks documentation names a `model` field without listing its values.
 The Stop hook costs one small-model call at every turn end,
 up to its 30-second timeout.
 
