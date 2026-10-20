@@ -1,7 +1,7 @@
 ---
 name: document-structure
 description: |
-  The shape of one document, triggered by the moments that flatten it: about to put a second topic into a paragraph, about to put a blank line after every sentence or between every list item, about to write a heading called Overview, Notes or Miscellaneous, about to open with background and reach the point last, about to write a procedure as prose or put two actions in one step, about to bullet a set of items that have three fields each, about to use a term before defining it or call one thing by two names, about to nest a fourth heading level or skip one, or about to explain the abstraction before showing an instance. A reader scans a page before reading it, and headings that do not read as an outline hide the content from that pass. Use when writing or revising a README, a guide, a specification, a runbook, a report, a pull request body or a long message in any language, and when a draft is correct sentence by sentence and still hard to use.
+  The shape of one document, triggered by the moments that flatten it: about to put a second topic into a paragraph, about to put a blank line after every sentence or list item, about to write a heading called Overview, Notes or Miscellaneous, about to open with background, about to write a procedure as prose or bullets, chain three actions in a sentence or put two in a step, about to bullet reader actions or "first" in a list that is not a procedure, about to bullet a set of items that have three fields each, about to use a term before defining it or call one thing by two names, about to nest a fourth heading level or skip one, or about to explain the abstraction before an instance. A reader scans before reading, and headings that are not an outline hide the content. Use when writing or revising a README, a guide, a spec, a runbook, a report, a pull request body or a long message in any language, and when a draft is correct sentence by sentence and still hard to use.
 allowed-tools: Read, Edit, Write, Grep, Glob
 ---
 
@@ -16,6 +16,14 @@ The structure is what that pass sees,
 and every rule here follows from one fact:
 **the first thing in any unit is the only thing most readers will read of it.**
 
+## Language layers
+
+The rule is language-neutral; what differs by language is layered on,
+not mixed in.
+Japanese: read `references/japanese.md` before writing or revising Japanese.
+It carries the forms that exist only there and worked examples in Japanese.
+A draft in another language uses the body alone.
+
 ## The moments this replaces
 
 | About to… | Instead |
@@ -25,7 +33,10 @@ and every rule here follows from one fact:
 | put a blank line between list items, or a hard break inside a sentence | keep the list tight, since the blank line makes every item a paragraph; a hard break is for an address or a verse |
 | write a heading called Overview, Notes, Details, Miscellaneous | name what is under it. Read the headings alone, top to bottom: if that is not an outline of the document, the headings are labels, not headings |
 | open with background, history or motivation | put the conclusion, the result or the action first; the reader who needs the background will keep reading |
-| write a procedure as a paragraph, or two actions in a step | numbered steps, one action each, the expected result stated after the action |
+| write a procedure as a paragraph or as bullets, or two actions in a step | numbered steps, one action each, the expected result stated after the action |
+| chain three or more actions or checks in one sentence, in a table cell too | a sentence that says what they are, then one item each; two stay a sentence |
+| write "first" or "then" in a bulleted list | the order is real, so number the list; a set with no order drops the words |
+| bullet what the reader does in a list that describes ("- Run the samples and modify them.") | a bulleted action reads as a step. Write the item as a label and its description, or as a fact with its own subject |
 | bullet items that each carry three pieces of data | a table: rows are items, columns are the fields. A list holds one dimension |
 | use a term before it is defined, or call one thing by two names | define at first use, then use the same word every time; synonyms read as different things |
 | add a fourth heading level, or jump from a second to a fourth | three levels is the depth a reader can hold; past that, split the document. Never skip a level |
@@ -84,6 +95,26 @@ examples, members. **A table** says each item has several fields:
 rows are the items, columns the fields, and the header row names them.
 Using bullets for a sequence loses the order;
 using them for items with three fields each buries the fields in prose.
+
+A word of order inside bullets is the same loss from the other side.
+"First", "then" and "after that" in an unnumbered list say the order matters while the bullets say it does not,
+and the reader has to pick one to believe.
+If the order is real, number the list; if it is not, drop the words.
+
+Bullets that each tell the reader to do something have the shape of a procedure without its numbers.
+A reader scanning "- Run the samples and modify them." takes it as a step and looks for the next one.
+In a list that describes rather than instructs,
+each item is a label and its description ("Content: the samples, run and modified") or a fact with its own subject ("`step` returns the next state").
+An expected result and a stated rule ("**Always** power off before connecting") keep their sentence form.
+
+A run of actions or checks inside one sentence is a list that has not been made.
+"Check the version, the range of the config values and the return value of init" asks the reader to hold three items and tick them off from memory;
+a sentence that says what they are, then one item each,
+lets them tick on the page.
+A run of values per item ("port A at 115200 bit/s, 8 data bits, even parity; port B at…") is one line per item,
+or a table when the fields repeat.
+Two items stay a sentence.
+A table cell takes the same rule, with the list inside the cell.
 
 Whatever the form, the items are parallel: the same grammatical shape,
 the same kind of thing.

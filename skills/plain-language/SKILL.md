@@ -1,7 +1,7 @@
 ---
 name: plain-language
 description: |
-  Sentences that read one way, triggered by the moments that produce ones that do not: about to join two claims with "but" or "so" (が, ので) in one sentence, about to let a subject and its predicate disagree across a long modifier, about to place a modifier where it could attach to two heads, about to stack three genitives ("the X of the Y of the Z", の three deep), about to spell the same term two ways in one document, about to write a term whose popular sense has left its source ("refactored" for a change in behaviour, "CI" over week-old branches), about to add a second courtesy marker to a request, about to write "here" (こちら) as the text of a link, or about to say a thing twice in one phrase ("first of all initially", 約 10 分程度). A sentence whose parse is ambiguous is wrong even when every word is right. Use when writing or revising prose in any language — a README, an announcement, a UI string, an email, an article — and when reviewing a translation.
+  Sentences that read one way, triggered by the moments that produce ones that do not: about to join two claims with "but" or "so" (が, ので) in one sentence, about to let a subject and its predicate disagree across a long modifier, about to place a modifier where it could attach to two heads, about to stack three genitives ("the X of the Y of the Z", の three deep), about to put a limit in parentheses, about to spell the same term two ways in one document, about to write a term whose popular sense has left its source ("refactored" for a change in behaviour), about to add a second courtesy marker to a request, about to write "here" (こちら) as the text of a link, or about to say a thing twice in one phrase ("first of all initially", 約 10 分程度). A sentence whose parse is ambiguous is wrong even when every word is right. Use when writing or revising prose in any language — a README, an announcement, a UI string, an email, an article — and when reviewing a translation.
 allowed-tools: Read, Edit, Write, Grep, Glob
 ---
 
@@ -36,6 +36,7 @@ A draft in another language uses the body alone.
 | put a long modifier between the subject and its predicate | read the subject and the predicate alone. If they do not agree, the sentence is broken, not the modifier |
 | stack three genitives ("the review of the settings of the new platform") | two at most; open the third into a verb ("we reviewed the new platform's settings") or cut the sentence |
 | place a modifier where it can attach to two heads | put it next to the head it belongs to. Long modifiers first, short ones last |
+| put what the reader needs inside parentheses: a limit, a condition, a variant of the command | parentheses hold only what can be skipped: an abbreviation's definition, a unit, a type, a part number, a reference. The rest gets its own sentence |
 | add a second courtesy marker ("we would like to kindly ask that you please") | one marker per sentence. Most sentences need none |
 | spell one term two ways ("log in" / "login", ユーザー / ユーザ) | pick one, apply it everywhere, and record the choice in the repository |
 | write a term whose popular sense has left its source ("refactored" for a change in behaviour, "technical debt" for poor code) | test the sentence against the criterion under One sense per term. If it fails, drop the term and write what was observed |
@@ -99,6 +100,25 @@ Stacked genitives are the same problem.
 membership and object on one preposition,
 and the reader guesses which binds to which.
 A verb settles it: "how our new product performed when we evaluated it".
+
+## Parentheses hold what can be skipped
+
+A reader takes a parenthesis as optional,
+and a scanning reader skips it.
+So what goes inside is what the sentence survives without:
+the definition of an abbreviation, a unit, a type, a pin or part number,
+a pointer to a reference.
+
+> Return from the callback quickly (within 20 µs).
+
+The limit is the instruction, and it sits where it is skipped.
+
+> Return from the callback quickly.
+> The limit is 20 µs.
+
+A condition, a variant of a command and the name the reader is looking for go the same way:
+into a sentence of their own,
+or into a row of a table when there are several.
 
 ## Courtesy is not stacked
 

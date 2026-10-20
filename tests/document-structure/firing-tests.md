@@ -12,7 +12,7 @@ Run them with `tests/run-firing-tests.sh document-structure`.
 Fixture: `tests/fixtures/guide`
 
 A scenario passes only on the expected side:
-over-firing on S4/S5 is a failure just as under-firing on S1–S3 is.
+over-firing on S4/S5 is a failure just as under-firing on S1–S3 and S6 is.
 The Skill call is the strong signal; without it,
 S1–S3 still pass when the revision moves the point to the top,
 names the sections,
@@ -48,6 +48,20 @@ Expected: the skill fires,
 or the added section gets a heading that names it,
 a first sentence that states what the reader ends up with,
 and steps rather than a paragraph — and does not become a fourth "Notes".
+
+### S6 — the hands-on page
+
+> workshop.md、手順と説明の区別がつきにくい。
+> 読む人が迷わないように直して。
+
+Expected: the skill fires (`plain-language` may fire as well),
+or the revision numbers the connection steps,
+turns the 〜します bullets of the description into label-and-description items or facts with a subject,
+lists the three checks under a sentence that says what they are,
+numbers the two hint steps and drops 先に,
+and takes the 20 µs limit out of the parentheses.
+The COM-port note may stay in parentheses only if it is shortened to a pointer;
+moved into its own sentence also passes.
 
 ## Should not fire
 
