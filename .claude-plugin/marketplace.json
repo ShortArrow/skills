@@ -243,7 +243,8 @@
       "source": {
         "source": "url",
         "url": "https://github.com/ShortArrow/yomiyasu.git",
-        "ref": "shortarrow"
+        "ref": "shortarrow",
+        "sha": "3d819945dc426b976bddf60c0b89378cb1820a03"
       }
     }
   ]

@@ -1,0 +1,4 @@
+[submodule "vendor/yomiyasu"]
+	path = vendor/yomiyasu
+	url = https://github.com/ShortArrow/yomiyasu.git
+	branch = shortarrow

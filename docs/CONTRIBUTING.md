@@ -15,11 +15,34 @@ tests/reflow-prose.py            wraps prose one sentence per line, in any langu
 tests/run-firing-tests.sh        the behavioural runner
 .claude-plugin/marketplace.json  plugin grouping
 docs/design-intent.md            the forces behind these shapes
+vendor/<plugin>/                 a fork of someone else's plugin, as a submodule
 ```
 
 `SKILL.md` opens with YAML frontmatter holding `name` and `description`.
 The name matches the directory;
 the portability check refuses a mismatch.
+
+## A vendored plugin installs the commit its submodule records
+
+`vendor/yomiyasu` is the fork ShortArrow/yomiyasu (MIT, upstream nanaism/yomiyasu),
+on its `shortarrow` branch:
+upstream unchanged except one paragraph and `references/local/`,
+where the owner's own rules go.
+Claude Code clones a marketplace with `--no-recurse-submodules`,
+so a source pointing into `vendor/` would install an empty directory;
+the marketplace entry fetches the fork by URL instead,
+and its `sha` pins the install to the commit the submodule records.
+`tests/test_vendor_pins.py` fails when the two differ.
+
+To ship a change to the fork:
+
+1. Commit and push it on `shortarrow` inside `vendor/yomiyasu`.
+2. In this repository, stage `vendor/yomiyasu` and set the entry's `sha` to the same commit.
+3. Run the tests, commit, push,
+   and run `claude plugin update yomiyasu@shortarrow-skills`.
+
+A fresh clone of this repository needs `git submodule update --init` before the fork can be edited;
+installing the plugins does not.
 
 ## Language-neutral rules, with language layers
 
