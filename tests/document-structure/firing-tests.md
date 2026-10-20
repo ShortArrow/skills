@@ -110,3 +110,26 @@ after "a pull request body" joined the description's list of documents (a body w
 
 5/5 on the expected side.
 
+
+2026-10-20, same command, on 03338a0,
+after the list rules (bulleted procedures, three actions chained in a sentence, "first" in a bulleted list, reader actions bulleted where nothing is a step) joined the body and the description,
+and S6 with `workshop.md` joined the scenarios:
+
+- S1, S2 and S6 fired ($0.45 / $0.41 / $0.39).
+  S6 renamed the description heading,
+  turned the 〜します bullets into 内容： and 進め方： items,
+  numbered the connection steps with the LED as the result of step 2,
+  moved the COM-port lookup before step 1,
+  took the 20 µs limit out of the parentheses into its own sentence,
+  listed the three checks under 次を確かめてください,
+  and numbered the two hint steps without 先に.
+- S3: no Skill call ($0.34), the first miss on it;
+  the description had been shortened in the same commit to stay under 1000 characters.
+  The behaviour passes on the weak signal:
+  a section named "Uninstall tinyparse",
+  a first sentence stating what is left afterwards,
+  five numbered steps of one action each with the optional ones marked at the start,
+  and no invented file names.
+- S4, S5: no Skill call.
+
+6/6 on the expected side, 5/6 by the strong signal.
