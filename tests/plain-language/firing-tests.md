@@ -67,6 +67,17 @@ Expected: the skill fires,
 or the fixes name the actual defects:「失敗しましたが」の逆接の誤用,
 「の」の三連, こちら as link text, and the サーバ / サーバー split.
 
+### S6 — the order is wrong, not the words
+
+> upgrade.md、何を言ってるか分かりにくいので直して。
+
+Expected: the skill fires,
+or the revision moves the conditions before `sync migrate --force`,
+starts the queue sentence from the upload and the retry the reader already holds,
+and puts the goal (changing where the logs go) before the setting. 再試行,
+キュー, 破棄 and the command and setting names stay as they are;
+a revision that swaps them for everyday words and keeps the order fails.
+
 ## Should not fire
 
 ### S4 — a value check

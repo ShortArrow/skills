@@ -1,7 +1,7 @@
 ---
 name: plain-language
 description: |
-  Sentences that read one way, triggered by the moments that produce ones that do not: about to join two claims with "but" or "so" (が, ので) in one sentence, about to let a subject and its predicate disagree across a long modifier, about to place a modifier where it could attach to two heads, about to stack three genitives ("the X of the Y of the Z", の three deep), about to put a limit in parentheses, about to spell the same term two ways in one document, about to write a term whose popular sense has left its source ("refactored" for a change in behaviour), about to add a second courtesy marker to a request, about to write "here" (こちら) as the text of a link, or about to say a thing twice in one phrase ("first of all initially", 約 10 分程度). A sentence whose parse is ambiguous is wrong even when every word is right. Use when writing or revising prose in any language — a README, an announcement, a UI string, an email, an article — and when reviewing a translation.
+  Sentences that read one way, triggered by the moments that produce ones that do not: about to join two claims with "but" or "so" (が, ので) in one sentence, about to let a subject and its predicate disagree across a long modifier, about to place a modifier where it could attach to two heads, about to stack three genitives ("the X of the Y of the Z", の three deep), about to put a limit in parentheses, about to swap a hard sentence's words for simpler ones, about to spell one term two ways, about to write a term whose popular sense has left its source ("refactored" for a change in behaviour), about to add a second courtesy marker to a request, about to write "here" (こちら) as the text of a link, or about to say a thing twice (約 10 分程度). A sentence whose parse is ambiguous, or whose order runs against the reader, is wrong even when every word is right. Use when writing or revising prose in any language — a README, a UI string, an email — and when reviewing a translation.
 allowed-tools: Read, Edit, Write, Grep, Glob
 ---
 
@@ -36,6 +36,7 @@ A draft in another language uses the body alone.
 | put a long modifier between the subject and its predicate | read the subject and the predicate alone. If they do not agree, the sentence is broken, not the modifier |
 | stack three genitives ("the review of the settings of the new platform") | two at most; open the third into a verb ("we reviewed the new platform's settings") or cut the sentence |
 | place a modifier where it can attach to two heads | put it next to the head it belongs to. Long modifiers first, short ones last |
+| make a hard sentence easier by swapping its words for simpler ones | keep the words and reorder: what the reader already holds first (the last sentence's term, their situation, their goal), the new part after it |
 | put what the reader needs inside parentheses: a limit, a condition, a variant of the command | parentheses hold only what can be skipped: an abbreviation's definition, a unit, a type, a part number, a reference. The rest gets its own sentence |
 | add a second courtesy marker ("we would like to kindly ask that you please") | one marker per sentence. Most sentences need none |
 | spell one term two ways ("log in" / "login", ユーザー / ユーザ) | pick one, apply it everywhere, and record the choice in the repository |
@@ -100,6 +101,35 @@ Stacked genitives are the same problem.
 membership and object on one preposition,
 and the reader guesses which binds to which.
 A verb settles it: "how our new product performed when we evaluated it".
+
+## Order follows the reader, not the vocabulary
+
+When a sentence is hard to follow,
+the reflex is to swap its words for easier ones.
+That rarely helps: the reader knew the words and lost the place to attach the next one. **Put first what the reader already holds,
+and the new part after it.** What the reader holds is the term the previous sentence ended on,
+the situation they are checking against, or the goal they came with.
+
+> Restart the agent with `--reset-cache` if the host clock moved more than five minutes after the first run.
+
+The reader has to hold the command until the condition says whether it applies to them.
+
+> If the host clock moved more than five minutes after the first run,
+> restart the agent with `--reset-cache`.
+
+Across sentences, open each one with what the last one left.
+
+> The scheduler sends each job to a worker.
+> A pool sized by `workers` in the config, eight by default,
+> holds the workers.
+
+> The scheduler sends each job to a worker.
+> The workers come from a pool.
+> Its size is `workers` in the config, eight by default.
+
+The words did not change.
+Keep the field's terms;
+reordering never moves a modifier away from its head.
 
 ## Parentheses hold what can be skipped
 
