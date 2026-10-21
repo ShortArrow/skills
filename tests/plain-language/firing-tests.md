@@ -67,17 +67,6 @@ Expected: the skill fires,
 or the fixes name the actual defects:「失敗しましたが」の逆接の誤用,
 「の」の三連, こちら as link text, and the サーバ / サーバー split.
 
-### S6 — the order is wrong, not the words
-
-> upgrade.md、何を言ってるか分かりにくいので直して。
-
-Expected: the skill fires,
-or the revision moves the conditions before `sync migrate --force`,
-starts the queue sentence from the upload and the retry the reader already holds,
-and puts the goal (changing where the logs go) before the setting. 再試行,
-キュー, 破棄 and the command and setting names stay as they are;
-a revision that swaps them for everyday words and keeps the order fails.
-
 ## Should not fire
 
 ### S4 — a value check
@@ -130,3 +119,23 @@ after the rename and the split into a neutral body and a Japanese layer:
 
 5/5 on the expected side after the move.
 
+2026-10-21, claude-opus-5-5,
+`MAX_TURNS=10 tests/run-firing-tests.sh plain-language` (fresh sessions, announce fixture),
+on a candidate rule "order follows the reader, not the vocabulary" (5199ed0, reverted):
+put what the reader already holds first and leave the words alone.
+It was tried as S6 on an upgrade note with a command before its conditions,
+a new queue before the known upload, and the goal after the setting.
+
+- S6, on 03338a0 and on 5199ed0, three runs each:
+  no Skill call in any of the six.
+  All six reordered the three sentences and kept 再試行, キュー and 破棄.
+  The behaviour was already stable without the rule,
+  so the rule bought nothing and was reverted with its scenario.
+- S2: 1/3 fired on 03338a0, 0/3 on 5199ed0.
+  S3: 3/3 on 03338a0, 2/3 on 5199ed0.
+  A difference of one run in three is within the spread;
+  it is the baseline for the next description change,
+  and S2 firing once in three on the unchanged skill is the number to beat.
+- S1 fired and S4 and S5 did not, one run each on 5199ed0.
+- The listing was within budget:
+  the debug log had no "Skill listing over budget" line.
