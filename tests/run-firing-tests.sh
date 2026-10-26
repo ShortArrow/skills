@@ -78,7 +78,7 @@ while IFS=$'\t' read -r id expect prompt; do
   done
   git -C "$work" add -A && git -C "$work" commit -qm "fixture"
   # stdin is the scenario list; without </dev/null the session reads it and the loop ends after one.
-  (cd "$work" && claude ${PLUGIN_DIR:+--plugin-dir "$PLUGIN_DIR"} -p "$prompt" --output-format stream-json --verbose --max-turns "$max_turns" </dev/null >"$out/$id.jsonl" 2>"$out/$id.err") || true
+  (cd "$work" && claude -p "$prompt" ${PLUGIN_DIR:+--plugin-dir "$PLUGIN_DIR"} --output-format stream-json --verbose --max-turns "$max_turns" </dev/null >"$out/$id.jsonl" 2>"$out/$id.err") || true
   if grep -q "\"name\":\"Skill\"" "$out/$id.jsonl" && grep -q "\"skill\":\"[a-z-]*:\?$skill\"" "$out/$id.jsonl"; then got=fire; else got=nofire; fi
   if [ "$got" = "$expect" ]; then verdict=pass; pass=$((pass+1)); else verdict=FAIL; fail=$((fail+1)); fi
   printf '%-4s expected %-6s got %-6s %s\n' "$id" "$expect" "$got" "$verdict"
