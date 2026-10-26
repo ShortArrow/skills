@@ -9,6 +9,11 @@
 # a finished edit needs more, because a session that writes the failing
 # test first spends its budget there.
 #
+# PLUGIN_DIR loads a candidate plugin directory beside the installed ones
+# (claude --plugin-dir), so a new or changed skill can be measured before
+# it is pushed. A Skill call names it as <plugin>:<skill>, which the
+# check below accepts.
+#
 # Scenarios are read from tests/<skill>/firing-tests.md — every "### Sn"
 # heading under "## Should fire" or "## Should not fire", with the prompt
 # in the "> " lines that follow — so the document is the only copy. Each
@@ -73,7 +78,7 @@ while IFS=$'\t' read -r id expect prompt; do
   done
   git -C "$work" add -A && git -C "$work" commit -qm "fixture"
   # stdin is the scenario list; without </dev/null the session reads it and the loop ends after one.
-  (cd "$work" && claude -p "$prompt" --output-format stream-json --verbose --max-turns "$max_turns" </dev/null >"$out/$id.jsonl" 2>"$out/$id.err") || true
+  (cd "$work" && claude ${PLUGIN_DIR:+--plugin-dir "$PLUGIN_DIR"} -p "$prompt" --output-format stream-json --verbose --max-turns "$max_turns" </dev/null >"$out/$id.jsonl" 2>"$out/$id.err") || true
   if grep -q "\"name\":\"Skill\"" "$out/$id.jsonl" && grep -q "\"skill\":\"[a-z-]*:\?$skill\"" "$out/$id.jsonl"; then got=fire; else got=nofire; fi
   if [ "$got" = "$expect" ]; then verdict=pass; pass=$((pass+1)); else verdict=FAIL; fail=$((fail+1)); fi
   printf '%-4s expected %-6s got %-6s %s\n' "$id" "$expect" "$got" "$verdict"

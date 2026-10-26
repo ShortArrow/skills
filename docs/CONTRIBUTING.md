@@ -335,3 +335,7 @@ Two rules from experience, both in `docs/design-intent.md`:
   Move the scenario, not the description.
 - Record every run under `## Recorded runs`, the failed ones included,
   with what the transcript showed and what changed because of it.
+
+`PLUGIN_DIR=<dir>` loads a candidate plugin beside the installed ones,
+so a new skill is measured against the session without it before anything is pushed.
+The directory holds `.claude-plugin/plugin.json` and `skills/<skill>/`.
