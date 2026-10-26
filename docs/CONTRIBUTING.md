@@ -339,3 +339,16 @@ Two rules from experience, both in `docs/design-intent.md`:
 `PLUGIN_DIR=<dir>` loads a candidate plugin beside the installed ones,
 so a new skill is measured against the session without it before anything is pushed.
 The directory holds `.claude-plugin/plugin.json` and `skills/<skill>/`.
+
+Measure the session without the skill first.
+Two candidates were dropped on 2026-10-21 and 2026-10-26 because the session already behaved that way without them.
+One was a plain-language rule, to reorder rather than reword;
+it is recorded in `tests/plain-language/firing-tests.md`.
+The other was `take-stock`, a ledger of done, running,
+unverified and owed items written when work goes quiet.
+Without it, the closing after two tasks carried the half-finished benchmark and the owner's TODO in 2 of 3 runs.
+With it, the skill fired when the user asked where things stood,
+but in 0 of 3 runs at the end of the turn,
+the moment it was written for.
+A description is matched when a task starts.
+The end of a turn is the Stop hook's moment, not a description's.
