@@ -38,8 +38,12 @@ To ship a change to the fork:
 
 1. Commit and push it on `shortarrow` inside `vendor/yomiyasu`.
 2. In this repository, stage `vendor/yomiyasu` and set the entry's `sha` to the same commit.
-3. Run the tests, commit, push,
-   and run `claude plugin update yomiyasu@shortarrow-skills`.
+3. Run the tests, commit and push.
+4. Run `claude plugin uninstall yomiyasu@shortarrow-skills`,
+   then `claude plugin install yomiyasu@shortarrow-skills`.
+   `claude plugin update` compares the version in the fork's `plugin.json`,
+   which a local rule does not change, and reports it already latest.
+   `gitCommitSha` in `~/.claude/plugins/installed_plugins.json` shows the commit installed.
 
 A fresh clone of this repository needs `git submodule update --init` before the fork can be edited;
 installing the plugins does not.
