@@ -341,7 +341,7 @@ so a new skill is measured against the session without it before anything is pus
 The directory holds `.claude-plugin/plugin.json` and `skills/<skill>/`.
 
 Measure the session without the skill first.
-Two candidates were dropped on 2026-10-21 and 2026-10-26 because the session already behaved that way without them.
+Three candidates were dropped between 2026-10-21 and 2026-10-26 because the session already behaved that way without them.
 One was a plain-language rule, to reorder rather than reword;
 it is recorded in `tests/plain-language/firing-tests.md`.
 The other was `take-stock`, a ledger of done, running,
@@ -352,3 +352,7 @@ but in 0 of 3 runs at the end of the turn,
 the moment it was written for.
 A description is matched when a task starts.
 The end of a turn is the Stop hook's moment, not a description's.
+The third was a `timed-wait` section on several waits at once,
+which kept one list of in-flight items and carried it in each report;
+with two background commands,
+the report when the first returned named the second as still running with its expected end in 3 of 3 runs both with and without it.
