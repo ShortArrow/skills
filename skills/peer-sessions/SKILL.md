@@ -103,6 +103,17 @@ What a send establishes:
   Do not resend to a similar name from the list;
   tell the user what was not delivered.
 
+Where herdr, a terminal workspace manager for coding agents,
+runs the sessions, it reaches further:
+agents of any kind on every saved machine,
+their state (idle, working, blocked, done) and their terminal output.
+Use it only when the user names herdr or this session runs in a herdr pane (`HERDR_ENV=1`),
+and take the syntax from `herdr --skill` and `--help`, not from here.
+Send with `herdr agent prompt <target> <text> --wait` and read the answer with `herdr agent read`;
+`agent_prompted` means the prompt was accepted,
+not that it was answered.
+Checked against herdr 0.9.3 on 2026-10-26.
+
 Do not ask a peer to do what this session was denied or would be blocked from doing.
 The peer doing it bypasses the user's decision;
 take the work back to the user.
@@ -142,3 +153,6 @@ The same applies to a task that looks like it was left for you.
   the cloud session that cannot reply, `notify_when_idle`,
   the literal reading of `@`,
   and the rule against asking a peer to do what was blocked here.
+- `herdr --help`, `herdr agent prompt --help` and `herdr --skill` of herdr 0.9.3,
+  read on 2026-10-26: the agent states, `--wait`,
+  and the conditions under which herdr's own guidance allows its use.
