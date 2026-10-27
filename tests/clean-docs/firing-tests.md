@@ -105,3 +105,24 @@ the candidate was loaded with `--plugin-dir` and the installed writing-skills di
   None wrote a `template.md`,
   and one wrote in Japanese after the Japanese prompt;
   three runs a side do not tell whether either difference comes from the change.
+
+2026-10-27, claude-opus-5-5, ADRs rewritten in place.
+The candidate moved the ADR from the frozen records to the living design intent:
+one file per decision, rewritten when the decision changes,
+the replaced design moved to Alternatives, no date,
+and a status of Draft, Accepted or Withdrawn.
+It was loaded with `--plugin-dir`,
+with the installed writing-skills disabled.
+
+- The same ADR prompt, three runs: clean-docs fired 3/3.
+  All three wrote the policy as record 0000, rewritten in place,
+  with no date,
+  the three statuses and an Alternatives table that turns down the frozen chain;
+  two said a judgment only its moment explains goes in a commit message.
+  The version before it froze accepted records in 3/3.
+- `MAX_TURNS=10`, S1 to S5 once each: S1 and S3 fired,
+  S4 and S5 stayed silent, S2 did not fire.
+- S2 three more times on each side:
+  the installed version (9ebb928) did not fire in 0/3,
+  the candidate fired in 3/3, so 3/4 with the run above.
+  Every run in both arms wrote a one-line Conventional Commits subject with a body.

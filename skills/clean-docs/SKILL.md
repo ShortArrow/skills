@@ -1,7 +1,7 @@
 ---
 name: clean-docs
 description: |
-  Discipline for writing durable artifacts — PR bodies, commits, CHANGELOGs, ADRs, READMEs, specifications, source code. A durable artifact is read by someone who never saw the conversation, so conversation-local labels die at its boundary, and it answers the reader, not the reviewer. Derivation orders documents — living documents follow their source, records freeze at their moment — and settles where each question belongs: what, why, why-not, how much, what changed. Use when writing a PR, a commit, a CHANGELOG, an ADR, a design document or an issue, when editing a README or PRD, when unsure where a why, a why-not or a history note belongs, when a why that still holds is about to be frozen into an ADR instead of stated as living design intent, when about to give an alternative the requirements already exclude the same pros and cons as the one adopted, and whenever about to write "See ADR-NNNN".
+  Discipline for writing durable artifacts — PR bodies, commits, CHANGELOGs, ADRs, READMEs, specifications, source code. A durable artifact is read by someone who never saw the conversation, so conversation-local labels die at its boundary, and it answers the reader, not the reviewer. Derivation orders documents — living documents follow their source, records freeze at their moment — and settles where each question belongs: what, why, why-not, how much, what changed. Use when writing a PR, a commit, a CHANGELOG, an ADR, a design document or an issue, when editing a README or PRD, when unsure where a why, a why-not or a history note belongs, when an accepted ADR is about to be frozen and superseded instead of rewritten in place, when about to give an alternative the requirements already exclude the same pros and cons as the one adopted, and whenever about to write "See ADR-NNNN".
 ---
 
 # Self-Contained Artifacts
@@ -107,8 +107,7 @@ Protecting the stable from the volatile — DIP exactly — then needs only one 
   Volatile because it must track its source.
 - **Record derivation** — a judgment or an observation taken from an artifact at a moment:
   a test run records what held that day; a CHANGELOG entry, a PR,
-  a commit record what changed;
-  an ADR records the forces as they stood when a decision was made. **Frozen when written.** Volatile not because it moves — it never moves again — but because it is true only of its moment,
+  a commit record what changed. **Frozen when written.** Volatile not because it moves — it never moves again — but because it is true only of its moment,
   and every later revision of its subject leaves it further behind.
 
 ### The layers, derived
@@ -120,14 +119,14 @@ Coarsened to two layers, this is the familiar table:
 
 | Layer | Documents | Nature |
 |---|---|---|
-| Upper — specifications, present tense | Design intent, principles, PRD and specifications, README, source code and schemas | Describe how things *are*; edited as they evolve |
-| Lower — records, past tense | ADR, design document (a proposal, frozen at approval), CHANGELOG, release notes, PR, issue, commit | Append-only; frozen when written |
+| Upper — specifications, present tense | Design intent and the ADRs that hold it, principles, PRD and specifications, README, source code and schemas | Describe how things *are*; edited as they evolve |
+| Lower — records, past tense | Design document (a proposal, frozen at approval), CHANGELOG, release notes, PR, issue, commit | Append-only; frozen when written |
 
 The design in the upper row is the living description of how the system is arranged;
 the design document in the lower row is the proposal that was approved on a date,
 and Discipline 5 is about the latter.
 
-The order is fractal: records have their own gradient (commit < PR < CHANGELOG < ADR),
+The order is fractal: records have their own gradient (commit < PR < CHANGELOG),
 and the theorems apply across every level of it,
 not only at the two-layer boundary.
 The axiom classifies by obligation, not by the edge's name:
@@ -167,6 +166,19 @@ When the forces change,
 the section is edited like any living document — and under version control every edit is the snapshot a frozen ADR used to be,
 so "what were the forces then" is answered by the history of one file.
 
+An ADR is design intent cut one file per decision,
+and it is kept the same way.
+When the decision changes, its ADR is rewritten in place,
+whatever its status, so that it states the decision in force;
+the design it replaces moves to its Alternatives with the reason it was dropped,
+and git history keeps every earlier text.
+An ADR carries a status (Draft, Accepted or Withdrawn) and no date,
+since git records when each version was written;
+it moves to Accepted only when its Open questions are empty,
+and its number is never reused.
+Freezing an accepted ADR and superseding it with a new one spreads the decision in force over a chain of records,
+and the reader has to follow every link to learn what holds now.
+
 What remains for a standalone frozen record is the judgment only its moment explains:
 made under a constraint that has since vanished,
 and touching no standing intent.
@@ -178,11 +190,11 @@ its own ADR policy is record 0000, and decision records start at 0001.
 ### Theorems
 
 1. **References run more-derived → less-derived only.** A reference is a dependency.
-   "See ADR-0032" in a README makes the least derived document depend on a frozen record:
-   when the ADR is superseded,
-   the stable side needs editing because the volatile side changed,
+   "See PR #412" in a README makes the least derived document depend on a frozen record:
+   when the code moves on,
+   the stable side still points at a moment that no longer describes it,
    and the reference only exports the body's failure to explain itself.
-   The pointer belongs to the record — an ADR naming the file and section it concerns is correct.
+   The pointer belongs to the record — a PR naming the file and section it concerns is correct.
 2. **Mutual links are forbidden.** Derivation is an order;
    a bidirectional link is a cycle in it,
    and one of the two edges is always the stable depending on the volatile.
@@ -191,7 +203,8 @@ its own ADR policy is record 0000, and decision records start at 0001.
 4. **A living document describes only the present.** Former behaviour,
    "this used to be…",
    how the decision was reached — record material stored in a following document.
-   Git holds the diffs, the ADR the why, the body the current What.
+   Git holds the diffs, the design intent the why,
+   the body the current What.
    (A permanent fact such as "renamed in 0.0.34" may stay.)
 5. **What is still moving does not belong in the stable layer.** "Not decided yet",
    "later", "provisional" in specification prose break the body's promise of being the settled present.
@@ -215,7 +228,7 @@ Present tense, to the living layer:
 | where | Where it runs | Infrastructure configuration |
 | how | How it works | The implementation body; how to operate it, the runbook |
 | which | Which one is in use | Design and lockfile show the outcome; the reason behind the choice goes to the design intent |
-| why (standing) | Why it is this way, while the reason holds | Design intent — the forces, their tension, what is protected |
+| why (standing) | Why it is this way, while the reason holds | Design intent — the forces, their tension, what is protected; a section, or the decision's ADR |
 | why-not (standing) | Why not the alternative that keeps being suggested | Design intent — a standing refusal, with its reason |
 | whatever (holds) | Whatever happens, what still holds | Invariants — the type, the domain model's constraints, the docstring's contract |
 | whatever (open) | Whatever it happens to do | Behaviour left open, named as unspecified in the specification, so nobody builds on the accident |
@@ -228,7 +241,7 @@ Past tense, to the record layer:
 |---|---|---|
 | what-changed | What changed | Commit; PR at branch scope; CHANGELOG at release scope |
 | why (change) | Why it changed | The commit message |
-| why (moment) | Why it was judged so then, when only that moment explains it | ADR — a snapshot of the forces at the decision; rare once the design intent is versioned |
+| why (moment) | Why it was judged so then, when only that moment explains it | The commit message of the change it decided; the forces as they stood are in the design intent's history |
 | how-much | How much, how fast | A measurement record that names its method and date |
 | when-did | When it happened | Every record carries its date |
 
@@ -289,7 +302,7 @@ For the reference you are about to write:
 - "Only someone asking **why it is this way** would follow it" → that question is the design intent's to answer.
   Pointing at the intent is legal, living to living;
   inlining the why is not needed.
-- The target is a record (ADR, CHANGELOG, PR) and you are writing a living document → the less derived depending on the more derived.
+- The target is a record (CHANGELOG, PR, commit) and you are writing a living document → the less derived depending on the more derived.
   Do not write it.
 
 ## Discipline 4: living documents belong under the docs root
