@@ -172,6 +172,9 @@ made under a constraint that has since vanished,
 and touching no standing intent.
 Its natural size is a commit message.
 
+When a repository starts keeping ADRs,
+its own ADR policy is record 0000, and decision records start at 0001.
+
 ### Theorems
 
 1. **References run more-derived → less-derived only.** A reference is a dependency.

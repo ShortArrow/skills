@@ -85,3 +85,23 @@ Lines are regrouped; nothing durable is written for a reader.
   which the fixture description now says.
 
 5/5 on the expected side.
+
+2026-10-27, claude-opus-5-5, the ADR policy as record 0000.
+Prompt 「このリポジトリで ADR を始めて。」 in a fresh repository holding only a one-line README,
+`claude -p --permission-mode acceptEdits --max-turns 15`,
+three runs per arm;
+the candidate was loaded with `--plugin-dir` and the installed writing-skills disabled.
+
+- Before (plugin cache at 7f34d86): clean-docs fired 3/3.
+  All three wrote the policy as `0001-record-architecture-decisions.md`,
+  frozen once accepted and superseded by a new record,
+  with an index in `docs/adr/README.md` and a `template.md`.
+- After (the three lines on record 0000 added to "Design intent is a living document"):
+  clean-docs fired 3/3.
+  All three wrote the policy as record 0000 and said decision records start at 0001,
+  kept the frozen records and the index,
+  and placed standing reasons in living documents;
+  one created `docs/design-intent.md`.
+  None wrote a `template.md`,
+  and one wrote in Japanese after the Japanese prompt;
+  three runs a side do not tell whether either difference comes from the change.
