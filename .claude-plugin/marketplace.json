@@ -225,7 +225,8 @@
         "./skills/assurance-case",
         "./skills/agent-harness",
         "./skills/repair-skill",
-        "./skills/timed-wait"
+        "./skills/timed-wait",
+        "./skills/heavy-jobs"
       ]
     },
     {
