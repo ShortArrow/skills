@@ -52,6 +52,7 @@
         "./skills/document-structure",
         "./skills/reader-map",
         "./skills/cognitive-rhythm",
+        "./skills/storyteller",
         "./skills/pdf-transcribe",
         "./skills/i18n-parity",
         "./skills/measured-claims",

@@ -212,6 +212,8 @@ The tells of machine writing (the paragraph that closes neatly every time, the h
 this skill builds the pull where they were, so the two run in turn.
 The reader's map and the holes in an argument are `reader-map`,
 which goes first.
+The skeleton of the whole piece — which section turns,
+what the title asks — is `storyteller`, and this skill works inside it.
 Sentence correctness is `plain-language`.
 
 The source gist (below) was written for book manuscripts and assumes the `japanese-tech-writing` gist has been read first;
