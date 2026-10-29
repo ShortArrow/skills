@@ -176,6 +176,8 @@ An ADR carries a status (Draft, Accepted or Withdrawn) and no date,
 since git records when each version was written;
 it moves to Accepted only when its Open questions are empty,
 and its number is never reused.
+Its file keeps its slug when its title is rewritten,
+so a commit that named it by the old title still reaches it through `git log -p` on that path.
 Freezing an accepted ADR and superseding it with a new one spreads the decision in force over a chain of records,
 and the reader has to follow every link to learn what holds now.
 
