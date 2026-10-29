@@ -130,6 +130,32 @@ on 2026-09-10 a session with this catalogue,
 two other plugins and the bundled skills listed 59 skills at 37,792 characters against a 30,000-character budget at the default fraction,
 and nothing was truncated at 0.05.
 
+## A rule added asks for one to go
+
+The commit that adds a rule — a new skill,
+a row in a skill's moments table,
+a section — looks for what it makes redundant elsewhere and removes it in the same commit:
+another skill's row or paragraph that now says the same thing,
+a skill whose remaining content the new one covers,
+a rule the new one contradicts.
+Where the overlap is partial,
+one skill keeps the rule and the other names it in its connections.
+When nothing can go, the commit message says what was checked.
+In code, a rule made obsolete by a new one gets removed because the code and its tests show it:
+on 2026-10-29 an agent asked to add a rule to a small fictional module removed the rule it superseded in 12 of 12 headless sessions,
+with no skill loaded.
+A skill shows neither, and no check notices when one stops earning its place.
+On the same day this catalogue's history held 51 skills added and none deleted,
+and 27 of its 49 skills had no Skill call and no slash command in this machine's transcripts since 2026-08-21,
+firing-test sessions included.
+Every description is paid for in every session (above),
+so a skill kept by default is not free.
+The search starts from the new rule's moment:
+grep the other skills for its trigger words and read the hits.
+A whole skill is a candidate when its moments are all named elsewhere,
+or when it has not fired; use on another machine counts,
+so look there before deleting one.
+
 ## Host branches
 
 A skill whose procedure names a tool (`AskUserQuestion`, `Read` with `pages`, `Agent` with a model) carries one row per host — Claude Code,
