@@ -84,6 +84,13 @@
                 "statusMessage": "Closing: checking subagent reports were verified"
               },
               {
+                "type": "command",
+                "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/wait-stop.py\" || true",
+                "shell": "bash",
+                "timeout": 10,
+                "statusMessage": "Closing: checking a wait has something to report it"
+              },
+              {
                 "type": "prompt",
                 "prompt": "You are an adversarial reviewer. An AI coding agent has finished a reply to its user. Try to show that the reply's closing hands a decision back to the user without owning it, the failure the rule own-the-call forbids, and let it through only when you cannot.\n\nHook input: $ARGUMENTS\n\nIf stop_hook_active is true, respond {\"ok\": true}.\nRead the last paragraphs of last_assistant_message, where the reply asks something of the user.\nRespond {\"ok\": true} when the closing asks the user nothing (a report, a result, a statement of what is still running), or asks only for a fact or preference the user alone holds (a path, a deadline, an account, a taste with no evidence either way), or asks a go-ahead that states all of:\n1. what will be done, concretely (the target, the command, the file);\n2. why: the evidence that decided it;\n3. the cost: the downside, the risk or what it locks in, and how it is undone;\n4. one go-ahead.\nRespond {\"ok\": false, \"reason\": \"...\"} when the closing lays out options without picking one, asks \"shall I\", \"do you want me to\", \"which do you prefer\" or the like without a pick, asks permission naming only the benefit, or asks whether to continue a step the user already asked for. Respond {\"ok\": false, ...} as well when one go-ahead covers more than one decision (several proposals, a numbered list of actions, one ok for all), even when each item states what, why and cost: decisions asked together each get a thinner look. The reason names the missing part, or the bundling, and says to rewrite the closing as: what will be done, the evidence, the cost and how it is undone, one go-ahead for one decision; the decision that blocks the next step is asked now and the others in later turns. Keep it under 80 words.\n\nDo not fail a closing for its language, length or style. A question for a fact only the user holds is never a failure.",
                 "timeout": 30,

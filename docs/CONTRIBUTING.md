@@ -270,6 +270,29 @@ Replayed on 2026-10-15 over this machine's 17 sessions that had subagent reports
 the publish gate would have refused 541 of their 1,106 publishing commands,
 in 13 sessions: those sessions verified some reports and published after others that nobody checked.
 
+`hooks/wait-stop.py` holds `timed-wait`'s line at the same moment.
+A session resumes only on a user message or a notification,
+so a turn that ends "waiting for CI" or "I will merge once CI passes" with nothing still running ends the wait too,
+and the user is the one who comes back to ask.
+The hook reads the closing for a wait on CI, a build, a job, a test,
+a deploy, a release or a subagent,
+and the transcript for anything still due to report:
+a background command, including one its timeout moved there,
+a background subagent or one sent a message, a monitor, a workflow,
+or a wakeup scheduled this turn.
+A notification ends a call unless it says the subagent is still waiting on work of its own,
+and a call started more than six hours before the turn is taken as lost with a restarted client.
+A wait on the user ("tell me when the key is made") is `grill-me`'s and passes.
+Replayed on 2026-10-30 over 6,500 turn endings in this machine's transcripts it blocked 6.
+Three were waits on CI that could not run for want of Actions budget,
+promised a merge and named nothing that would report;
+one ended "next, I wait for the checks to pass",
+and the user's next message was "watch the checks until they pass";
+two were defensible, a "go" asked for and a merge left to the user.
+Earlier versions blocked watchers the transcript did not show as running:
+a command moved to the background by its timeout,
+a subagent resumed by a message, and tasks a restarted client had lost.
+
 Every Python hook command ends in `|| true` and runs in bash.
 A marketplace update makes the client read the new hook commands while the installed plugin may still be the old commit,
 whose cache lacks the script they name;
