@@ -45,6 +45,17 @@ To ship a change to the fork:
    which a local rule does not change, and reports it already latest.
    `gitCommitSha` in `~/.claude/plugins/installed_plugins.json` shows the commit installed.
 
+Nothing here fetches the upstream,
+so `.claude/settings.json` runs `hooks/upstream-behind.py` when a session starts in this repository.
+It asks GitHub for the upstream's `main` with `git ls-remote`,
+and when the fork's HEAD does not contain that commit it fetches it,
+counts what the fork lacks and puts the count into the session.
+On 2026-10-30 the fork was twelve commits behind,
+Windows fixes among them, and nobody had noticed.
+An unreachable upstream or a submodule not checked out passes in silence.
+The check lives in the project's settings and not in a plugin's hooks,
+because a plugin's hooks run in every repository.
+
 A fresh clone of this repository needs `git submodule update --init` before the fork can be edited;
 installing the plugins does not.
 
