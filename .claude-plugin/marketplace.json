@@ -255,6 +255,16 @@
         "ref": "shortarrow",
         "sha": "e67deb742ca926531d33e2478253248938aeb58a"
       }
+    },
+    {
+      "name": "security-audit",
+      "description": "cloudflare/security-audit-skill (MIT) unchanged: a source-first vulnerability review that names an affected principal before it calls anything a finding, with attack-class companions per surface and Node validators over its report schema",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/cloudflare/security-audit-skill.git",
+        "ref": "main",
+        "sha": "c1c8a8c1471069fb0e188eeaff69b8e8db6564a8"
+      }
     }
   ]
 }

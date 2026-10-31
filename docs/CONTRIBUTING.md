@@ -59,6 +59,28 @@ because a plugin's hooks run in every repository.
 A fresh clone of this repository needs `git submodule update --init` before the fork can be edited;
 installing the plugins does not.
 
+## A plugin taken unchanged is pinned, not forked
+
+A fork exists to carry a local change.
+Where someone else's plugin is taken as it stands,
+there is nothing to carry,
+so it gets no submodule and no copy under `skills/`:
+the marketplace entry fetches it by URL and pins it with `ref` and `sha`.
+`security-audit` is cloudflare/security-audit-skill that way.
+
+Without a submodule no sha holds the pin,
+so `tests/test_upstream_pins.py` asks the remote:
+the entry names both a `ref` and a full `sha`,
+and that commit is still an ancestor of the ref.
+A rewritten or dropped commit fails; an unreachable remote skips,
+because the pin was reviewed when it was set.
+
+The catalogue's own gates read `skills/` only,
+so a pinned plugin is not held to this repository's house style — its files are upstream's to shape.
+What this repository owes such a plugin is the review in `adopt-dependency` and `dependency-licenses`,
+recorded in the commit that adds it,
+and a bump that is a fresh review rather than a newer number.
+
 ## Language-neutral rules, with language layers
 
 A skill's body is the rule that holds in every language, in English.
