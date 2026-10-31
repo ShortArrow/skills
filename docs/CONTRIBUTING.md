@@ -131,10 +131,13 @@ The whole listing is also capped at 1% of the context window in characters,
 Over that, the skills with the fewest recorded uses lose their descriptions first and are listed by name only,
 so a skill that has never fired cannot fire on its description,
 and a new skill starts at the back of that queue.
-This catalogue's forty-seven descriptions total about 36,000 characters,
-so with two or more of its plugins installed the default budget is exceeded.
-`tests/skill-doctor.py` prints the per-plugin totals and the fraction that would hold this catalogue alone;
-the README tells installers to raise `skillListingBudgetFraction` (0.05 holds the whole catalogue) or to install one plugin.
+This catalogue's descriptions together run to several times that budget,
+so with two or more of its plugins installed the default is exceeded.
+The count and the total move with every skill added,
+so neither is written here:
+`tests/skill-doctor.py` prints the per-plugin totals and the fraction that would hold this catalogue alone.
+The README carries the fraction installers are told to set,
+rounded up so one more skill does not invalidate it — raise it there when the measured fraction reaches it.
 The budget is shared with every other plugin and the bundled skills,
 and the real figures are in the debug log:
 on 2026-09-10 a session with this catalogue,

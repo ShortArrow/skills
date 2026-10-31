@@ -14,14 +14,15 @@ the table below links to them.
 Then install whichever set applies.
 
 Claude Code sends the model one listing of every loaded skill and caps it at 1% of the context window (8,000 characters at 200k).
-The descriptions here are deliberately long,
-about 34,000 characters across the four plugins (`python tests/skill-doctor.py` prints the current total),
+The descriptions here are deliberately long — together they run to several times that cap,
 so with more than one plugin installed the least-used skills are listed by name only and never fire on their description.
 Raise the cap in `~/.claude/settings.json`, or install one plugin:
 
 ```json
-{ "skillListingBudgetFraction": 0.05 }
+{ "skillListingBudgetFraction": 0.06 }
 ```
+
+`python tests/skill-doctor.py` prints the current total and the fraction that holds it.
 
 | Plugin | Skills |
 |---|---|
