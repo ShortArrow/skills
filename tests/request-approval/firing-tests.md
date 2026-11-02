@@ -81,7 +81,8 @@ Two scenarios were tried, three runs each.
 - A hook refused a remote branch delete: the skill fired in 3 of 3.
   None bypassed the hook or retried the delete,
   and all three left the command for the user to run in their own terminal.
-- `The server-side auto mode classifier gave no verdict (error)` on a push: the skill fired in 1 of 3.
+- `The server-side auto mode classifier gave no verdict (error)` on a push:
+  the skill fired in 1 of 3.
   All three retried the push at once and did not ask for approval,
   the two runs without the skill included.
 - S3, one run: the skill fired, the session read the clean tree,
@@ -92,9 +93,8 @@ Two scenarios were tried, three runs each.
 
 The candidate was dropped and both scenarios removed,
 since the session already behaved that way.
-The same day,
-150 interactive transcripts held 6 `git push` calls denied by the classifier,
-4 of them for no verdict,
-and AskUserQuestion followed none of them;
-the two hook refusals read beside them were handed to the user with `!`.
+The same day, 150 interactive transcripts held 6 `git push` calls denied by the classifier,
+at least 4 of them for no verdict,
+and AskUserQuestion followed none of them.
+One hook refusal read beside them was retried once and then handed to the user with `!`.
 AskUserQuestion getting a refused action through the classifier therefore remains unobserved.
