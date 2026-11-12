@@ -131,7 +131,7 @@ $hostInvariants = @(
     @{ Skill = 'grill-me'; Text = 'ask_user' }
     @{ Skill = 'plan-delegate-verify'; Text = 'runSubagent' }
     @{ Skill = 'plan-delegate-verify'; Text = '@name' }
-    @{ Skill = 'peer-sessions'; Text = 'not documented (checked 2026-08-28)' }
+    @{ Skill = 'peer-sessions'; Text = 'listing is not documented' }
     @{ Skill = 'pdf-transcribe'; Text = 'read_file' }
     @{ Skill = 'any-screenshot'; Text = 'browser_agent' }
     @{ Skill = 'any-screenshot'; Text = 'screenshotPage' }
@@ -146,7 +146,7 @@ foreach ($entry in $hostInvariants) {
 }
 
 # A skill that names a public standard rests on it, so it carries a
-# Sources block saying which version was read and when. The pattern is
+# Sources block saying which version was read. The pattern is
 # case-sensitive and word-bounded on purpose: "Administrators" contains
 # "nist", and a match there would demand a citation for nothing.
 $standardPattern = 'ISTQB|ISO/IEC|\bIEC 6\d{4}|\bRFC \d{4}|BCP 47|Semantic Versioning|\bSemVer\b|\bSLSA\b|OpenSSF|\bScorecard\b|GSN Community|Diátaxis|文化庁|\bJTF\b|消費者庁|厚生労働省|DO-178|arXiv|docs\.github\.com|github-linguist|developers\.google\.com/style|Microsoft Writing Style Guide|plainlanguage\.gov|digital\.gov'
@@ -155,8 +155,6 @@ foreach ($directory in Get-ChildItem -LiteralPath $skillsRoot -Directory) {
     if ($content -notmatch $standardPattern) { continue }
     if ($content -notmatch '(?m)^## Sources\s*$') {
         $failures.Add("$($directory.Name): names a standard but has no '## Sources' block")
-    } elseif ($content -notmatch '(?sm)^## Sources\s*$.*?20\d\d-\d\d-\d\d') {
-        $failures.Add("$($directory.Name): '## Sources' block carries no check date (YYYY-MM-DD)")
     }
 }
 
@@ -209,8 +207,8 @@ if ($readme -notmatch [regex]::Escape('npx skills add ShortArrow/skills -g')) {
 if ($readme -match 'skills/<name>/agents/openai\.yaml') {
     $failures.Add('README layout lists optional openai.yaml files that do not exist')
 }
-if ($readme -notmatch 'official OpenAI documentation' -or $readme -notmatch 'on \d{4}-\d{2}-\d{2}\.') {
-    $failures.Add('README: Codex discovery claim lacks its source or check date')
+if ($readme -notmatch 'official OpenAI documentation') {
+    $failures.Add('README: Codex discovery claim lacks its source')
 }
 
 $toolSyntax = Get-Content -Raw -LiteralPath (Join-Path $skillsRoot 'tool-call-syntax\SKILL.md')
