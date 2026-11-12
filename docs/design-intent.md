@@ -28,7 +28,7 @@ and what it deleted does not show in the diff.
   The dilution is invisible in a diff and permanent in effect.
 - Writing a tool name or mechanism no official document states.
   A wrong concrete is worse than an honest gap;
-  an undocumented capability is written as `not documented (checked <date>)` and falls through to the last row.
+  an undocumented capability is written as `not documented` and falls through to the last row.
 - Substituting one host's procedure or script on another host,
   simulating a missing tool in prose, or pretending a subagent ran.
 - One section per host.
@@ -36,7 +36,7 @@ and what it deleted does not show in the diff.
   a capability table grows by one row per host per capability instead.
 
 **The next case.** A new host is one row per capability table,
-holding only documented mechanisms with a check date,
+holding only documented mechanisms,
 placed above the final `Any other host` row,
 which states a substitute procedure and the prohibitions.
 Existing hosts' rows are not touched by the addition.
@@ -54,7 +54,7 @@ a description written as "about to …" constrains what is about to be written,
 where a rule written as "avoid …" can only be applied to what was written.
 Prevention costs one reading at the moment;
 correction costs a second pass,
-and the habit that produced the text is still there for the next paragraph (natural-japanese states the same as 事後修正より生成時制約, read 2026-09-14).
+and the habit that produced the text is still there for the next paragraph (natural-japanese states the same as 事後修正より生成時制約).
 "The caller guarantees a non-empty id" tells the next reader which side to fix when it breaks;
 "follow Clean Architecture" tells them a vocabulary and leaves the decision where it was.
 
@@ -120,18 +120,22 @@ and dressing them in a standard's name borrows authority the standard never gave
   `state-first` and `diagnose-first` say where they come from and do not cite a standard.
 - A version-less citation.
   Syllabi and specifications are revised;
-  the version and its date are part of the reference.
+  the version is part of the reference,
+  and a page with no version is identified by the date it carries.
+- A date on which the source was read.
+  The commit that adds the citation records when it was read,
+  and a second date in the text only drifts from it.
 
 **The next case.** When a rule can be grounded,
-it is grounded in the free public document, cited as name, version,
-date, section, and the date it was checked,
+it is grounded in the free public document, cited as name,
+version and section,
 the way `measured-claims` makes a number carry its method.
 When it cannot, the skill says the rule is practice.
 
 **Gate.** `tests/check-portability.ps1`:
-a skill whose body names a standard or a paper (ISTQB, ISO/IEC, RFC, SemVer, SLSA, GSN, Diátaxis,文化庁, 消費者庁, arXiv and the rest of the pattern in the script) must carry a `## Sources` block,
-and that block must contain a check date in `YYYY-MM-DD`.
-Deleting the block, or the date, makes the script exit 1.
+a skill whose body names a standard or a paper (ISTQB, ISO/IEC, RFC, SemVer, SLSA, GSN, Diátaxis,文化庁, 消費者庁, arXiv and the rest of the pattern in the script) must carry a `## Sources` block.
+Deleting the block makes the script exit 1.
+Whether each citation names its version and section is read in review.
 
 ## A public skill rests on what its reader can open
 
@@ -141,7 +145,8 @@ And the repositories, sessions and organisations the author keeps private stay o
 where a name, once pushed and cloned, cannot be taken back.
 
 **In tension.** The author's richest evidence is private work:
-the commits, transcripts and scripts of projects that cannot be published.
+the commits,
+transcripts and scripts of projects that cannot be published.
 A count taken from them is real,
 and dropping it leaves a claim weaker than what the author knows.
 Calling the source "a private repository" keeps the name out and the dependence in:
@@ -154,8 +159,7 @@ and describes a past the reader cannot visit.
 **Refused, while these reasons hold.**
 
 - A figure, example or quotation whose source the reader cannot open:
-  a private repository, a session transcript,
-  files on one machine.
+  a private repository, a session transcript, files on one machine.
   Count again in a public corpus,
   or rest the claim on a reason the reader can check and say it is practice,
   as the section above has it.
@@ -207,7 +211,7 @@ and stays a rule only while every row is a test with an action attached.
 - A pin written from memory,
   which is the restatement the section above refuses.
   The criterion is read in the source,
-  the quotation matched against the page, the date recorded.
+  and the quotation matched against the page.
 - A pin that cannot be answered yes or no.
   A source that states a preference yields no criterion.
 - Calling one sense the original or the correct one.
@@ -220,7 +224,7 @@ and stays a rule only while every row is a test with an action attached.
 
 **The next case.** A skill body that leans on such a term states the criterion where the term is used.
 A term with no skill of its own gets a row in `plain-language` under One sense per term,
-with its quotation, source and read date in that skill's `references/pinned-senses.md`.
+with its quotation and source in that skill's `references/pinned-senses.md`.
 
 **Gate.** None mechanical for the sense:
 a script can find the word and cannot tell which sense the sentence used.
@@ -228,7 +232,7 @@ a script can find the word and cannot tell which sense the sentence used.
 a run passes on the Skill call alone,
 so whether the term was dropped is read in the transcript.
 The sources of the pinned senses do not match the pattern of the gate above,
-so their read dates are kept by review.
+so their citations are kept by review.
 
 ## Language-neutral rules, with language layers
 
@@ -363,7 +367,6 @@ What it cannot see is the budget those characters are spent against.
 
 **In tension.** The budget is the part a maintainer wants judged.
 Claude Code documents it as a share of the model's context window (`skillListingBudgetFraction`, default `0.01`, in code.claude.com/docs/en/settings-reference) with a fallback of 8,000 characters (`SLASH_COMMAND_TOOL_CHAR_BUDGET`, in code.claude.com/docs/en/env-vars),
-both read on 2026-11-11,
 so an estimate looks like arithmetic away — assume a context length,
 assume a tokens-to-characters ratio, take one percent.
 Each assumption is invisible in the output,

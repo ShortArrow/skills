@@ -46,7 +46,7 @@ The latter installs under `.agents/skills/`,
 one of the repository and user locations Codex scans.
 Select individual skills instead of the whole catalogue when only a few apply.
 Restart Codex if a new install does not appear.
-The installer and discovery locations were checked against the [official OpenAI documentation](https://learn.chatgpt.com/docs/build-skills) on 2026-08-23.
+The installer and discovery locations were checked against the [official OpenAI documentation](https://learn.chatgpt.com/docs/build-skills).
 
 ## Install anywhere
 

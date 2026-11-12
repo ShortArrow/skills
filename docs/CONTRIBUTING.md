@@ -50,15 +50,15 @@ so `.claude/settings.json` runs `hooks/upstream-behind.py` when a session starts
 It asks GitHub for the upstream's `main` with `git ls-remote`,
 and when the fork's HEAD does not contain that commit it fetches it,
 counts what the fork lacks and puts the count into the session.
-On 2026-10-30 the fork was twelve commits behind,
-Windows fixes among them, and nobody had noticed.
+Once the fork was twelve commits behind, Windows fixes among them,
+and nobody had noticed.
 An unreachable upstream or a submodule not checked out passes in silence.
 The check lives in the project's settings and not in a plugin's hooks,
 because a plugin's hooks run in every repository.
 
 The installed plugins fall behind the same way.
-On 2026-11-04 this machine's plugins were still at the commit of 2026-10-09,
-and a rule pushed that day reached no session.
+Once the installed plugins were still at a commit nearly four weeks old,
+and a rule pushed to the catalogue reached no session.
 So the engineering-skills entry runs `hooks/update-own-plugins.py` asynchronously when a session starts.
 It compares each plugin whose source is this repository with the HEAD the marketplace installs from:
 the clone's HEAD for a marketplace added from a directory,
@@ -92,7 +92,7 @@ because the pin was reviewed when it was set.
 The catalogue's own gates read `skills/` only,
 so a pinned plugin is not held to this repository's house style — its files are upstream's to shape.
 What this repository owes such a plugin is the review in `adopt-dependency` and `dependency-licenses`,
-recorded in the commit that adds it,
+recorded in `docs/dependencies.md`, next to the sha it covers,
 and a bump that is a fresh review rather than a newer number.
 
 ## Language-neutral rules, with language layers
@@ -154,13 +154,13 @@ a rule that can only be applied to finished text arrives after the habit has alr
 Short is not the goal; ambiguity and the budget are.
 A long description made of concrete moments does not over-fire (the S4 and S5 scenarios measure that),
 a short one made of a domain name does;
-OpenAI's guidance for GPT-6 Astra (developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra, read 2026-09-14) draws the same line with "use when working with databases" against "use when adding or changing a migration".
+OpenAI's guidance for GPT-6 Astra (developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra) draws the same line with "use when working with databases" against "use when adding or changing a migration".
 
 Claude Code caps the listing twice,
-and both caps were read from the client's own code on 2026-09-10 (`skillListingMaxDescChars`, `skillListingBudgetFraction`).
+and both caps were read from the client's own code (`skillListingMaxDescChars`, `skillListingBudgetFraction`).
 One description is cut at 1,536 characters.
 GitHub Copilot CLI is stricter:
-its skill schema rejects a description over 1,024 characters and the skill is not listed at all (read from its bundle on 2026-09-11; four skills here were missing from Copilot until they were shortened).
+its skill schema rejects a description over 1,024 characters and the skill is not listed at all (read from its bundle; four skills here were missing from Copilot until they were shortened).
 `tests/skill-doctor.py` refuses one over 1,000 so both the tail and the Copilot listing survive.
 The whole listing is also capped at 1% of the context window in characters,
 8,000 at a 200k window.
@@ -176,7 +176,7 @@ The README carries the fraction installers are told to set,
 rounded up so one more skill does not invalidate it — raise it there when the measured fraction reaches it.
 The budget is shared with every other plugin and the bundled skills,
 and the real figures are in the debug log:
-on 2026-09-10 a session with this catalogue,
+one session with this catalogue,
 two other plugins and the bundled skills listed 59 skills at 37,792 characters against a 30,000-character budget at the default fraction,
 and nothing was truncated at 0.05.
 
@@ -190,13 +190,12 @@ a skill whose remaining content the new one covers,
 a rule the new one contradicts.
 Where the overlap is partial,
 one skill keeps the rule and the other names it in its connections.
-When nothing can go, the commit message says what was checked.
 In code, a rule made obsolete by a new one gets removed because the code and its tests show it:
-on 2026-10-29 an agent asked to add a rule to a small fictional module removed the rule it superseded in 12 of 12 headless sessions,
+an agent asked to add a rule to a small fictional module removed the rule it superseded in 12 of 12 headless sessions,
 with no skill loaded.
 A skill shows neither, and no check notices when one stops earning its place.
-On the same day this catalogue's history held 51 skills added and none deleted,
-and 27 of its 49 skills had no Skill call and no slash command in this machine's transcripts since 2026-08-21,
+At the time this catalogue's history held 51 skills added and none deleted,
+and 27 of its 49 skills had no Skill call and no slash command in this machine's transcripts of the ten weeks before,
 firing-test sessions included.
 Every description is paid for in every session (above),
 so a skill kept by default is not free.
@@ -230,7 +229,7 @@ which is what `npx skills add -g` resolves for the reader:
 | Cursor | `~/.cursor/skills`, `~/.agents/skills`, `~/.claude/skills`, `~/.codex/skills` | `.agents/skills`, `.cursor/skills`, `.claude/skills`, `.codex/skills` |
 | Gemini CLI | `~/.gemini/skills`, `~/.agents/skills` (the alias wins ties) | `.gemini/skills`, `.agents/skills` |
 
-The directories above were checked against official documentation on 2026-08-28.
+The directories above were checked against official documentation.
 
 The format itself is not specific to one host.
 The same folder-with-a-manifest shape is used across agents,
@@ -263,7 +262,7 @@ because that is the only form a marketplace entry accepts:
 a file path is silently ignored,
 and a `hooks/hooks.json` at the shared plugin root would register once per plugin.
 The script it runs, `hooks/pr-body-context.sh`, prints one JSON object.
-Codex, Copilot, Cursor and Gemini CLI document a pre-tool hook of their own (`pull-request` lists each, checked 2026-09-17),
+Codex, Copilot, Cursor and Gemini CLI document a pre-tool hook of their own (`pull-request` lists each),
 but a marketplace entry can wire only Claude Code's,
 so on those hosts the descriptions still carry the moment and a project wires the same script itself;
 the hook is the backstop for the one place a description is blind.
@@ -275,7 +274,7 @@ skips quoted spans,
 and blocks once when it leaves a decision with the user (「お任せします」, "up to you", "shall I");
 the reason carries `own-the-call`'s rule,
 and the agent rewrites the closing.
-Replayed over 4,470 turn endings in this machine's transcripts on 2026-10-15 it blocked 205,
+Replayed over 4,470 turn endings in this machine's transcripts it blocked 205,
 and a sample of 25 were all decisions handed back without a pick.
 
 A phrase list catches the words of a hand-back, not its shape:
@@ -289,7 +288,7 @@ Both let a question for a fact only the user holds through,
 because that is `grill-me`'s and has no position to take.
 The prompts live inline in the marketplace entry,
 and `tests/own-the-call/judge-prompts.py` replays them on 21 fixed questions and closings,
-three times each; on 2026-10-16 it scored 51 of 51 twice,
+three times each; it scored 51 of 51 twice,
 after a first version had failed fact questions for not naming a cost.
 Later that day the four bundle cases were added:
 three proposals under one go-ahead, each with all four parts,
@@ -316,7 +315,7 @@ it refuses `git push`, `gh pr create`,
 as a Stop hook it sends a turn back once when such a report arrived since the user last spoke.
 A verifier is an Agent call whose description starts with "Verify" or names it skeptic,
 adversarial, refute, fact-check or cross-check.
-Replayed on 2026-10-15 over this machine's 17 sessions that had subagent reports,
+Replayed over this machine's 17 sessions that had subagent reports,
 the publish gate would have refused 541 of their 1,106 publishing commands,
 in 13 sessions: those sessions verified some reports and published after others that nobody checked.
 
@@ -333,7 +332,7 @@ or a wakeup scheduled this turn.
 A notification ends a call unless it says the subagent is still waiting on work of its own,
 and a call started more than six hours before the turn is taken as lost with a restarted client.
 A wait on the user ("tell me when the key is made") is `grill-me`'s and passes.
-Replayed on 2026-10-30 over 6,500 turn endings in this machine's transcripts it blocked 6.
+Replayed over 6,500 turn endings in this machine's transcripts it blocked 6.
 Three were waits on CI that could not run for want of Actions budget,
 promised a merge and named nothing that would report;
 one ended "next, I wait for the checks to pass",
@@ -348,10 +347,17 @@ A marketplace update makes the client read the new hook commands while the insta
 whose cache lacks the script they name;
 Python then exits 2 on the missing file,
 and exit 2 from a hook blocks the call.
-On 2026-10-15 that blocked Bash in fresh sessions until `claude plugin update` caught the cache up.
+Once that blocked Bash in fresh sessions until `claude plugin update` caught the cache up.
 The scripts report a verdict as JSON on exit 0,
 so `|| true` loses nothing;
 `tests/test_hook_commands.py` runs every hook against an empty plugin root and refuses exit 2.
+
+## Commit messages
+
+A commit message is one line, `update: <what>`,
+where `<what>` names what the commit changes: `skill`, `docs`,
+`submodule`, `adr` and the like.
+No body is written.
 
 ## Sources
 
@@ -378,8 +384,8 @@ Failures print one per line and the run exits 1.
 The second is this repository's answer to the health report Claude Code does not have.
 Claude Code's own `/skill-doctor` reports usage and context cost,
 and `claude plugin validate` checks manifests;
-on 2026-09-10 the latter passed a SKILL.md whose description the runtime cannot parse and one 2,600 characters long,
-and on 2026-09-11 it passed a marketplace entry whose hooks were given as a file path,
+the latter has passed a SKILL.md whose description the runtime cannot parse and one 2,600 characters long,
+and a marketplace entry whose hooks were given as a file path,
 a form the runtime silently ignores.
 `tests/skill-doctor.py` reads each skill the way the runtime does and prints one row per skill:
 the frontmatter parses as YAML with a matching name and a non-empty description (a plain scalar containing ": " is not YAML, and the runtime then loads no description at all, which `claude plugin details` shows as `< 20` always-on tokens);
@@ -453,7 +459,7 @@ so a new skill is measured against the session without it before anything is pus
 The directory holds `.claude-plugin/plugin.json` and `skills/<skill>/`.
 
 Measure the session without the skill first.
-Three candidates were dropped between 2026-10-21 and 2026-10-26 because the session already behaved that way without them.
+Three candidates were dropped because the session already behaved that way without them.
 One was a plain-language rule, to reorder rather than reword;
 it is recorded in `tests/plain-language/firing-tests.md`.
 The other was `take-stock`, a ledger of done, running,
