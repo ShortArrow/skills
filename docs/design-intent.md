@@ -179,7 +179,7 @@ not a real one with its letters changed.
 **Gate.** `.githooks/pre-push`,
 enabled with `git config core.hooksPath .githooks`,
 refuses a push whose commits carry the name of a repository the pushing account keeps private or holds a ghq clone of,
-under the word rules in `.githooks/repo-names.py`.
+under the word rules in `skills/guard-private-names/scripts/repo-names.py`.
 It catches names only.
 A claim that rests on private evidence without naming it passes the hook,
 and is this section's to refuse.

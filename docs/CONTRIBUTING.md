@@ -414,17 +414,9 @@ git config core.hooksPath .githooks
 ```
 
 `.githooks/pre-commit` runs the doctor with `--strict`.
-`.githooks/pre-push` refuses a push whose commits carry the name of a repository the signed-in `gh` account keeps private,
-or of a clone `ghq list` finds that GitHub does not confirm as public.
-It matches whole words in the tree of each pushed tip and in the lines every other pushed commit adds,
-so a name added and later removed is still refused.
-A refusal shows each place and an 8-character id, never the name;
-`python .githooks/repo-names.py --explain ID`, run in your own terminal,
-shows the name.
-A name that is an ordinary word goes on its own line in `.git/info/repo-names-allowed`,
-which is not tracked and is kept per clone,
-since a published list of private names would be the leak itself.
-When `gh` cannot list the names, the push is refused.
+`.githooks/pre-push` runs the hook `guard-private-names` installs elsewhere,
+from its place in this tree;
+that skill says what it refuses and what a refusal asks of you.
 
 ## Firing tests
 
