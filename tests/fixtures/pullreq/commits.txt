@@ -1,0 +1,4 @@
+a41c2d9 refactor(queue): move the retry loop from HttpClient into QueueWorker
+5b7e013 feat(queue): read retry interval and attempt count from settings
+c90f7a2 test(queue): cover the give-up path after the last attempt
+e12ab88 fix(queue): stop retrying on 4xx responses

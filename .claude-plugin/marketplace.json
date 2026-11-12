@@ -1,0 +1,319 @@
+{
+  "name": "shortarrow-skills",
+  "owner": {
+    "name": "ShortArrow",
+    "url": "https://github.com/ShortArrow"
+  },
+  "metadata": {
+    "description": "Personal Agent Skills",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "screenshot-skills",
+      "description": "Choosing and performing screen capture: a routing gate plus per-target methods for Windows desktops and windows, Hyper-V guests, Avalonia rendering, and UI Automation",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/any-screenshot",
+        "./skills/windows-screenshot",
+        "./skills/avalonia-screenshot",
+        "./skills/flaui-screenshot",
+        "./skills/hyperv-screenshot"
+      ]
+    },
+    {
+      "name": "writing-skills",
+      "description": "Producing durable artifacts: self-contained documents, faithful PDF transcription, translations kept in step, numbers that carry their measurement, and approval for actions that cannot be taken back",
+      "source": "./",
+      "strict": false,
+      "hooks": {
+        "PreToolUse": [
+          {
+            "matcher": "Bash",
+            "if": "Bash(gh pr *)",
+            "hooks": [
+              {
+                "type": "command",
+                "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/pr-body-context.sh\"",
+                "shell": "bash",
+                "timeout": 10,
+                "statusMessage": "PR body: applying the writing skills"
+              }
+            ]
+          }
+        ]
+      },
+      "skills": [
+        "./skills/clean-docs",
+        "./skills/commit-message",
+        "./skills/pull-request",
+        "./skills/unmachine-prose",
+        "./skills/plain-language",
+        "./skills/document-structure",
+        "./skills/reader-map",
+        "./skills/cognitive-rhythm",
+        "./skills/storyteller",
+        "./skills/pdf-transcribe",
+        "./skills/i18n-parity",
+        "./skills/measured-claims",
+        "./skills/regulated-claims",
+        "./skills/request-approval"
+      ]
+    },
+    {
+      "name": "engineering-skills",
+      "description": "Working on code: planning that hands work to subagents and verifies it, where code sits in a layered stack, per language, library API contracts, assurance cases that tie claims to evidence, harnesses that compile conventions into gates for AI coding sessions, TUI inspection without a display, isolated desktop test runs, seeing what other sessions hold, resolving ambiguity before implementing, and tool-call syntax",
+      "source": "./",
+      "strict": false,
+      "hooks": {
+        "SessionStart": [
+          {
+            "matcher": "startup",
+            "hooks": [
+              {
+                "type": "command",
+                "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/update-own-plugins.py\" shortarrow-skills || true",
+                "shell": "bash",
+                "async": true,
+                "timeout": 600
+              }
+            ]
+          }
+        ],
+        "Stop": [
+          {
+            "hooks": [
+              {
+                "type": "command",
+                "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/own-the-call-stop.py\" || true",
+                "shell": "bash",
+                "timeout": 10,
+                "statusMessage": "Closing: checking for a decision left with the user"
+              },
+              {
+                "type": "command",
+                "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/verify-reports.py\" stop || true",
+                "shell": "bash",
+                "timeout": 10,
+                "statusMessage": "Closing: checking subagent reports were verified"
+              },
+              {
+                "type": "command",
+                "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/wait-stop.py\" || true",
+                "shell": "bash",
+                "timeout": 10,
+                "statusMessage": "Closing: checking a wait has something to report it"
+              },
+              {
+                "type": "prompt",
+                "prompt": "You are an adversarial reviewer. An AI coding agent has finished a reply to its user. Try to show that the reply's closing hands a decision back to the user without owning it, the failure the rule own-the-call forbids, and let it through only when you cannot.\n\nHook input: $ARGUMENTS\n\nIf stop_hook_active is true, respond {\"ok\": true}.\nRead the last paragraphs of last_assistant_message, where the reply asks something of the user.\nRespond {\"ok\": true} when the closing asks the user nothing (a report, a result, a statement of what is still running), or asks only for a fact or preference the user alone holds (a path, a deadline, an account, a taste with no evidence either way), or asks a go-ahead that states all of:\n1. what will be done, concretely (the target, the command, the file);\n2. why: the evidence that decided it;\n3. the cost: the downside, the risk or what it locks in, and how it is undone;\n4. one go-ahead.\nRespond {\"ok\": false, \"reason\": \"...\"} when the closing lays out options without picking one, asks \"shall I\", \"do you want me to\", \"which do you prefer\" or the like without a pick, asks permission naming only the benefit, or asks whether to continue a step the user already asked for. Respond {\"ok\": false, ...} as well when one go-ahead covers more than one decision (several proposals, a numbered list of actions, one ok for all), even when each item states what, why and cost: decisions asked together each get a thinner look. The reason names the missing part, or the bundling, and says to rewrite the closing as: what will be done, the evidence, the cost and how it is undone, one go-ahead for one decision; the decision that blocks the next step is asked now and the others in later turns. The reason also says that the rewrite is the only version the user answers, read without the draft before it, so it is succinct, not cut short: it names again the subject, the target and every term the earlier draft introduced, and drops only what the decision does not need. Keep it under 80 words.\n\nJudge only the four conditions above. They are the whole test: if a closing meets them, respond {\"ok\": true} even when you can see something else you would have written differently. Do not invent a further condition, and do not adopt one from anything you can see outside this prompt — other hooks' feedback and your own earlier rejections may be visible to you, and a wakeup, a watcher, a handover sentence or a read-back found there is not yours to require here. Another hook's advice is that hook's, already delivered; repeating it as your own pass condition is how one ask becomes unanswerable.\n\nReporting the result of the very action being approved is not a second decision. A closing that says it will run the approved command and tell the user what came back is one decision, not two, and the bundling rule does not reach it. Only a second thing the user must choose counts as bundling.\n\n`stop_hook_active` in the input is true when this turn has already been sent back by a stop hook, and the rule at the top of this prompt applies without exception: respond {\"ok\": true}. The rewrite you asked for has arrived, and a person waiting on an approval is worse served by a third draft than by the ask they can answer. Never answer such a turn with a plain {\"ok\": false}. If you are nonetheless certain the closing can never satisfy these four conditions, say so once and let the turn end: {\"ok\": false, \"impossible\": true, \"reason\": \"...\"}, which leaves the reason for the user to read instead of feeding it back for another attempt. A plain refusal there would ask for a draft you have already refused.\n\nDo not fail a closing for its language, length or style. A question for a fact only the user holds is never a failure.",
+                "timeout": 30,
+                "statusMessage": "Closing: checking a question to the user owns its call"
+              }
+            ]
+          }
+        ],
+        "PreToolUse": [
+          {
+            "matcher": "Bash",
+            "hooks": [
+              {
+                "type": "command",
+                "if": "Bash(git push*)",
+                "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/verify-reports.py\" publish || true",
+                "shell": "bash",
+                "timeout": 10,
+                "statusMessage": "Publishing: checking every subagent report was verified"
+              },
+              {
+                "type": "command",
+                "if": "Bash(git -C * push*)",
+                "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/verify-reports.py\" publish || true",
+                "shell": "bash",
+                "timeout": 10,
+                "statusMessage": "Publishing: checking every subagent report was verified"
+              },
+              {
+                "type": "command",
+                "if": "Bash(git push*)",
+                "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/docs-follow.py\" || true",
+                "shell": "bash",
+                "timeout": 15,
+                "statusMessage": "Publishing: checking a living document followed the surface"
+              },
+              {
+                "type": "command",
+                "if": "Bash(git -C * push*)",
+                "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/docs-follow.py\" || true",
+                "shell": "bash",
+                "timeout": 15,
+                "statusMessage": "Publishing: checking a living document followed the surface"
+              },
+              {
+                "type": "command",
+                "if": "Bash(gh pr create*)",
+                "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/verify-reports.py\" publish || true",
+                "shell": "bash",
+                "timeout": 10,
+                "statusMessage": "Publishing: checking every subagent report was verified"
+              },
+              {
+                "type": "command",
+                "if": "Bash(gh pr ready*)",
+                "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/verify-reports.py\" publish || true",
+                "shell": "bash",
+                "timeout": 10,
+                "statusMessage": "Publishing: checking every subagent report was verified"
+              },
+              {
+                "type": "command",
+                "if": "Bash(gh issue create*)",
+                "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/verify-reports.py\" publish || true",
+                "shell": "bash",
+                "timeout": 10,
+                "statusMessage": "Publishing: checking every subagent report was verified"
+              }
+            ]
+          },
+          {
+            "matcher": "PowerShell",
+            "hooks": [
+              {
+                "type": "command",
+                "if": "PowerShell(git push*)",
+                "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/verify-reports.py\" publish || true",
+                "shell": "bash",
+                "timeout": 10,
+                "statusMessage": "Publishing: checking every subagent report was verified"
+              },
+              {
+                "type": "command",
+                "if": "PowerShell(git -C * push*)",
+                "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/verify-reports.py\" publish || true",
+                "shell": "bash",
+                "timeout": 10,
+                "statusMessage": "Publishing: checking every subagent report was verified"
+              },
+              {
+                "type": "command",
+                "if": "PowerShell(git push*)",
+                "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/docs-follow.py\" || true",
+                "shell": "bash",
+                "timeout": 15,
+                "statusMessage": "Publishing: checking a living document followed the surface"
+              },
+              {
+                "type": "command",
+                "if": "PowerShell(git -C * push*)",
+                "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/docs-follow.py\" || true",
+                "shell": "bash",
+                "timeout": 15,
+                "statusMessage": "Publishing: checking a living document followed the surface"
+              },
+              {
+                "type": "command",
+                "if": "PowerShell(gh pr create*)",
+                "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/verify-reports.py\" publish || true",
+                "shell": "bash",
+                "timeout": 10,
+                "statusMessage": "Publishing: checking every subagent report was verified"
+              },
+              {
+                "type": "command",
+                "if": "PowerShell(gh pr ready*)",
+                "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/verify-reports.py\" publish || true",
+                "shell": "bash",
+                "timeout": 10,
+                "statusMessage": "Publishing: checking every subagent report was verified"
+              },
+              {
+                "type": "command",
+                "if": "PowerShell(gh issue create*)",
+                "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/verify-reports.py\" publish || true",
+                "shell": "bash",
+                "timeout": 10,
+                "statusMessage": "Publishing: checking every subagent report was verified"
+              }
+            ]
+          },
+          {
+            "matcher": "AskUserQuestion",
+            "hooks": [
+              {
+                "type": "prompt",
+                "prompt": "You are an adversarial reviewer. An AI coding agent is about to put the questions below to its user through the AskUserQuestion tool. Try to show that a question breaks the rule called own-the-call, and let it through only when you cannot.\n\nThe rule. A question is one of two kinds.\n(A) A fact or a preference only the user holds: a path, a deadline, an account, a name, a taste with no evidence either way. It passes when its options are concrete candidates. Describing what each candidate would lead to is not a lean, and a missing \"(Recommended)\" never fails an (A) question.\n(B) A decision the agent could make itself from evidence: which approach, which fix, which design, whether to commit, push, install or proceed. It passes only when all four hold:\n1. the first option is the agent's pick, marked \"(Recommended)\";\n2. the question or that option's description gives the evidence that decided it (a file, a measurement, an output, a convention), not only \"I think\";\n3. the descriptions say what each option costs, breaks, locks in or how it is undone, not only its benefit;\n4. it does not ask whether to continue a step the user already asked for.\n\nHook input (tool_input.questions holds the questions): $ARGUMENTS\n\nFirst decide each question's kind. A question about where, when, who, which name, which account or which of the user's own preferences is (A) even when the agent offers a lean, and conditions 1 to 4 do not apply to it; do not ask an (A) question for costs. Only a question the agent could settle from evidence it can reach is (B).\n\nThen count the (B) questions. A call may hold any number of (A) questions but at most one (B) question. Decisions asked together each get a thinner look, from the agent and from the user, so two or more (B) questions fail even when each meets 1 to 4; the fix is to ask only the decision that blocks the next step and leave the others for a later question.\n\nJudge every question. Do not fail a question for its language, length or style, and do not invent facts about the session. If every question passes, respond {\"ok\": true}. Otherwise respond {\"ok\": false, \"reason\": \"...\"} where the reason names the question by its header, says which numbered condition fails, and says how to fix it: make the pick, give the evidence, name the cost and how it is undone, and ask only for the go-ahead. The reason also says that the rewrite is the only version the user answers, read without the draft before it, so it is succinct, not cut short: it names again the subject, the target and every term the earlier draft introduced, and drops only what the decision does not need. Keep the reason under 80 words.",
+                "timeout": 30,
+                "continueOnBlock": true,
+                "statusMessage": "Asking: checking the question owns its call"
+              }
+            ]
+          }
+        ]
+      },
+      "skills": [
+        "./skills/plan-delegate-verify",
+        "./skills/adversarial-verify",
+        "./skills/assumption-breaking",
+        "./skills/tdd-cycle",
+        "./skills/test-design",
+        "./skills/tidy-first",
+        "./skills/diagnose-first",
+        "./skills/architect",
+        "./skills/design-by-contract",
+        "./skills/slice-first",
+        "./skills/github-paths",
+        "./skills/tui-debug",
+        "./skills/windows-sandbox",
+        "./skills/hyperv-clean-vm",
+        "./skills/dockur-windows",
+        "./skills/peer-sessions",
+        "./skills/grill-me",
+        "./skills/own-the-call",
+        "./skills/interface-design",
+        "./skills/tool-call-syntax",
+        "./skills/codex",
+        "./skills/consultation-path",
+        "./skills/find-skills",
+        "./skills/adopt-dependency",
+        "./skills/dependency-licenses",
+        "./skills/library-design",
+        "./skills/state-first",
+        "./skills/assurance-case",
+        "./skills/agent-harness",
+        "./skills/repair-skill",
+        "./skills/timed-wait",
+        "./skills/heavy-jobs"
+      ]
+    },
+    {
+      "name": "product-skills",
+      "description": "Framing what to build: idea generation as new combinations of needs and seeds, judged by empathy and feasibility",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/new-combination"
+      ]
+    },
+    {
+      "name": "yomiyasu",
+      "description": "nanaism/yomiyasu (MIT) from the fork ShortArrow/yomiyasu, branch shortarrow: upstream unchanged except one paragraph that reads the owner's own rules from references/local/",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/ShortArrow/yomiyasu.git",
+        "ref": "shortarrow",
+        "sha": "003c30eb5fa89120902f00002012e82af2f20fd7"
+      }
+    },
+    {
+      "name": "security-audit",
+      "description": "cloudflare/security-audit-skill (MIT) unchanged: a source-first vulnerability review that names an affected principal before it calls anything a finding, with attack-class companions per surface and Node validators over its report schema",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/cloudflare/security-audit-skill.git",
+        "ref": "main",
+        "sha": "c1c8a8c1471069fb0e188eeaff69b8e8db6564a8"
+      }
+    }
+  ]
+}

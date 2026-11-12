@@ -1,0 +1,7 @@
+{
+  "name": "tinyparse",
+  "version": "0.3.0",
+  "description": "A parser.",
+  "main": "dist/bundle.min.js",
+  "license": "MIT"
+}

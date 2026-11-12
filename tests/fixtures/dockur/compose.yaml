@@ -1,0 +1,25 @@
+services:
+  windows:
+    image: dockurr/windows:6.05
+    container_name: win-fixture
+    environment:
+      VERSION: "11"
+      USERNAME: "fixture"
+      PASSWORD: "${VM_PASSWORD}"
+      RAM_SIZE: "8G"
+      CPU_CORES: "4"
+      DISK_SIZE: "64G"
+    devices:
+      - /dev/kvm
+      - /dev/net/tun
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - ./storage:/storage
+      - ./oem:/oem:ro
+    ports:
+      - 8006:8006
+      - 3389:3389/tcp
+      - 3389:3389/udp
+      - 2222:22
+    restart: always

@@ -1,0 +1,375 @@
+---
+name: plan-delegate-verify
+description: |
+  Keep the judgement in the session and send the bulk out: the session plans, subagents carry out the items, and the session verifies the result against the plan it wrote. Use when about to plan an implementation, when a task decomposes into items that could run in parallel, or when work will be handed to subagents at all, when choosing between a subagent and a separate session, and when a read or a run is about to put a large output needed once into the session's context. Covers keeping the planner's context for the plan and the evidence, delegating the fact-gathering without the judgement, what the plan must contain for an implementer that never saw the conversation, why an assertable item is handed over as a test already seen to fail, why a subagent's "done" is not evidence, which vehicle a piece of work takes and why the foreground is what blocks, what changes when the artefact is itself the pass mark, and when the overhead costs more than the work.
+allowed-tools: Agent, Read, Bash, PowerShell, Edit, Write, TodoWrite
+---
+
+# Plan, delegate, verify
+
+Four roles, and they are roles rather than models:
+
+| Role | Owns |
+|---|---|
+| **Scout** | Facts, with citations. No judgement, no recommendation |
+| **Planner** | Decomposition, the order, and the check that decides each item is done |
+| **Implementer** | One item at a time, in a subagent, with no say over what done means |
+| **Verifier** | Whether the result meets the plan — not whether the diff looks reasonable |
+
+Planner and verifier are the same session.
+That is the point: the context trusted with judgement decides what to build and whether it was built,
+and never does the typing.
+
+## What the split protects
+
+The session's context is the working memory of the judgement,
+and it only fills.
+Every file read whole, every test log,
+every benchmark dump stays in it until the session ends,
+and the verdict comes last, when the context is fullest.
+Conventions decay the same way (`agent-harness` builds gates because prose held at turn 1 slips by turn 200),
+and so does the reading of a diff.
+A planner that gathered its own facts verifies on a context that is mostly material it needed once.
+
+So the split protects two things:
+the judgement's context is not spent on bulk, and,
+where a cheaper model exists for a role,
+the judgement tier is not spent on typing.
+The first holds on any model,
+and it is why the split happens when the session and the subagent run on the same one.
+Whatever is large and needed once goes out to a subagent and comes back as a conclusion with citations,
+and what stays in the session is the plan, the evidence,
+and the verdict.
+That is why a scout returns facts and not file dumps,
+and why the verifier runs the checks itself instead of reading a transcript of them:
+both keep the session's context to what the verdict is made from.
+
+This is not a licence to delegate everything.
+Orientation still happens in the session,
+because a plan written on a scout's summary of an unknown shape is a plan for the summary;
+and spawning still needs the user to have asked.
+The rule is narrower: when the output is large and its use is once,
+the session should not be the place it lands.
+
+## Host adapter
+
+Identify the host from the tools it exposes before choosing a row:
+`AskUserQuestion`, `Agent` and `Skill` mean Claude Code;
+a structured tool interface with approval requests on blocked calls means Codex;
+`askQuestions`, `runSubagent` and `#browser` mean Copilot in VS Code;
+`/agent`,
+a permission prompt with a "rest of the session" option and `--allow-all` mean Copilot CLI;
+an "Ask questions" tool, a Task tool and a Browser tool mean Cursor;
+`ask_user`,
+`read_file` and subagents exposed as tools of their own name mean Gemini CLI.
+A host that matches none of these takes the last row.
+
+In Claude Code, the session is planner and verifier and does neither the reading nor the typing:
+
+```
+Agent(prompt: "...")                    # scout or implementer, on the session's model
+Agent(prompt: "...", model: "<name>")   # the same role, moved to another model
+```
+
+Without `model` the subagent runs on the session's model,
+and that is still the split:
+the read lands in the subagent's context and the session keeps only the conclusion.
+Set `model` when the tier rule under Gathering the facts puts a role on a different model;
+the names the parameter accepts are listed in the tool's own description,
+and none is written here,
+because a name written here goes stale and reads as a condition for delegating at all.
+
+### The vehicle is chosen by what has to come back
+
+A subagent and a separate session are not two styles of the same thing.
+The subagent returns a value into this conversation;
+a session does not return anything, and is asked.
+That difference, not the size of the work, picks the vehicle.
+
+Delegate to a **subagent** when the result is evidence this session has to judge:
+the scout's conclusion, the implementer's diff, the verifier's verdict.
+Those are the roles above,
+and they exist to put a value back in front of the planner.
+Give it `isolation: worktree` when it writes files that another agent is also writing;
+the subagent then runs its commands inside its own checkout,
+branched by default from the default branch rather than this session's `HEAD`,
+and the worktree is removed again if it changed nothing.
+
+Start a **separate session** when the work is not reporting to this plan at all:
+a long errand whose outcome the user reads directly,
+work in another repository,
+an errand that should outlive this conversation.
+`claude --bg` starts one, `claude agents` lists them,
+and `claude attach <id|name>` opens one in a terminal;
+each is its own operating-system process,
+and a session paused on a permission prompt keeps that process running.
+Measured here on 2026-11-10: fifteen sessions, fifteen distinct pids,
+three working while twelve sat idle.
+`peer-sessions` is how one is found and asked,
+and the answer it gives is that session's text,
+not a result returned to this one.
+
+What makes this worth stating is that the foreground is the expensive default.
+A foreground subagent blocks this conversation until it finishes,
+so a prompt it raises stops everything waiting on it.
+A background subagent does not:
+it runs while the session keeps working,
+its permission prompt surfaces here named for the subagent that asked,
+and denying that one call does not stop the subagent.
+So the cure for a delegated run that drags the session down with it is the background,
+not a different vehicle.
+
+The cost that has no flag is on the return.
+A report coming back into this session brings this session's own gates with it — here,
+a subagent's claim cannot be relayed until something has tried to break it.
+That is the right price for evidence the plan depends on,
+and it is pure overhead for an errand that was never going to be judged here.
+When the work owes this plan nothing,
+a session keeps it out of the turn entirely.
+
+| The work | Vehicle |
+|---|---|
+| Produces evidence this session must judge | a subagent, in the background, with a schema on the return |
+| Writes files another agent is also writing | a subagent with `isolation: worktree` |
+| Reports to the user, not to this plan | a separate session, found and asked through `peer-sessions` |
+| Must outlive this conversation | a separate session |
+
+In Codex, use the runtime's subagent tools only when the user or governing repository instructions explicitly authorize delegation.
+Prefer the inherited model unless the user asked for a particular model or tier.
+If subagents are unavailable or unauthorized, keep the same planner,
+implementer,
+and verifier responsibilities as separate phases in the current session;
+do not pretend a subagent ran.
+
+| Host | Delegation |
+|---|---|
+| Copilot in VS Code | `runSubagent`. The model is the explicit parameter, else the agent's `.agent.md` `model`, else the main model. Move a role to another model with that parameter when the tier rule asks for it |
+| Copilot CLI | The built-in Explore agent as scout and the Task agent as implementer, selected with `/agent` or by name in the prompt. A custom agent's `model` frontmatter picks the tier. Agent-to-agent delegation goes only through the `agent` tool alias in a custom agent's tools |
+| Cursor | The Task tool, with `/name` to force a particular subagent. The subagent's `model` frontmatter picks the tier, `inherit` by default |
+| Gemini CLI | Each subagent is a tool named after itself, and `@name` at the start of the prompt forces one. `model` in `.gemini/agents/*.md` picks the tier, default `inherit` |
+| Any other host | Run planner, implementer and verifier as three separate phases in the one session, and write each phase's output to a file the next phase reads. Do not pretend a subagent ran |
+
+## Gathering the facts is delegable; deciding from them is not
+
+Writing a plan takes an inventory first — the public surface,
+the tests that already exist, the values the specification fixes,
+where the boundaries are declared.
+Reading twenty files to find six facts spends the planner's context on material it will not use again,
+and the planner needs the conclusion, not the file dumps.
+Send scouts.
+
+What a scout returns is **what exists, with citations**: path and line,
+the actual value, the actual name.
+What it must not return is a recommendation.
+An agent that comes back with "these three cases should be tested" has written the part of the plan the planner exists to write,
+and the planner will find it hard not to accept a list that already looks finished.
+
+Two things worth asking for that a scout will not volunteer:
+
+- **What it looked for and did not find.** Absence is a fact the plan needs — no test covers this path,
+  the specification fixes no value here — and it never appears in a report of what was found.
+- **Where it was unsure.** A scout that guessed rather than read has produced a fact indistinguishable from the others.
+
+Split scouts by **question**, not by directory.
+Three agents each asking something different — what the wire format fixes,
+what the existing tests already assert,
+what the error paths are — miss different things.
+Three agents each given a third of the tree miss the same thing three times.
+
+This does not turn exploration into a delegable step. **Enumeration delegates;
+orientation does not.** When the shape is already known — list every call site,
+find each declared constant — a scout returns it faster and cheaper.
+When the question is still what the shape *is*,
+reading it yourself is what produces the plan.
+
+Which model each role runs on follows the same line.
+Tier by the cost of that role being wrong, not by the role's name:
+the closer a role sits to a verdict (the planner, the verifier, a reviewer whose finding will be acted on),
+the higher the tier; the closer it sits to producing facts (a scout, an implementer holding a written plan and a failing test),
+the lower.
+The rule can put every role on the same model,
+and the split still stands,
+since the context is the other thing it protects.
+A cast written as names,
+this model for the developer and that one for the reviewer,
+goes stale with the model list and reads as a condition;
+the rule does not.
+
+## The plan is an artifact, not a conversation
+
+A subagent starts with none of the conversation.
+Anything the plan leaves implicit becomes a guess,
+and the guess arrives as working code that solves a different problem.
+
+Each item carries five things:
+
+1. **The file and what changes about it.** Not "the parser" — the path.
+2. **The check that decides it is done.** A command with an expected result.
+   Decided now, by the planner, not later by whoever implements it.
+   Where the item's behaviour can be asserted,
+   that check is a test the planner has already seen fail, handed over red,
+   with its assertion and its expected value fixed in the plan.
+   `tdd-cycle` is the loop the implementer then runs;
+   this is only about who writes the first test and when.
+   An implementer that receives "done when the suite is green" writes the test and the code together,
+   and a test written beside the code it checks is shaped by that code — it passes by construction,
+   and the plan has handed away the one judgement it exists to keep.
+   The exception is the item whose behaviour resists assertion (a layout, a prose edit, a build-system change);
+   there the check is the command and its expected output,
+   and the plan says which of the two it is,
+   because an implementer cannot tell a missing test from a deliberate one.
+3. **What it must not touch.** The blast radius, stated,
+   so an implementer who sees an adjacent problem leaves it alone.
+4. **What it depends on.** Items with no dependency between them run at once;
+   items with one do not.
+5. **How far it goes, and where it stops.** Whether the item ends at code that compiles,
+   at the check passing, or at the change running,
+   inspected and its failures fixed; and what lies outside it.
+   An implementer that reaches a first working version and comes back for review has stopped where nobody told it not to.
+
+A plan that reads "fix the three issues from the audit" names nothing an implementer can act on.
+The severity codes, the option letters and the positional references all die at the subagent boundary.
+
+## A subagent's report is a claim
+
+Agents report success.
+They report it after skipping a step,
+after a test that was already failing,
+and after deciding an item was unnecessary.
+
+**Ask for evidence, and make the evidence the return value.** Command output,
+a test count, the diff that was written.
+Then check it against the item's own criterion — not against whether the answer sounds right.
+A schema on the Agent call makes that mechanical:
+the agent cannot return prose when the field wants a number.
+
+Two things a verifier looks for that a reviewer of the diff does not:
+
+- **What is missing.** An item the plan listed and the result does not contain.
+  This is the common failure and it leaves no trace in the diff.
+- **What was widened.** An implementer that fixed something adjacent has told you the plan was wrong,
+  or has done something nobody checked.
+
+When the verification itself is delegated to a fresh context,
+as `adversarial-verify` asks for expensive claims,
+the verifier's prompt has to carry its method,
+because a subagent has read none of these skills.
+Give it two, in this order:
+`assumption-breaking` to widen the search (extract the premises the plan and the result rest on, walk at least four distinct axes, ask whether the plan can be satisfied while the goal fails) and `adversarial-verify` to narrow the report (refute by default, confirmed and hypothesis kept apart).
+A verifier given only the second finds what the plan already named;
+a verifier given only the first reports hypotheses as defects.
+Name the skills in the prompt and quote the parts that matter;
+a bare instruction to "verify adversarially" hands the method back to the model that produced the work.
+
+## When the plan is a test plan
+
+The rule that the implementer has no say over what done means gets tighter,
+not looser, because now the artefact **is** the criterion.
+
+- **The planner owns the assertions.
+  The subagent owns the mechanics.** What must be true — the inputs,
+  the expected values, the wire strings,
+  the counts — is written into the plan.
+  The subagent writes the harness,
+  the fixtures and the plumbing around it.
+  An agent that supplies both the test and its expected value is deciding its own pass mark,
+  and it will decide generously.
+- **Say where each expected value came from.** From the specification,
+  or from running the code as it is today.
+  The second is a characterisation test and is legitimate when pinning existing behaviour is the intent — and useless when correctness was the intent,
+  because it records the bug.
+  The plan marks which of the two each case is;
+  nothing downstream can recover it.
+- **Verify that each test can fail.** Passing tests are not evidence:
+  a test that asserts nothing passes too.
+  See it red before the fix,
+  or break the subject and confirm the test notices.
+  This is the only check that distinguishes a test from a decoration,
+  and it is the one a subagent reporting "12 passed" has not done.
+- **Count the cases against the plan.** A case list makes the missing-item check mechanical:
+  nine declared, six written,
+  reported as done is the ordinary outcome without it.
+
+## Run the checks yourself
+
+The verifier runs the plan's commands in its own session.
+A subagent reporting that the tests pass is not the tests passing;
+it is a sentence about the tests.
+
+**The mechanical gates run first,
+and all of them.** The repository's formatter, linter,
+type check and tests run on the result before the verifier reads a line of it,
+whatever the change looks like.
+They are cheap and they do not tire.
+A finding a formatter would have printed, raised by the verifier,
+is the verifier's context spent on something a tool computes;
+the verifier's reading is for what no tool computes,
+whether the result meets the plan.
+
+**A selector may add checks,
+never remove one.** Between the gates and the verifier,
+something cheaper — a rule over the changed paths, a smaller model,
+a classifier that returns probabilities — can read the diff for what it means and add the checks its paths do not reveal:
+a public surface changed,
+so the compatibility check and the documentation; prose added,
+so the prose lint; credentials or outbound calls touched,
+so the security review.
+Deciding that a gate can be skipped this time is a different role.
+A missed addition costs one check, with the gates still standing;
+a wrong skip lets a defect through to the verifier or past it.
+By the tiering rule above, that decision sits next to the verdict,
+so it belongs to the verifier and not to the cheap tier.
+The selector may also send a result back for an item of the plan it cannot find in the diff,
+but its pass is not evidence; only the verifier's own run is.
+
+Where the work was split across worktrees,
+the verification happens after the merge, on the combined result.
+Items that pass alone and fail together are the reason the phase exists.
+
+## When not to do this
+
+- **The work is one edit.** Planning it,
+  spawning an agent and verifying the result costs more than making the change.
+  The exception is the one edit that takes a long read to locate:
+  the read is the bulk, and it can go out even when the edit stays in.
+- **The task is exploratory.** A plan written before the shape is known will be wrong,
+  and the implementer will follow it anyway.
+  Orient first — yourself, not through a scout — then plan.
+- **The items are not separable.** Two agents editing the same file in parallel produce a merge,
+  not progress.
+  Either sequence them or give them worktrees.
+
+## The user has to have asked
+
+Spawning subagents spends tokens at a rate the user did not choose by asking for the feature.
+In Claude Code, only the user explicitly invoking this skill by name counts as asking;
+automatic activation from the description,
+or inference from the size of a task, does not.
+In Codex, follow the host's delegation policy as well:
+skill invocation cannot override a requirement for explicit user or repository authorization.
+In Copilot, Cursor and Gemini CLI, and in any other host,
+the same rule holds,
+and the host's own delegation policy applies on top.
+
+## Sources
+
+- Anthropic, "Subagents" (code.claude.com/docs/en/sub-agents.md):
+  foreground subagents block the main conversation until complete,
+  background subagents run concurrently while the user keeps working,
+  a background subagent's permission prompt surfaces in the main session named for the subagent,
+  and denying that one tool call does not stop the subagent;
+  the `isolation: worktree` frontmatter field and its default base branch.
+  Read 2026-11-10.
+- Anthropic, "Run parallel sessions with worktrees" (code.claude.com/docs/en/worktrees.md):
+  a subagent's worktree is removed automatically when it finishes without changes,
+  and the isolation checks cover every subagent spawned from an isolated session.
+  Read 2026-11-10.
+- Anthropic, "Run agents in parallel" (code.claude.com/docs/en/agents.md):
+  subagents return a summary to the conversation that spawned them while agent-view sessions report only to the user.
+  Read 2026-11-10.
+- Anthropic, "Manage agents with agent view" (code.claude.com/docs/en/agent-view.md):
+  each session is its own Claude Code process,
+  and one paused on a permission prompt keeps that process running.
+  Read 2026-11-10.
+- The fifteen-session count is from `claude agents --json` on this machine on 2026-11-10:
+  fifteen sessions, fifteen distinct pids, three busy and twelve idle.

@@ -1,0 +1,11 @@
+# Commits whose surface change needed no living document to follow it.
+#
+# One full 40-character sha per line, then the reason. An abbreviated sha is
+# ignored, because how far git abbreviates depends on the repository's size, so
+# one that is unique here can be ambiguous on a runner. A line with no reason is
+# a silenced check and is ignored too.
+#
+# The entry names a commit, never a path: a commit's contents never change, so
+# the excuse cannot outlive what it excused. A path would be a permanent hole.
+# Once the commit is pushed the entry is spent, and every refusal lists the spent
+# ones so they can be deleted.

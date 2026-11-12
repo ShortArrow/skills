@@ -1,0 +1,6 @@
+cff-version: 1.2.0
+title: tinyparse
+authors:
+  - family-names: Example
+    given-names: Maintainer
+version: 0.3.0

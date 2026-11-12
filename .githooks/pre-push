@@ -1,0 +1,3 @@
+#!/bin/sh
+# Refuses a push that names a repository kept private. See repo-names.py.
+exec python "$(dirname "$0")/repo-names.py" "$@"

@@ -1,0 +1,470 @@
+# Contributing
+
+## Layout
+
+```
+skills/<name>/SKILL.md           the skill
+skills/<name>/scripts/           anything it executes
+skills/<name>/references/        material the body links to, read only when needed
+hooks/                           scripts the plugin hooks run (Claude Code only)
+tests/<name>/firing-tests.md     its scenarios and recorded runs
+tests/fixtures/<name>/           the repository a scenario runs in
+tests/check-portability.ps1      manifests, hosts, invariants, sources
+tests/skill-doctor.py            health of every skill, as the host will see it
+tests/reflow-prose.py            wraps prose one sentence per line, in any language
+tests/run-firing-tests.sh        the behavioural runner
+.claude-plugin/marketplace.json  plugin grouping
+docs/design-intent.md            the forces behind these shapes
+vendor/<plugin>/                 a fork of someone else's plugin, as a submodule
+```
+
+`SKILL.md` opens with YAML frontmatter holding `name` and `description`.
+The name matches the directory;
+the portability check refuses a mismatch.
+
+## A vendored plugin installs the commit its submodule records
+
+`vendor/yomiyasu` is the fork ShortArrow/yomiyasu (MIT, upstream nanaism/yomiyasu),
+on its `shortarrow` branch:
+upstream unchanged except one paragraph and `references/local/`,
+where the owner's own rules go.
+Claude Code clones a marketplace with `--no-recurse-submodules`,
+so a source pointing into `vendor/` would install an empty directory;
+the marketplace entry fetches the fork by URL instead,
+and its `sha` pins the install to the commit the submodule records.
+`tests/test_vendor_pins.py` fails when the two differ.
+
+To ship a change to the fork:
+
+1. Commit and push it on `shortarrow` inside `vendor/yomiyasu`.
+2. In this repository, stage `vendor/yomiyasu` and set the entry's `sha` to the same commit.
+3. Run the tests, commit and push.
+4. Run `claude plugin uninstall yomiyasu@shortarrow-skills`,
+   then `claude plugin install yomiyasu@shortarrow-skills`.
+   `claude plugin update` compares the version in the fork's `plugin.json`,
+   which a local rule does not change, and reports it already latest.
+   `gitCommitSha` in `~/.claude/plugins/installed_plugins.json` shows the commit installed.
+
+Nothing here fetches the upstream,
+so `.claude/settings.json` runs `hooks/upstream-behind.py` when a session starts in this repository.
+It asks GitHub for the upstream's `main` with `git ls-remote`,
+and when the fork's HEAD does not contain that commit it fetches it,
+counts what the fork lacks and puts the count into the session.
+On 2026-10-30 the fork was twelve commits behind,
+Windows fixes among them, and nobody had noticed.
+An unreachable upstream or a submodule not checked out passes in silence.
+The check lives in the project's settings and not in a plugin's hooks,
+because a plugin's hooks run in every repository.
+
+The installed plugins fall behind the same way.
+On 2026-11-04 this machine's plugins were still at the commit of 2026-10-09,
+and a rule pushed that day reached no session.
+So the engineering-skills entry runs `hooks/update-own-plugins.py` asynchronously when a session starts.
+It compares each plugin whose source is this repository with the HEAD the marketplace installs from:
+the clone's HEAD for a marketplace added from a directory,
+the remote's HEAD, read with `git ls-remote`, for one added from GitHub.
+What is behind gets `claude plugin update`,
+after `claude plugin marketplace update` for a remote marketplace,
+and the next session loads it.
+A vendored plugin is left to the procedure above.
+This one lives in a plugin's hooks because it concerns the install,
+which every repository shares.
+
+A fresh clone of this repository needs `git submodule update --init` before the fork can be edited;
+installing the plugins does not.
+
+## A plugin taken unchanged is pinned, not forked
+
+A fork exists to carry a local change.
+Where someone else's plugin is taken as it stands,
+there is nothing to carry,
+so it gets no submodule and no copy under `skills/`:
+the marketplace entry fetches it by URL and pins it with `ref` and `sha`.
+`security-audit` is cloudflare/security-audit-skill that way.
+
+Without a submodule no sha holds the pin,
+so `tests/test_upstream_pins.py` asks the remote:
+the entry names both a `ref` and a full `sha`,
+and that commit is still an ancestor of the ref.
+A rewritten or dropped commit fails; an unreachable remote skips,
+because the pin was reviewed when it was set.
+
+The catalogue's own gates read `skills/` only,
+so a pinned plugin is not held to this repository's house style — its files are upstream's to shape.
+What this repository owes such a plugin is the review in `adopt-dependency` and `dependency-licenses`,
+recorded in the commit that adds it,
+and a bump that is a fresh review rather than a newer number.
+
+## Language-neutral rules, with language layers
+
+A skill's body is the rule that holds in every language, in English.
+What differs by language goes in `references/<language>.md` (today `references/japanese.md`),
+and the body names it from a section called **Language layers**,
+placed right after the introduction and worded the same way in every writing skill,
+so the layer is loaded whenever the draft is Japanese and never otherwise.
+Material specific to a market rather than a language takes the same shape (`regulated-claims` and its `references/japan.md`) and carries its own `## Sources` block.
+The portability check refuses a layer file the body does not name,
+and a named path the directory lacks.
+
+A stack takes the same shape.
+`architect`'s body is the placement rule that holds in every language,
+and `references/<stack>.md` (today `references/csharp.md`, with its longer material in files prefixed `csharp-`, and `references/go.md`) holds what one language,
+a framework or a binary boundary spells differently,
+named from a section called **Stack layers**.
+A session reads the layer for the stack in hand and no other,
+so what it loads grows with the stacks it touches and not otherwise.
+`docs/design-intent.md` carries the reasoning.
+
+## Prose is wrapped one sentence per line
+
+In every language: a sentence ends a line,
+in Japanese a sentence of 120 characters or fewer stays on one line and a longer one breaks at every 読点 (the half up to the 読点 on one line, the half up to the 句点 on the next, a middle line per further 読点; a fragment of six characters or fewer such as また、 stays with its clause),
+in English a sentence wider than about 72 columns breaks after a clause separator (, ; :),
+and a line never breaks inside a word, a bracket or a quoted phrase.
+A fixed-width wrap re-flows a whole paragraph in the diff when one word changes and puts breaks where no reader pauses;
+in Japanese it also splits words and can render as a stray space.
+`python tests/reflow-prose.py <file>` applies the rule,
+with the sentence ends and separators of each language layered on from the characters in the paragraph,
+and refuses to write if anything but whitespace and blockquote markers would change.
+`--check` lists the files that are not yet in shape.
+
+## The description is the part that is always on
+
+A host loads every installed skill's name and description into every session and reads the body only when the skill fires.
+In Claude Code, `claude plugin details <plugin>@shortarrow-skills` shows that split for one plugin,
+skill by skill.
+Codex applies a discovery budget when many skills are installed and shortens descriptions to fit it.
+
+So the description is paid for continuously, and it has one job:
+to let the model decide whether the skill applies.
+Detail goes in the body, where it costs nothing until it is used.
+Synonyms of words the description already contains add nothing,
+and a second language adds nothing either;
+the skills Anthropic ships are English-only and fire in every language.
+What the description should spend its words on is the boundary with its siblings:
+four skills here answer to the word "screenshot",
+and the description is the only place that can say which one owns which case before one of them fires.
+
+Descriptions here are written as the moments the skill replaces ("about to …"),
+because a skill fires on a moment and a glossary fires on nothing.
+The moment is placed before the act,
+so the skill prevents rather than repairs;
+a rule that can only be applied to finished text arrives after the habit has already shaped the next paragraph.
+`docs/design-intent.md` carries the reasoning.
+Short is not the goal; ambiguity and the budget are.
+A long description made of concrete moments does not over-fire (the S4 and S5 scenarios measure that),
+a short one made of a domain name does;
+OpenAI's guidance for GPT-6 Astra (developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra, read 2026-09-14) draws the same line with "use when working with databases" against "use when adding or changing a migration".
+
+Claude Code caps the listing twice,
+and both caps were read from the client's own code on 2026-09-10 (`skillListingMaxDescChars`, `skillListingBudgetFraction`).
+One description is cut at 1,536 characters.
+GitHub Copilot CLI is stricter:
+its skill schema rejects a description over 1,024 characters and the skill is not listed at all (read from its bundle on 2026-09-11; four skills here were missing from Copilot until they were shortened).
+`tests/skill-doctor.py` refuses one over 1,000 so both the tail and the Copilot listing survive.
+The whole listing is also capped at 1% of the context window in characters,
+8,000 at a 200k window.
+Over that, the skills with the fewest recorded uses lose their descriptions first and are listed by name only,
+so a skill that has never fired cannot fire on its description,
+and a new skill starts at the back of that queue.
+This catalogue's descriptions together run to several times that budget,
+so with two or more of its plugins installed the default is exceeded.
+The count and the total move with every skill added,
+so neither is written here:
+`tests/skill-doctor.py` prints the per-plugin totals and the fraction that would hold this catalogue alone.
+The README carries the fraction installers are told to set,
+rounded up so one more skill does not invalidate it — raise it there when the measured fraction reaches it.
+The budget is shared with every other plugin and the bundled skills,
+and the real figures are in the debug log:
+on 2026-09-10 a session with this catalogue,
+two other plugins and the bundled skills listed 59 skills at 37,792 characters against a 30,000-character budget at the default fraction,
+and nothing was truncated at 0.05.
+
+## A rule added asks for one to go
+
+The commit that adds a rule — a new skill,
+a row in a skill's moments table,
+a section — looks for what it makes redundant elsewhere and removes it in the same commit:
+another skill's row or paragraph that now says the same thing,
+a skill whose remaining content the new one covers,
+a rule the new one contradicts.
+Where the overlap is partial,
+one skill keeps the rule and the other names it in its connections.
+When nothing can go, the commit message says what was checked.
+In code, a rule made obsolete by a new one gets removed because the code and its tests show it:
+on 2026-10-29 an agent asked to add a rule to a small fictional module removed the rule it superseded in 12 of 12 headless sessions,
+with no skill loaded.
+A skill shows neither, and no check notices when one stops earning its place.
+On the same day this catalogue's history held 51 skills added and none deleted,
+and 27 of its 49 skills had no Skill call and no slash command in this machine's transcripts since 2026-08-21,
+firing-test sessions included.
+Every description is paid for in every session (above),
+so a skill kept by default is not free.
+The search starts from the new rule's moment:
+grep the other skills for its trigger words and read the hits.
+A whole skill is a candidate when its moments are all named elsewhere,
+or when it has not fired; use on another machine counts,
+so look there before deleting one.
+
+## Host branches
+
+A skill whose procedure names a tool (`AskUserQuestion`, `Read` with `pages`, `Agent` with a model) carries one row per host — Claude Code,
+Codex, Copilot, Cursor,
+Gemini CLI — and a final "Any other host" row that gives a substitute procedure.
+Rows hold only mechanisms a host's own documentation states,
+with the date checked;
+an undocumented capability is written as `not documented (checked <date>)` and falls through to the last row.
+The Claude Code and Codex rows are pinned by string invariants in the portability check,
+so a later edit that generalises them into host-neutral prose fails the run.
+Prose-only skills need none of this.
+
+Where each host reads skills from,
+which is what `npx skills add -g` resolves for the reader:
+
+| Host | User directory | Project directory |
+|---|---|---|
+| Claude Code | `~/.claude/skills` | `.claude/skills` |
+| Codex | `~/.codex/skills`, `~/.agents/skills` | `.agents/skills` |
+| Copilot in VS Code | `~/.copilot/skills`, `~/.agents/skills`, and `~/.claude/skills` | `.github/skills`, `.claude/skills`, `.agents/skills` |
+| Copilot CLI | `~/.copilot/skills`, `~/.agents/skills` | `.github/skills`, `.claude/skills`, `.agents/skills`; `/add-dir` loads `.github/skills` |
+| Cursor | `~/.cursor/skills`, `~/.agents/skills`, `~/.claude/skills`, `~/.codex/skills` | `.agents/skills`, `.cursor/skills`, `.claude/skills`, `.codex/skills` |
+| Gemini CLI | `~/.gemini/skills`, `~/.agents/skills` (the alias wins ties) | `.gemini/skills`, `.agents/skills` |
+
+The directories above were checked against official documentation on 2026-08-28.
+
+The format itself is not specific to one host.
+The same folder-with-a-manifest shape is used across agents,
+and each states its own in its documentation:
+
+| | |
+|---|---|
+| [agentskills.io](https://agentskills.io) | The specification |
+| [claude.com/skills](https://claude.com/skills) | Claude |
+| [docs.github.com — about agent skills](https://docs.github.com/en/copilot/concepts/agents/about-agent-skills) | GitHub Copilot |
+| [developers.openai.com — tools and skills](https://developers.openai.com/api/docs/guides/tools-skills) | OpenAI, from the API |
+| [developers.openai.com — skills in the API](https://developers.openai.com/cookbook/examples/skills_in_api) | The same, worked through |
+| [learn.chatgpt.com — build skills](https://learn.chatgpt.com/docs/build-skills) | ChatGPT |
+| [geminicli.com — skills](https://geminicli.com/docs/cli/skills/) | Gemini CLI |
+| [skills.sh](https://www.skills.sh/) | Directory of published skills |
+
+## A hook for the moment a description cannot see
+
+A description fires when the model decides what to do next.
+A body typed inside a Bash call (`gh pr create --body ...`) is written without that pause,
+at the end of a long session, from the conversation,
+and that is where pull request bodies go sloppy.
+The writing-skills entry in `.claude-plugin/marketplace.json` declares a PreToolUse hook on `gh pr *` that injects the rule as context before the command runs:
+the body is written from the commits and the diff, says what changed,
+why and what is left, carries no conversation-local labels,
+and is checked against `pull-request`, `clean-docs`,
+`document-structure` and `plain-language`.
+The hook is written inline in the marketplace entry,
+because that is the only form a marketplace entry accepts:
+a file path is silently ignored,
+and a `hooks/hooks.json` at the shared plugin root would register once per plugin.
+The script it runs, `hooks/pr-body-context.sh`, prints one JSON object.
+Codex, Copilot, Cursor and Gemini CLI document a pre-tool hook of their own (`pull-request` lists each, checked 2026-09-17),
+but a marketplace entry can wire only Claude Code's,
+so on those hosts the descriptions still carry the moment and a project wires the same script itself;
+the hook is the backstop for the one place a description is blind.
+
+The engineering-skills entry declares a Stop hook for the other blind moment,
+the last sentence of a turn.
+`hooks/own-the-call-stop.py` reads the closing paragraph of the reply,
+skips quoted spans,
+and blocks once when it leaves a decision with the user (「お任せします」, "up to you", "shall I");
+the reason carries `own-the-call`'s rule,
+and the agent rewrites the closing.
+Replayed over 4,470 turn endings in this machine's transcripts on 2026-10-15 it blocked 205,
+and a sample of 25 were all decisions handed back without a pick.
+
+A phrase list catches the words of a hand-back, not its shape:
+a closing can say 「進めてよいですか？」 with only the benefit named and pass it.
+So two prompt hooks (`type: "prompt"`) ask a second,
+small model to refute every question put to the user against `own-the-call`'s four parts.
+One is PreToolUse on `AskUserQuestion` with `continueOnBlock`,
+so a failing question comes back to the agent as the tool's error and is rewritten;
+the other runs at Stop beside the phrase list and reads the closing.
+Both let a question for a fact only the user holds through,
+because that is `grill-me`'s and has no position to take.
+The prompts live inline in the marketplace entry,
+and `tests/own-the-call/judge-prompts.py` replays them on 21 fixed questions and closings,
+three times each; on 2026-10-16 it scored 51 of 51 twice,
+after a first version had failed fact questions for not naming a cost.
+Later that day the four bundle cases were added:
+three proposals under one go-ahead, each with all four parts,
+before the one-decision rule the question passed 3 of 3 and the closing failed only 2 of 3;
+after it the question failed 3 of 3 and the closing 8 of 9.
+The same day's full run scored 59 of 63;
+the misses were a bare `{"ok": true}` on a case that should fail.
+Six runs per case put that at 2 of 60 calls on the failing cases,
+about 3%, with no passing case blocked (124 of 126 right).
+Two changes were measured against it and not taken.
+Asking for the reason before the verdict scored 120 of 126,
+with 4 false passes and 2 false blocks.
+Judging with `sonnet` instead of the default model passed nothing that should fail (0 of 30),
+but blocked a fact question whose closing named the likely answer 3 times of 3,
+and it would put a larger model's call at every turn end;
+the hooks documentation names a `model` field without listing its values.
+The Stop hook costs one small-model call at every turn end,
+up to its 30-second timeout.
+
+`hooks/verify-reports.py` holds `adversarial-verify`'s line on subagent reports at the two places a claim leaves the session.
+As a PreToolUse hook, with one `if` filter per command so that no other shell call starts Python,
+it refuses `git push`, `gh pr create`,
+`gh pr ready` and `gh issue create` while the transcript holds a completed Agent or Workflow report with no verifier's report after it;
+as a Stop hook it sends a turn back once when such a report arrived since the user last spoke.
+A verifier is an Agent call whose description starts with "Verify" or names it skeptic,
+adversarial, refute, fact-check or cross-check.
+Replayed on 2026-10-15 over this machine's 17 sessions that had subagent reports,
+the publish gate would have refused 541 of their 1,106 publishing commands,
+in 13 sessions: those sessions verified some reports and published after others that nobody checked.
+
+`hooks/wait-stop.py` holds `timed-wait`'s line at the same moment.
+A session resumes only on a user message or a notification,
+so a turn that ends "waiting for CI" or "I will merge once CI passes" with nothing still running ends the wait too,
+and the user is the one who comes back to ask.
+The hook reads the closing for a wait on CI, a build, a job, a test,
+a deploy, a release or a subagent,
+and the transcript for anything still due to report:
+a background command, including one its timeout moved there,
+a background subagent or one sent a message, a monitor, a workflow,
+or a wakeup scheduled this turn.
+A notification ends a call unless it says the subagent is still waiting on work of its own,
+and a call started more than six hours before the turn is taken as lost with a restarted client.
+A wait on the user ("tell me when the key is made") is `grill-me`'s and passes.
+Replayed on 2026-10-30 over 6,500 turn endings in this machine's transcripts it blocked 6.
+Three were waits on CI that could not run for want of Actions budget,
+promised a merge and named nothing that would report;
+one ended "next, I wait for the checks to pass",
+and the user's next message was "watch the checks until they pass";
+two were defensible, a "go" asked for and a merge left to the user.
+Earlier versions blocked watchers the transcript did not show as running:
+a command moved to the background by its timeout,
+a subagent resumed by a message, and tasks a restarted client had lost.
+
+Every Python hook command ends in `|| true` and runs in bash.
+A marketplace update makes the client read the new hook commands while the installed plugin may still be the old commit,
+whose cache lacks the script they name;
+Python then exits 2 on the missing file,
+and exit 2 from a hook blocks the call.
+On 2026-10-15 that blocked Bash in fresh sessions until `claude plugin update` caught the cache up.
+The scripts report a verdict as JSON on exit 0,
+so `|| true` loses nothing;
+`tests/test_hook_commands.py` runs every hook against an empty plugin root and refuses exit 2.
+
+## Sources
+
+A skill that names a public standard (ISTQB, an RFC, SemVer, a style guide, a regulator's guidance) carries a `## Sources` block naming the version,
+the section and the date it was read.
+The portability check requires the block, and a date in it,
+wherever such a name appears.
+Skills that rest on practice rather than a standard say so and cite nothing;
+dressing them in a standard's name is refused.
+
+## Checks
+
+Run before every commit:
+
+```powershell
+pwsh -File tests/check-portability.ps1
+python tests/skill-doctor.py --strict
+```
+
+The first checks the host rows and their string invariants,
+the Sources blocks, and the README headings an installer looks for.
+Failures print one per line and the run exits 1.
+
+The second is this repository's answer to the health report Claude Code does not have.
+Claude Code's own `/skill-doctor` reports usage and context cost,
+and `claude plugin validate` checks manifests;
+on 2026-09-10 the latter passed a SKILL.md whose description the runtime cannot parse and one 2,600 characters long,
+and on 2026-09-11 it passed a marketplace entry whose hooks were given as a file path,
+a form the runtime silently ignores.
+`tests/skill-doctor.py` reads each skill the way the runtime does and prints one row per skill:
+the frontmatter parses as YAML with a matching name and a non-empty description (a plain scalar containing ": " is not YAML, and the runtime then loads no description at all, which `claude plugin details` shows as `< 20` always-on tokens);
+the description is under 1,000 characters (warning),
+1,024 (error: Copilot CLI drops the skill) and 1,536 (error: Claude Code truncates);
+every `references/*.md` is named in the body and every named path exists;
+a skill with `references/japanese.md` has a Language layers section;
+and the files follow the one-sentence-per-line rule.
+Then the marketplace: every skill in exactly one plugin,
+every listed path present,
+hooks in the inline object form with every script they run present,
+and the characters each plugin adds to the skill listing,
+which `/context` measures after the budget is applied.
+With `--host` it also asks this machine's Claude Code what it loaded:
+the installed cache is at HEAD,
+and no skill loaded at `< 20` always-on tokens.
+It exits 1 on an error, and with `--strict` on a warning;
+`--json` prints the same report as one object.
+It takes any skills directory as its argument,
+so it also serves for a catalogue that is not this one.
+
+Enable this repository's git hooks once per clone:
+
+```bash
+git config core.hooksPath .githooks
+```
+
+`.githooks/pre-commit` runs the doctor with `--strict`.
+`.githooks/pre-push` refuses a push whose commits carry the name of a repository the signed-in `gh` account keeps private,
+or of a clone `ghq list` finds that GitHub does not confirm as public.
+It matches whole words in the tree of each pushed tip and in the lines every other pushed commit adds,
+so a name added and later removed is still refused.
+A refusal shows each place and an 8-character id, never the name;
+`python .githooks/repo-names.py --explain ID`, run in your own terminal,
+shows the name.
+A name that is an ordinary word goes on its own line in `.git/info/repo-names-allowed`,
+which is not tracked and is kept per clone,
+since a published list of private names would be the leak itself.
+When `gh` cannot list the names, the push is refused.
+
+## Firing tests
+
+A skill's description is its implementation,
+and `tests/<skill>/ firing-tests.md` is its test:
+three scenarios that must make the skill fire and two that must not,
+each a prompt run in a fresh headless session inside a copy of the skill's fixture.
+
+```bash
+tests/run-firing-tests.sh <skill> [out-dir] [scenario-regex]
+MAX_TURNS=10 tests/run-firing-tests.sh <skill>
+```
+
+Each session costs a full context of installed skills,
+on the order of a dollar, so run a scenario, not the suite,
+while iterating.
+Six turns shows whether the skill fired;
+a scenario whose expectation is a finished edit needs `MAX_TURNS` raised,
+because a session that writes the failing test first spends its budget there.
+
+Two rules from experience, both in `docs/design-intent.md`:
+
+- The negative scenarios stand clear of the trigger.
+  A "should not fire" prompt aimed at a file that also carries a real instance of the trigger asks the skill to stay silent about a defect in front of it,
+  and a session that does the edit and then names that defect as out of scope has behaved correctly.
+  Move the scenario, not the description.
+- Record every run under `## Recorded runs`, the failed ones included,
+  with what the transcript showed and what changed because of it.
+
+`PLUGIN_DIR=<dir>` loads a candidate plugin beside the installed ones,
+so a new skill is measured against the session without it before anything is pushed.
+The directory holds `.claude-plugin/plugin.json` and `skills/<skill>/`.
+
+Measure the session without the skill first.
+Three candidates were dropped between 2026-10-21 and 2026-10-26 because the session already behaved that way without them.
+One was a plain-language rule, to reorder rather than reword;
+it is recorded in `tests/plain-language/firing-tests.md`.
+The other was `take-stock`, a ledger of done, running,
+unverified and owed items written when work goes quiet.
+Without it, the closing after two tasks carried the half-finished benchmark and the owner's TODO in 2 of 3 runs.
+With it, the skill fired when the user asked where things stood,
+but in 0 of 3 runs at the end of the turn,
+the moment it was written for.
+A description is matched when a task starts.
+The end of a turn is the Stop hook's moment, not a description's.
+The third was a `timed-wait` section on several waits at once,
+which kept one list of in-flight items and carried it in each report;
+with two background commands,
+the report when the first returned named the second as still running with its expected end in 3 of 3 runs both with and without it.

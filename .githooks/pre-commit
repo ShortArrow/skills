@@ -1,0 +1,3 @@
+#!/bin/sh
+# Refuses a commit the skill doctor finds an error or a warning in. See tests/skill-doctor.py.
+exec python "$(git rev-parse --show-toplevel)/tests/skill-doctor.py" --strict
