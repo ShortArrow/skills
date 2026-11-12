@@ -217,11 +217,10 @@ A reader who wants it whole can place its SKILL.md at `~/.claude/skills/japanese
   2026-08-20 (golden-lucky.hatenablog.com/entry/2026/08/20/185818).
   The three-level reading,
   the three symptoms and the three questions for an ambush are from this article.
-  Read 2026-09-10.
 - k16shikano, "japanese-tech-writing/SKILL",
   gist (gist.github.com/k16shikano/fd287c3133457c4fd8f5601d34aa817d),
   Unlicense by the author's declaration (gist 67625f2a7d96e3bbdfae8d571a936063).
-  Revision of 2026-09-09, read 2026-09-10.
+  Revision of 2026-09-09.
   Its sections on reader load, rigour of argument, restraint in rhetoric,
   redundancy and honesty were rewritten into this repository's shape (the moment and its replacement),
   not copied.

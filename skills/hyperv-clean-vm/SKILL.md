@@ -38,7 +38,7 @@ The durable one is the local group made for this.
 
 **Read the state before changing it.** There are three cases and only one of them needs the group command.
 The group is `S-1-5-32-578`,
-a well-known SID ([Security Identifiers](https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/understand-security-identifiers), read 2026-10-07),
+a well-known SID ([Security Identifiers](https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/understand-security-identifiers)),
 so none of this depends on `whoami` being on PATH or on the group's localised name.
 
 ```powershell

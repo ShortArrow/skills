@@ -43,7 +43,7 @@ type store interface {
 ```
 
 The implementation in `internal/storage` satisfies it without naming it.
-Go's own review guidance puts an interface in the package that uses it and returns concrete types from the package that implements it (go.dev/wiki/CodeReviewComments, "Interfaces", read 2026-09-17),
+Go's own review guidance puts an interface in the package that uses it and returns concrete types from the package that implements it (go.dev/wiki/CodeReviewComments, "Interfaces"),
 which is `design-by-contract`'s rule about who declares an interface,
 said once;
 株式会社一創's article shows the same placement for a slice (Sources in `SKILL.md`).

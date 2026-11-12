@@ -123,7 +123,7 @@ the output of a command, an error message, a response body.
 A pull request body is not a Markdown file.
 GitHub renders a single newline in an issue,
 a pull request or a comment as a line break,
-where the same newline in a `.md` file renders as a space (docs.github.com, read 2026-09-17).
+where the same newline in a `.md` file renders as a space (docs.github.com).
 So the source convention for repository files, one sentence per line,
 changes meaning in a body:
 every line ending the writer types is a line ending the reviewer sees.
@@ -149,7 +149,7 @@ locate it, then write.
 1. Open the pull request as a draft,
    with the title in the form the receiving repository uses and a body of at most 120 characters:
    the one thing the diff cannot say, or the issue it closes.
-   A draft cannot be merged and requests no review from code owners (docs.github.com, read 2026-09-22),
+   A draft cannot be merged and requests no review from code owners (docs.github.com),
    so nobody reads it before the body exists,
    and the checks run meanwhile.
    The title is settled here because it travels in notifications and mail subjects,
@@ -183,10 +183,10 @@ and each host covers the command for the session that skips the procedure:
 | Host | Cover |
 |---|---|
 | Claude Code | The writing-skills plugin runs a PreToolUse hook on `gh pr create` and `gh pr edit` that injects this rule as context before the command runs (`hooks/pr-body-context.sh`) |
-| Codex | `PreToolUse` in `.codex/hooks.json` or `config.toml` intercepts shell commands (learn.chatgpt.com/docs/hooks, checked 2026-09-17); this catalogue does not wire it, so a project adds the same script there or relies on step 1 of the procedure |
-| Copilot | `preToolUse` in `.github/hooks/<name>.json` for Copilot agents (docs.github.com, checked 2026-09-17); whether Copilot CLI reads it is not stated there. Not wired by this catalogue; step 1 of the procedure covers the command |
-| Cursor | `beforeShellExecution` or `preToolUse` in `.cursor/hooks.json` (cursor.com/docs/agent/hooks, checked 2026-09-17). Not wired by this catalogue; step 1 of the procedure covers the command |
-| Gemini CLI | `BeforeTool` under `hooks` in `settings.json` (geminicli.com/docs/hooks, checked 2026-09-17). Not wired by this catalogue; step 1 of the procedure covers the command |
+| Codex | `PreToolUse` in `.codex/hooks.json` or `config.toml` intercepts shell commands (learn.chatgpt.com/docs/hooks); this catalogue does not wire it, so a project adds the same script there or relies on step 1 of the procedure |
+| Copilot | `preToolUse` in `.github/hooks/<name>.json` for Copilot agents (docs.github.com); whether Copilot CLI reads it is not stated there. Not wired by this catalogue; step 1 of the procedure covers the command |
+| Cursor | `beforeShellExecution` or `preToolUse` in `.cursor/hooks.json` (cursor.com/docs/agent/hooks). Not wired by this catalogue; step 1 of the procedure covers the command |
+| Gemini CLI | `BeforeTool` under `hooks` in `settings.json` (geminicli.com/docs/hooks). Not wired by this catalogue; step 1 of the procedure covers the command |
 | Any other host | Open the draft with the short body, write the body to a file, read it in full, then pass the file to `gh pr edit --body-file` |
 
 ## How this connects
@@ -201,12 +201,12 @@ The rules here rest on practice.
 
 ## Sources
 
-- The host table above cites each host's own documentation for its pre-tool hook,
-  all read on 2026-09-17: learn.chatgpt.com/docs/hooks (Codex),
+- The host table above cites each host's own documentation for its pre-tool hook:
+  learn.chatgpt.com/docs/hooks (Codex),
   docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/use-hooks (Copilot),
   cursor.com/docs/agent/hooks (Cursor) and geminicli.com/docs/hooks (Gemini CLI). docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax,
-  read 2026-09-17, for the rendering of a single newline in a pull request body against a `.md` file. docs.github.com/en/pull-requests/reference/pull-requests,
-  read 2026-09-22, for a draft not being mergeable,
+  for the rendering of a single newline in a pull request body against a `.md` file. docs.github.com/en/pull-requests/reference/pull-requests,
+  for a draft not being mergeable,
   code owners not being requested on a draft,
   and ready for review being what requests them.
   No standard stands behind the body rules themselves.

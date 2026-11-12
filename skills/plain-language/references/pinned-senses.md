@@ -55,7 +55,7 @@ and the article does not say that services sharing a database stop being microse
 
 ## Sources
 
-Each was fetched and the quoted strings matched against the page text on 2026-09-18.
+Each was fetched and the quoted strings matched against the page text.
 
 - Martin Fowler, "DefinitionOfRefactoring", 1 September 2004,
   martinfowler.com/bliki/DefinitionOfRefactoring.html.

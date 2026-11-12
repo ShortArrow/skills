@@ -16,8 +16,8 @@ and 厚生労働省's 「医薬品等適正広告基準」 (薬生発0929第4号
 ## Sources
 
 - 消費者庁, 景品表示法関係ガイドライン等 (caa.go.jp):
-  the four titles above as listed on 2026-09-04,
+  the four titles above as listed,
   with the dates the page shows for the two dated ones.
 - 厚生労働省, 医薬品等適正広告基準の改正について (薬生発0929第4号,平成29年9月29日) and 医薬品等適正広告基準の解説及び留意事項等について(薬生監麻発0929第5号):
-  notice numbers and date confirmed on 2026-09-04 through the ministry's published PDF and secondary listings;
+  notice numbers and date confirmed through the ministry's published PDF and secondary listings;
   the text itself was not re-read for this skill.

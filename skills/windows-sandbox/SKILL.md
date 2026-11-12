@@ -190,7 +190,6 @@ Keep in the project only what is about the project:
   section Exec (learn.microsoft.com/windows/security/application-security/application-isolation/windows-sandbox/windows-sandbox-cli):
   "An active user session is required to execute a command in the context of the currently logged on user … a remote desktop connection should be established",
   and `--run-as ExistingLogin` "fails if there's no active user session".
-  Read 2026-09-11.
-- Microsoft Learn, "Windows Sandbox" overview and "Install Windows Sandbox" (same section of learn.microsoft.com),
-  read 2026-09-11: one instance at a time, Pro/Enterprise/Education only,
+- Microsoft Learn, "Windows Sandbox" overview and "Install Windows Sandbox" (same section of learn.microsoft.com):
+  one instance at a time, Pro/Enterprise/Education only,
   no service or headless mode described.

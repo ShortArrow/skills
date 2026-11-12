@@ -107,7 +107,7 @@ not asked.
 Asking again for one of them converts a decision the user already made into n they have to make again.
 
 What the grant does **not** carry is the step that leaves the working tree.
-Measured in one session (a grant given on 2026-10-04, counted on 2026-11-10 by walking that session's transcript for `tool_use` blocks in `type=="assistant"` lines):
+Measured in one session (counted by walking that session's transcript for `tool_use` blocks in `type=="assistant"` lines):
 the grant `1〜9全部やって` carried **50 consecutive tool calls** with no question of any kind.
 Of those fifty, exactly one left the working tree,
 and it was a local commit.
@@ -154,8 +154,7 @@ and a rule is not something a prompt can talk its way past:
 > Instructions in your prompt or `CLAUDE.md` shape what Claude tries to do,
 > but they don't change what Claude Code allows.
 
-— [Configure permissions](https://code.claude.com/docs/en/permissions.md),
-checked 2026-11-10.
+— [Configure permissions](https://code.claude.com/docs/en/permissions.md).
 
 Which means an agent that finds itself prompted repeatedly for the same class reports the pattern and names the mechanism,
 and leaves the choosing alone.
@@ -236,7 +235,5 @@ except where the Sources block below cites the host's own documentation.
   and sometimes not offered at all;
   the saved rule going to `.claude/settings.local.json` at the repository root except in the cases the page lists,
   Windows among them; `/permissions` applying a change from the next tool call in the same turn.
-  Read 2026-11-10.
 - Anthropic, "Permission modes" (code.claude.com/docs/en/permission-modes.md):
   the six modes (`default`, `acceptEdits`, `plan`, `auto`, `dontAsk`, `bypassPermissions`) and what each runs without asking.
-  Read 2026-11-10.

@@ -212,21 +212,18 @@ via `clean-docs`; this skill applies inside whichever one it is.
 
 ## Sources
 
-- Google developer documentation style guide, developers.google.com/style,
-  read on 2026-09-04:
+- Google developer documentation style guide, developers.google.com/style:
   "Headings and titles" (descriptive and unique headings, do not skip levels, no empty headings, noun phrases for concepts and bare verbs for tasks),
   "Lists" (numbered for sequence, bulleted for sets, description lists for terms; parallel structure; a full introductory sentence),
   "Procedures" (one action per step, action then result, prerequisites before the task, "Optional:" at the start, a one-step procedure is not numbered),
   "Tables" (three or more fields per item is a table, one or two is a list).
   The guide carries no version number; the date is the reference.
 - Microsoft Writing Style Guide, "Scannable content",
-  learn.microsoft.com/style-guide,
-  page dated 2023-06-20 and read on 2026-09-04: put first things first,
-  lead paragraphs and headings with the keyword,
+  learn.microsoft.com/style-guide, page dated 2023-06-20:
+  put first things first, lead paragraphs and headings with the keyword,
   three to seven lines per paragraph,
   parallel structure for compared things.
-- CommonMark Spec, version 0.31.2 (2024-01-28),
-  spec.commonmark.org/0.31.2, read on 2026-09-17:
+- CommonMark Spec, version 0.31.2, spec.commonmark.org/0.31.2:
   "Lists" (a list is loose if any items are separated by blank lines, and a loose list's items are wrapped in paragraphs),
   "Hard line breaks" (two or more spaces or a backslash before the line ending) and "Soft line breaks" (a line ending inside a paragraph renders as a space).
 - Diátaxis (Daniele Procida) is named for the four reader needs only;

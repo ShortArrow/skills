@@ -274,9 +274,9 @@ When the dispatch, the pipeline or the folder layout is the question,
 the rule is in `slice-first` and `design-by-contract`;
 the code above only shows how this stack spells it.
 
-MediatR left the Apache licence at v13.0.0 (2025-07-02) for a dual commercial and open-source licence and asks for a licence key at registration;
+MediatR left the Apache licence at v13.0.0 for a dual commercial and open-source licence and asks for a licence key at registration;
 a missing key logs a warning,
-and production use requires one under the licence (release notes and the licensing source read 2026-09-17).
+and production use requires one under the licence (release notes and the licensing source).
 A solution adopting it after that date chooses its licence first;
 Mediator.SourceGenerator and a direct call to the handler are the routes that do not ask.
 

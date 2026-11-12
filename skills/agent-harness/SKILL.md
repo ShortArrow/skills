@@ -164,20 +164,19 @@ Sensors are an investment repaid per session, so the tiers differ:
 
 ## Sources
 
-- OpenAI, "Rethinking skills and prompts for GPT-6 Astra" (developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra),
-  read 2026-09-14: conditional document references instead of a stack read before every edit,
+- OpenAI, "Rethinking skills and prompts for GPT-6 Astra" (developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra):
+  conditional document references instead of a stack read before every edit,
   explicit permission for safe workflows,
   and the observation that guidance written for an earlier model overconstrains a later one.
 - Evelyn Duesterwald, Benjamin Elder, Lilian Ngweta,
   Shashanka Ubaru and Malgorzata Zimon,
   "Closing the Consistency Gap: Self-Evolving Agents That Learn to Stay on Course",
-  arXiv 2609.08832, submitted 2026-09-08; abstract read 2026-09-17:
-  the consistency gap, the analyser that finds low-consistency steps,
+  arXiv 2609.08832: the consistency gap,
+  the analyser that finds low-consistency steps,
   and the guideline generator that writes memory for them.
 - Atsushi Kadowaki (ナレッジセンス),
   「SKILL.md を良くする技術。AIのブレをなくす。」,
-  zenn.dev/knowledgesense/articles/9adf1e9b17ffd6,
-  published 2026-09-15 and read 2026-09-17:
+  zenn.dev/knowledgesense/articles/9adf1e9b17ffd6, published 2026-09-15:
   the per-step resampling as the paper's method,
   the repair procedure as a skill of its own,
   the fix that missed the prose copy of the command,

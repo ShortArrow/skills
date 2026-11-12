@@ -109,8 +109,8 @@ Where they have not, `own-the-call` governs unchanged and the pick leads.
 
 ## What is actually available to consult
 
-Checked on this machine on 2026-11-10 and 2026-11-11 by running each binary,
-not only its help, because a consultation command that does not exist produces a reading nobody ran — and because a flag that is documented can still have been removed.
+Checked by running each binary, not only its help,
+because a consultation command that does not exist produces a reading nobody ran — and because a flag that is documented can still have been removed.
 
 | CLI | One-shot form | Keeping it read-only |
 |---|---|---|
@@ -416,8 +416,7 @@ Every row below was observed on this machine.
 Where a first reading was wrong, the correction is kept beside it,
 because what the error was is part of what the row establishes.
 
-- `codex --version`, `codex --help` and `codex exec --help` of codex-cli 0.164.0,
-  read 2026-11-10 and 2026-11-11:
+- `codex --version`, `codex --help` and `codex exec --help` of codex-cli 0.164.0:
   `--full-auto` no longer exists and `codex exec --full-auto` exits **2** with "unexpected argument";
   `-s`/`--sandbox` takes `read-only`,
   `workspace-write` or `danger-full-access`;
@@ -427,8 +426,7 @@ because what the error was is part of what the row establishes.
   and `review` is a second non-interactive subcommand.
   An earlier draft of this skill said exit code 1;
   the observed code is 2.
-- Write attempts against a named file in the session scratchpad,
-  2026-11-10 and 2026-11-11.
+- Write attempts against a named file in the session scratchpad.
   Under `codex exec --sandbox read-only` in a throwaway Git repository:
   PowerShell `Set-Content`, `cmd /c echo`, `python`, `git commit`,
   a write to `%TEMP%` outside the working directory,
@@ -443,8 +441,7 @@ because what the error was is part of what the row establishes.
   and nothing changed.
   Under `--allow-all-tools --available-tools view glob grep`,
   copilot printed `Disabled tools: create, edit, powershell, …` and no tool name got a write through.
-- `copilot --help` and `copilot help sandbox` of GitHub Copilot CLI 1.0.108,
-  read 2026-11-10 and 2026-11-11:
+- `copilot --help` and `copilot help sandbox` of GitHub Copilot CLI 1.0.108:
   `-p`/`--prompt` with `-s`/`--silent` as the non-interactive form;
   a prompt may instead arrive on stdin,
   and `copilot -sp` combines the short flags,
@@ -454,7 +451,7 @@ because what the error was is part of what the row establishes.
   An earlier draft of this skill claimed non-interactive mode *requires* `--allow-all-tools`;
   the help says the opposite — non-interactive mode denies what no rule approves,
   because there is nobody to ask — and a bare `-p` run confirmed it.
-- The `gemini` shim and the installed package, 2026-11-11:
+- The `gemini` shim and the installed package:
   `gemini --help` fails with `mise ERROR No version is set for shim`,
   but `mise ls` shows `npm:@google/gemini-cli 0.52.0` present,
   and running it directly returns `IneligibleTierError: This client is no longer supported for Gemini Code Assist for individuals` (`UNSUPPORTED_CLIENT`, `free-tier`).
@@ -464,14 +461,14 @@ because what the error was is part of what the row establishes.
   and the second read exit 55 as the tier error's own code.
   It is not — 55 comes from an untrusted-directory check that fires alongside it,
   and with the directory trusted the same error exits 1.
-- `antigravity --help` of Antigravity 1.104.0, 2026-11-11:
+- `antigravity --help` of Antigravity 1.104.0:
   a `chat [prompt]` subcommand exists,
   with `--mode ask|edit|agent` and otherwise window options,
   and no documented way to return the answer on stdout.
   It was not run, because it opens a window.
   An earlier draft said it had no one-shot prompt mode,
   which is false as worded.
-- Three rounds of adversarial verification, 2026-11-11,
+- Three rounds of adversarial verification,
   each given the claims and how to break them and not the conclusion.
   The first refuted two of five claims and corrected a third,
   and broke the invocation-matching consultation check with 21 missed shapes.
@@ -490,7 +487,7 @@ because what the error was is part of what the row establishes.
   that change was reverted.
   Its finding that `PRINTS_SOURCE` was pinned by no test was correct at the time and is now moot,
   since the simplification removed that pattern along with five others.
-- An automated security review of the pushed commit, 2026-11-11,
+- An automated security review of the pushed commit,
   which found two parser differentials in the line-dropping step:
   a `<<` inside quotes or after a `#` read as a heredoc opener,
   an unterminated heredoc discarding the rest of the command,
@@ -498,7 +495,7 @@ because what the error was is part of what the row establishes.
   Seven of its eight example commands reproduced here and are now fixtures;
   the eighth was refuted by running it in `bash`,
   where the `#` it relied on really does open a comment.
-- A second automated security review, 2026-11-11,
+- A second automated security review,
   which found that Bash escape rules were being applied to PowerShell commands:
   a backslash is literal there, a backtick escapes,
   and `''` inside a single-quoted string is one escaped quote.
@@ -507,7 +504,7 @@ because what the error was is part of what the row establishes.
   because the quote-aware blanking runs after the unquoting step and because `'` already opens quote mode.
   Two of its PowerShell examples were cases where the verdict was already correct,
   which only running them in `pwsh` established.
-- A third automated security review, 2026-11-11:
+- A third automated security review:
   PowerShell's block comment `<# … #>` ends,
   and `Write-Output x <# a #> ; codex exec q` reaches the consultation,
   confirmed in `pwsh`.

@@ -172,12 +172,10 @@ a message that cannot be written without 連用形 is usually reporting that the
   the imperative mood ("as if you are giving orders to the codebase"),
   the four things a body explains,
   and the present tense for the problem statement.
-  Read 2026-11-07.
 - Git, "git-commit" DISCUSSION (git-scm.com/docs/git-commit):
   "a single short (no more than 50 characters) line summarizing the change, followed by a blank line and then a more thorough description";
   the text up to the first blank line is the title, used throughout git,
   including `git format-patch`'s `Subject:`.
-  Read 2026-11-07.
 - Conventional Commits 1.0.0 (conventionalcommits.org, CC BY 3.0):
   the `<type>[(scope)]: <description>` form,
   `feat` and `fix` as the two typed by the specification,
@@ -185,7 +183,6 @@ a message that cannot be written without 連用形 is usually reporting that the
   the body beginning one blank line after the description,
   footers one blank line after the body with `-` for whitespace in the token,
   and breaking changes marked by `!` in the prefix or an uppercase `BREAKING CHANGE` footer.
-  Read 2026-11-07.
 
 The 72-column body wrap is convention rather than a rule either source states;
 neither git page gives a body width.

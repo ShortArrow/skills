@@ -88,6 +88,6 @@ and `plan-delegate-verify` says why the plan keeps that choice.
 - Konstantinou, Degiovanni, Papadakis,
   "Do LLMs generate test oracles that capture the actual or the expected program behaviour?",
   arXiv:2410.21136, 2024.
-  Cited for its finding on generated oracles; read on 2026-08-26.
+  Cited for its finding on generated oracles;.
 - Red-green-refactor itself is practice (Beck), not a standard,
   and is not dressed as one.

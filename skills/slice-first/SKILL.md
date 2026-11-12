@@ -154,8 +154,7 @@ whose stack layers spell it per language.
 ## Sources
 
 - 株式会社一創, 「Vertical Slice Architecture」,
-  issoh.co.jp/tech/details/10356,
-  published 2025-12-22 and read 2026-09-17:
+  issoh.co.jp/tech/details/10356, published 2025-12-22:
   the cases where the cut does not pay,
   and migration judged by whether a change's files stay under the feature folder.
   The feature-cut layouts are drawn in `architect`'s stack layers.

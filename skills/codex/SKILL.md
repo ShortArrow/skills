@@ -49,7 +49,7 @@ It consults the model exactly as `exec` does,
 so anything said here about a returned reading applies to it too.
 
 Two refusals that look like a failed reading and are not,
-both met on codex-cli 0.164.0 on 2026-11-10:
+both met on codex-cli 0.164.0:
 
 - **Outside a Git repository it refuses to start** — "Not inside a trusted directory and `--skip-git-repo-check` was not specified." Add `--skip-git-repo-check` only when the target genuinely is not a repository;
   for a repository, the message means `--cd` is pointing somewhere else.
@@ -61,7 +61,7 @@ both met on codex-cli 0.164.0 on 2026-11-10:
 The sandbox is enforced by the operating system,
 not by the model's cooperation,
 which means the guarantee does not depend on the request being polite.
-Verified in a throwaway repository on 2026-11-10 and again on 2026-11-11 under `--sandbox read-only`:
+Verified twice in a throwaway repository under `--sandbox read-only`:
 PowerShell `Set-Content`, `cmd /c echo`, `python`, `git commit`,
 a write to `%TEMP%` outside the working directory,
 and `New-Item -ItemType Directory` all ran and all were refused with "Access to the path … is denied".

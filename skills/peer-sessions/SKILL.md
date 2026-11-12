@@ -22,9 +22,9 @@ A host that matches none of these takes the last row.
 |---|---|
 | Claude Code | Run `scripts/peer-sessions.sh [minutes]` and use the files described below. To ask a session, see Asking the session itself |
 | Codex | Use the host's task/thread listing and status tools. Prefer a compact wait/status snapshot when following progress. Do not inspect Codex's internal task database or transcripts by guessed filesystem path |
-| Copilot | Peer session listing is not documented (checked 2026-08-28); use the row below |
-| Cursor | Peer session listing is not documented (checked 2026-08-28); use the row below |
-| Gemini CLI | Peer session listing is not documented (checked 2026-08-28); use the row below |
+| Copilot | Peer session listing is not documented; use the row below |
+| Cursor | Peer session listing is not documented; use the row below |
+| Gemini CLI | Peer session listing is not documented; use the row below |
 | Any other host | Peer state is not available from this session. Take the resource's own lock as the only signal, and say so when asked what else is running. Do not run `scripts/peer-sessions.sh`, and do not read another host's storage |
 
 If Codex exposes no task/thread coordination tool,
@@ -144,7 +144,7 @@ and take the syntax from `herdr --skill` and `--help`, not from here.
 Send with `herdr agent prompt <target> <text> --wait` and read the answer with `herdr agent read`;
 `agent_prompted` means the prompt was accepted,
 not that it was answered.
-Checked against herdr 0.9.3 on 2026-10-26.
+Checked against herdr 0.9.3.
 
 Do not ask a peer to do what this session was denied or would be blocked from doing.
 The peer doing it bypasses the user's decision;
@@ -180,15 +180,15 @@ The same applies to a task that looks like it was left for you.
 
 ## Sources
 
-- The `ListAgents` and `SendMessage` tool descriptions as Claude Code exposed them on 2026-10-26:
+- The `ListAgents` and `SendMessage` tool descriptions as Claude Code exposed them:
   who can be listed, delivery without a read receipt,
   the cloud session that cannot reply, `notify_when_idle`,
   the literal reading of `@`,
   and the rule against asking a peer to do what was blocked here.
-- `ListAgents` as called from a Claude Code session on 2026-11-11:
+- `ListAgents` as called from a Claude Code session:
   each row carries a session's title,
   Remote Control and cloud sessions on other machines included,
   and no field or filter for confidentiality.
-- `herdr --help`, `herdr agent prompt --help` and `herdr --skill` of herdr 0.9.3,
-  read on 2026-10-26: the agent states, `--wait`,
+- `herdr --help`, `herdr agent prompt --help` and `herdr --skill` of herdr 0.9.3:
+  the agent states, `--wait`,
   and the conditions under which herdr's own guidance allows its use.

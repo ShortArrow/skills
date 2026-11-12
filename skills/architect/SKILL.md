@@ -203,14 +203,12 @@ named here, holding only what differs from the body.
 ## Sources
 
 - nrs, 「バイブコーディングで GUI が壊れていく理由とその対策プロンプト」,
-  zenn.dev/nrs/articles/9ba91aea587bf5,
-  published 2026-09-15 and read 2026-09-17: the passive view,
-  the presenter tree with one root, events bubbling upward,
-  the mediator that is a state machine,
+  zenn.dev/nrs/articles/9ba91aea587bf5, published 2026-09-15:
+  the passive view, the presenter tree with one root,
+  events bubbling upward, the mediator that is a state machine,
   and the three symptoms of screens that decide for themselves.
 - 株式会社一創, 「Vertical Slice Architecture」,
-  issoh.co.jp/tech/details/10356,
-  published 2025-12-22 and read 2026-09-17:
+  issoh.co.jp/tech/details/10356, published 2025-12-22:
   the shape of the feature-cut layout in C# and the store interface declared on the slice's side in Go;
   the layer files say where they follow it.
   The rest of this skill rests on practice.

@@ -403,17 +403,15 @@ Put the list in the prompt;
 
 - Michael Nygard, "Documenting Architecture Decisions", 2011-11-15,
   cognitect.com — the Context section's definition and the two blind paths,
-  read on 2026-08-31.
-- Diátaxis, diataxis.fr, by Daniele Procida — the four types and two axes as stated on the site on 2026-09-04.
+- Diátaxis, diataxis.fr, by Daniele Procida — the four types and two axes as stated on the site.
   No version is published; the site is the reference.
 - pospome, 「優秀なエンジニアが書くDesign Docは何が違うのか?」,
-  www.pospome.work/entry/2026/08/24/223309,
-  published 2026-08-24 and read 2026-09-17:
+  www.pospome.work/entry/2026/08/24/223309, published 2026-08-24:
   the design document as the place uncertainty is made visible,
   and alternatives,
   concerns and undecided items as the three sections a reviewer reads.
 - 依田 (take-yoda), 「生成AIが書いたドキュメントを読みたくない」,
-  qiita.com/take-yoda/items/e5d9ce6618523af1ffc5, read 2026-09-17:
+  qiita.com/take-yoda/items/e5d9ce6618523af1ffc5:
   the four ways a generated design document tires its reader,
   the decision-first shape with non-goals and an alternatives table,
   the per-section test,

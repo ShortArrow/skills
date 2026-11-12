@@ -185,7 +185,7 @@ which is a stage-8 judgement made once, at the start.
 
 - GSN Community Standard, Version 3, document SCSC-141C,
   Safety-Critical Systems Club (scsc.uk/gsn-standard).
-  Version and document number checked on 2026-09-04;
+  Version and document number checked against the standard;
   the element mapping above is paraphrase, not quotation.
 - ISO/IEC 25010:2023 is named for its characteristic list only;
   it is not free, and no rule here depends on its text.

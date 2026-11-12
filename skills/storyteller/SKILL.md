@@ -172,15 +172,13 @@ The tells of machine writing are `unmachine-prose`.
   Christopher M. Danforth and Peter Sheridan Dodds,
   "The emotional arcs of stories are dominated by six basic shapes",
   EPJ Data Science 5, 31 (2016),
-  epjds.epj.org/articles/epjdata/abs/2016/01/13688_2016_Article_93/13688_2016_Article_93.html;
-  abstract read 2026-10-29: the six shapes,
-  among them "man in a hole" and "Icarus".
-- 起承転結: kotobank.jp/word/起承転結, read 2026-10-29,
+  epjds.epj.org/articles/epjdata/abs/2016/01/13688_2016_Article_93/13688_2016_Article_93.html:
+  the six shapes, among them "man in a hole" and "Icarus".
+- 起承転結: kotobank.jp/word/起承転結,
   the composition of a quatrain (起 raises, 承 develops, 転 shifts the scene, 結 closes),
   earlier called 起承転合, later applied to renga, haikai and prose.
-- 換骨奪胎: kotobank.jp/word/黄庭堅, read 2026-10-29,
+- 換骨奪胎: kotobank.jp/word/黄庭堅,
   Huang Tingjian's method of building a new poem from an earlier poet's lines;
-  hugkum.sho.jp/631363, read 2026-10-29,
-  the two methods as recorded in the *Lengzhai yehua*: 換骨,
-  keeping the sense in new words, and 奪胎,
+  hugkum.sho.jp/631363, the two methods as recorded in the *Lengzhai yehua*:
+  換骨, keeping the sense in new words, and 奪胎,
   taking the sense into a new form.

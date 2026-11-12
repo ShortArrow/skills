@@ -16,7 +16,7 @@ taken with `qemu-img` while the guest is stopped,
 and the screenshot is a `screendump` sent to the QEMU monitor,
 which comes back as a PNG without a session, an agent or a viewer.
 
-The monitor and snapshot mechanics below were run on 2026-09-24 against `qemux/qemu`,
+The monitor and snapshot mechanics below were run against `qemux/qemu`,
 the image dockur/windows is built on,
 with an Alpine guest on a remote Ubuntu 24.04 host.
 The Windows-only steps,
@@ -37,7 +37,7 @@ are the ones a production runner uses and were not rerun here.
 
 ## What the host needs
 
-`/dev/kvm` on the machine the Docker daemon runs on. dockur's readme (read 2026-09-24) states that Docker Desktop on Linux,
+`/dev/kvm` on the machine the Docker daemon runs on. dockur's readme states that Docker Desktop on Linux,
 macOS and Windows 10 does not hand KVM to containers,
 and that Windows 11 works with nested virtualization enabled.
 A Linux host with the `kvm` module, or a remote context to one,
@@ -87,7 +87,7 @@ services:
     restart: "no"
 ```
 
-`MONITOR` and `DISK_FMT` are documented variables of the image (docs/environment.md, read 2026-09-24).
+`MONITOR` and `DISK_FMT` are documented variables of the image (docs/environment.md).
 Without `MONITOR` the monitor still exists,
 at `/run/shm/monitor.sock` inside the container,
 but that path is the image's internal layout and moves without notice;
@@ -210,20 +210,18 @@ the screendump wins when there is no session at all.
 
 ## Sources
 
-- dockur/windows readme, github.com/dockur/windows, read 2026-09-24:
-  the compose example, the host support table (KVM under Docker Desktop),
+- dockur/windows readme, github.com/dockur/windows: the compose example,
+  the host support table (KVM under Docker Desktop),
   the `/oem/install.bat` mechanism and the `/storage` files.
-- dockur/windows `docs/environment.md`, read 2026-09-24: `MONITOR`,
-  `DISK_FMT`, `DISK_FLAGS`, `DISPLAY`, `VNC_PORT` and their defaults.
-- qemus/qemu `docs/environment.md` and `src/{display,disk,power}.sh` at master,
-  read 2026-09-24: the internal monitor path,
+- dockur/windows `docs/environment.md`: `MONITOR`, `DISK_FMT`,
+  `DISK_FLAGS`, `DISPLAY`, `VNC_PORT` and their defaults.
+- qemus/qemu `docs/environment.md` and `src/{display,disk,power}.sh` at master:
+  the internal monitor path,
   `nc -q 1 -w 1 -U` as the image's own way of talking to it,
   and the disk name following the format.
-- QEMU 11.1.0 `help screendump`,
-  read from the running container on 2026-09-24:
+- QEMU 11.1.0 `help screendump`, read from the running container:
   `screendump filename [-f format] [device [head]]`,
   formats `png` and `ppm`.
 - The timings above (25 s cold and 5 s warm to the monitor socket, 9 s to stop, 1280×800 capture) are one run of `qemux/qemu` with `BOOT=alpine`,
-  `RAM_SIZE=1G`, `DISK_FMT=qcow2` on a remote Ubuntu 24.04 host with 12 cores,
-  on 2026-09-24.
+  `RAM_SIZE=1G`, `DISK_FMT=qcow2` on a remote Ubuntu 24.04 host with 12 cores.
   They bound the mechanism, not a Windows guest.

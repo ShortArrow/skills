@@ -130,8 +130,7 @@ Nothing comes back when the message is read,
 so the wait it opens has no signal at all — not a slow one,
 a missing one.
 
-What the channel reports,
-measured against the host's own documentation on 2026-11-10:
+What the channel reports, measured against the host's own documentation:
 
 | Target | What returns |
 |---|---|
@@ -184,7 +183,7 @@ and killing on breach without reading it treats both as the second — each erro
 A compaction preserves a reference and drops what it referred to.
 The obligation survives as a label — "the four remaining situations",
 "items 5 and 7" — and neither the session nor the user can act on a number.
-Measured here on 2026-11-10:
+Measured in one session:
 after a compaction this session carried `situations 5/7/10/12` through four consecutive closings while unable to reconstruct the enumeration,
 because only references to it had survived.
 It read as tracked work and was not tracked.
@@ -228,4 +227,3 @@ and at every poll loop whose end condition might never arrive.
   a cloud session being unable to reply with `SendMessage`,
   and `notify_when_idle` being refused for any target beyond this machine — the whole call,
   including a message attached to it — and its subscription dropping after twelve hours.
-  Read 2026-11-10.

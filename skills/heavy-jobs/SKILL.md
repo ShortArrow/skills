@@ -9,7 +9,7 @@ allowed-tools: Bash, PowerShell, Read
 
 A build that fills every core at the agent's own priority takes the cores from the agent,
 from the other agents on the machine and from the terminal that draws them.
-Measured on an 8-core, 16-thread Windows machine on 2026-10-29:
+Measured on an 8-core, 16-thread Windows machine:
 sixteen busy loops at Normal for three minutes left every agent pane at BelowNormal drawing nothing,
 while the multiplexer at Normal kept accepting keystrokes into a queue that drained only when the load ended.
 The fix is on the job's side: the job is lowered,

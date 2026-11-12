@@ -99,5 +99,5 @@ neither of which has this skill installed.
 
 - RFC 5646, "Tags for Identifying Languages", BCP 47,
   IETF — subtag order (section 2.1) and case treatment;
-  wording checked on 2026-09-04.
+  wording checked against the RFC.
   Obsoletes RFC 4646.

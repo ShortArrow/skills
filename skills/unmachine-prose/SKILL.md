@@ -297,8 +297,7 @@ Apply both in turn; mixing them dulls each check.
 
 ## Sources
 
-- blader/humanizer v3.0.0 (MIT, commit 9862685 of 2026-09-06),
-  read 2026-09-17,
+- blader/humanizer v3.0.0 (MIT, commit 9862685),
   which rests on Wikipedia's "Signs of AI writing" maintained by WikiProject AI Cleanup:
   the observation that a tell counts by how rarely a careful writer makes it on purpose,
   the general choice as the cause, the closer, the run-up, the aphorism,
@@ -309,7 +308,6 @@ Apply both in turn; mixing them dulls each check.
   and the five marked as acting alone are this catalogue's choice.
 - Dmitry Kobak, Rita González-Márquez, Emőke-Ágnes Horvát and Jan Lause,
   "Delving into LLM-assisted writing in biomedical publications through excess vocabulary",
-  Science Advances 11(27), 2025-07-02 (arXiv 2406.07016):
+  Science Advances 11(27) (arXiv 2406.07016):
   the excess-frequency ratios for `delves`,
-  `underscores` and `showcasing`,
-  checked against the published version on 2026-09-17.
+  `underscores` and `showcasing`, checked against the published version.

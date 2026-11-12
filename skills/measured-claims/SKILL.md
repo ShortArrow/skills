@@ -1,7 +1,7 @@
 ---
 name: measured-claims
 description: |
-  Publishing numbers, triggered by the moments that detach them from their measurement: about to write a figure without how it was measured, about to compare numbers taken under different conditions, about to report a single run as the value, about to reuse a figure measured weeks ago as current, or about to quote an estimate where the real quantity is one command away. A number without its method is a rumour, and without its date it rots silently — a document can carry two stale figures that disagree with each other and both be wrong. Use when a benchmark, note, commit message or README is about to carry any measured quantity.
+  Publishing numbers, triggered by the moments that detach them from their measurement: about to write a figure without how it was measured, about to compare numbers taken under different conditions, about to report a single run as the value, about to reuse a figure measured weeks ago as current, or about to quote an estimate where the real quantity is one command away. A number without its method is a rumour, and without the version of what it moves with it rots silently — a document can carry two stale figures that disagree with each other and both be wrong. Use when a benchmark, note, commit message or README is about to carry any measured quantity.
 allowed-tools: Bash, PowerShell, Read, Grep
 ---
 
@@ -13,7 +13,7 @@ and a number can satisfy this skill completely while the sentence around it is s
 `regulated-claims` covers that.
 
 A number in a document makes a claim the prose around it inherits.
-The figure that cannot say how it was obtained, on what, and when,
+The figure that cannot say how it was obtained and on what,
 spends credibility the document does not have.
 
 ## The moments this replaces
@@ -23,7 +23,7 @@ spends credibility the document does not have.
 | write a figure with no method | attach the command and the environment it ran in |
 | compare across different conditions | re-measure both sides under one condition, or compare nothing |
 | report one run | run enough to see the spread, and report it: `127 ms (115–144), 15 runs` |
-| reuse an old figure as current | re-measure, or date it and say what it moves with |
+| reuse an old figure as current | re-measure, or say what it moves with and at which version |
 | quote an estimate when measurement is cheap | run the command — the estimate that prompted it is not worth defending |
 
 ## The method travels with the number
@@ -37,18 +37,24 @@ the pipeline is the method: paste it.
 
 The strongest form is a number a script reprints on every run.
 A figure with a living instrument cannot silently drift from its source,
-only from the document — which the date exposes.
+only from the document — which the version beside it exposes.
 
-## Date what moves independently
+## Name the version of what moves independently
 
-Some numbers move with the repository and need no date — the diff shows when they changed.
-The ones that need dating move with something else: the tool list,
+Some numbers move with the repository and need nothing beside them — the diff shows when they changed.
+The ones that need more move with something else: the tool list,
 the installed packages, an external service.
 A document once carried 894 and 185 for the same headroom, both stale,
 disagreeing with each other — nothing in the repository had changed,
 and no diff would ever have flagged either.
-State the date and what the number moves with,
-so the reader knows what invalidates it.
+State what the number moves with and its version — the tool's release,
+the package's version,
+the service's API version — so the reader can compare it with their own and knows what invalidates it.
+A thing with no version is named by the date it carries itself,
+such as a page's revision date.
+A date of measurement is not written:
+an installed copy of a skill has no history to check it against,
+and the version says what the date only hints at.
 
 ## One run is an anecdote
 

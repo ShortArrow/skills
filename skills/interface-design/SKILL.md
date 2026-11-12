@@ -191,15 +191,12 @@ this skill takes only Lighthouse's accessibility category.
   W3C Recommendation dated 12 December 2024 (www.w3.org/TR/WCAG22/):
   the four principles, the A/AA/AAA levels,
   and the removal of 4.1.1 Parsing as obsolete.
-  Read 2026-11-08.
 - W3C, "How to Meet WCAG 2.2 (Quick Reference)" (www.w3.org/WAI/WCAG22/quickref/):
   every threshold in the table above,
   read at Level AAA to include 2.4.13 and 2.5.5.
-  Read 2026-11-08.
 - Deque Labs, axe-core README (github.com/dequelabs/axe-core): MPL-2.0;
   rules mapped to WCAG 2.0, 2.1 and 2.2 at A, AA and AAA;
   "you can find on average 57% of WCAG issues automatically".
-  Read 2026-11-08.
 - Chrome for Developers, "Accessibility scoring in Lighthouse" (developer.chrome.com/docs/lighthouse/accessibility/scoring):
   the score is a weighted average, weights 3 to 10,
   "based on axe user impact assessments",
@@ -208,18 +205,15 @@ this skill takes only Lighthouse's accessibility category.
   manual and low-impact audits are excluded from the score.
   The page does not itself say a perfect score means the page is accessible — nor does it say the opposite,
   so the warning above is this skill's.
-  Read 2026-11-08.
-- デジタル庁デザインシステム (design.digital.go.jp): v2.18.2, 2026-10-21,
+- デジタル庁デザインシステム (design.digital.go.jp): v2.18.2,
   labelled β版 in the sense of a living standard.
   The site states no WCAG level and no JIS X 8341-3 target.
   `digital-go-jp/design-tokens`,
   `design-system-example-components-react` and `-html` on GitHub are MIT.
-  Read 2026-11-08.
 - Material Design 3's 48×48 dp touch target and its colour-role guidance are taken from secondary sources citing m3.material.io,
   not from that site: its pages render by script and could not be read here.
   The 48 dp figure is a design recommendation,
   not a platform-enforced minimum.
-  Read 2026-11-08.
 
 The claim that these sources disagree,
 and that the stricter figure is the one to meet,

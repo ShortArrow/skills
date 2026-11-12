@@ -101,8 +101,7 @@ the candidates go in the options and the default is marked in its label.
 - Copilot in VS Code: `askQuestions` for the question,
   plus the repository search and read tools.
   Use `runSubagent` only when the user or governing repository instructions authorize delegation
-- Copilot CLI: no question tool is documented (checked 2026-08-28);
-  ask in chat.
+- Copilot CLI: no question tool is documented; ask in chat.
   The built-in agents reached with `/agent` are subject to the same authorization
 - Cursor: the "Ask questions" tool, the repository read and search tools,
   and the Task tool under the same authorization

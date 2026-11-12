@@ -252,7 +252,6 @@ a license list and a compatibility page are read on a day.
 
 ## Sources
 
-All read on 2026-10-15.
 
 - SPDX Specification 3.0.1,
   Annex B "SPDX license expressions" (Normative): operators, precedence,
@@ -260,11 +259,10 @@ All read on 2026-10-15.
 - SPDX Specification 2.3.1,
   clause 7.13 "Concluded license" and 7.15 "Declared license":
   the definitions quoted above and the meanings of `NONE` and `NOASSERTION`.
-- SPDX License List 3.29.0 of 2026-09-16, spdx.org/licenses:
+- SPDX License List 3.29.0, spdx.org/licenses:
   deprecated identifiers such as `GPL-2.0` remain valid but should no longer be used.
-- REUSE Specification 3.3 of 2024-11-14, reuse.software/spec-3.3:
-  `LICENSES/`, `SPDX-FileCopyrightText`,
-  `.license` files and `REUSE.toml`.
+- REUSE Specification 3.3, reuse.software/spec-3.3: `LICENSES/`,
+  `SPDX-FileCopyrightText`, `.license` files and `REUSE.toml`.
 - SPDX Specification 3.0.1,
   Annex "License matching guidelines and templates":
   added text or clauses is not a match.

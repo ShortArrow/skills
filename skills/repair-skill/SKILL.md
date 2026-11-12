@@ -170,10 +170,9 @@ a purchase, a message.
 - Evelyn Duesterwald, Benjamin Elder, Lilian Ngweta,
   Shashanka Ubaru and Malgorzata Zimon,
   "Closing the Consistency Gap: Self-Evolving Agents That Learn to Stay on Course",
-  arXiv 2609.08832, submitted 2026-09-08; abstract read 2026-09-17:
-  the consistency gap and the analyser that finds low-consistency steps.
-- tankadoko/agent-repair (MIT, commit c4056ff of 2026-09-12),
-  read 2026-09-17, a Codex skill with a Python helper built on that paper:
+  arXiv 2609.08832: the consistency gap and the analyser that finds low-consistency steps.
+- tankadoko/agent-repair (MIT, commit c4056ff),
+  a Codex skill with a Python helper built on that paper:
   the original and candidate copies,
   the three-sample probe given only the history before the decision,
   the check plan of the failing input, a similar one and a regression,
@@ -183,7 +182,6 @@ a purchase, a message.
   and `scripts/session-steps.py` is this catalogue's own reader for Claude Code transcripts.
 - Atsushi Kadowaki (ナレッジセンス),
   「SKILL.md を良くする技術。AIのブレをなくす。」,
-  zenn.dev/knowledgesense/articles/9adf1e9b17ffd6,
-  published 2026-09-15 and read 2026-09-17:
+  zenn.dev/knowledgesense/articles/9adf1e9b17ffd6, published 2026-09-15:
   the repair that fixed the script and left the example command,
   and the rerun at the counts that used to pass.

@@ -103,7 +103,7 @@ an errand that should outlive this conversation.
 and `claude attach <id|name>` opens one in a terminal;
 each is its own operating-system process,
 and a session paused on a permission prompt keeps that process running.
-Measured here on 2026-11-10: fifteen sessions, fifteen distinct pids,
+Measured on one machine: fifteen sessions, fifteen distinct pids,
 three working while twelve sat idle.
 `peer-sessions` is how one is found and asked,
 and the answer it gives is that session's text,
@@ -359,17 +359,13 @@ and the host's own delegation policy applies on top.
   a background subagent's permission prompt surfaces in the main session named for the subagent,
   and denying that one tool call does not stop the subagent;
   the `isolation: worktree` frontmatter field and its default base branch.
-  Read 2026-11-10.
 - Anthropic, "Run parallel sessions with worktrees" (code.claude.com/docs/en/worktrees.md):
   a subagent's worktree is removed automatically when it finishes without changes,
   and the isolation checks cover every subagent spawned from an isolated session.
-  Read 2026-11-10.
 - Anthropic, "Run agents in parallel" (code.claude.com/docs/en/agents.md):
   subagents return a summary to the conversation that spawned them while agent-view sessions report only to the user.
-  Read 2026-11-10.
 - Anthropic, "Manage agents with agent view" (code.claude.com/docs/en/agent-view.md):
   each session is its own Claude Code process,
   and one paused on a permission prompt keeps that process running.
-  Read 2026-11-10.
-- The fifteen-session count is from `claude agents --json` on this machine on 2026-11-10:
+- The fifteen-session count is from `claude agents --json` on one machine:
   fifteen sessions, fifteen distinct pids, three busy and twelve idle.

@@ -224,7 +224,7 @@ in this repository `reader-map` stands in that place.
 - k16shikano, "cognitive-rhythm-writing/SKILL.md",
   gist (gist.github.com/k16shikano/eb2929f13ed19c97188393d297be8432),
   Unlicense by the author's declaration (gist 67625f2a7d96e3bbdfae8d571a936063).
-  Revision of 2026-09-09, read 2026-09-10.
+  Revision of 2026-09-09.
   The principles, the beat, the density wave,
   openings and section entries, landing a list, collecting questions,
   the situation-or-document test and the checking procedure were rewritten into this repository's shape (the moment and its replacement),

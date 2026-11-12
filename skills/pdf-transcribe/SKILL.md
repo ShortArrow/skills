@@ -24,7 +24,7 @@ A host that matches none of these takes the last row.
 | Codex | In Codex, use the installed PDF skill or the runtime's PDF extraction/rendering tools. Follow that skill's render-and-verify procedure when visual layout affects the transcription. |
 | Copilot in VS Code | The PDF is attached to the chat by the user, by paste, drag-drop or context menu. A tool-read of a PDF from disk is not documented, so ask for the attachment and transcribe from the attached pages. |
 | Copilot CLI | `@path` attaches the PDF, as do drag-drop and paste. Ask the user to attach it if it is not attached already. |
-| Cursor | not documented (checked 2026-08-28); use the row below. The Read files tool lists images only. |
+| Cursor | not documented; use the row below. The Read files tool lists images only. |
 | Gemini CLI | `read_file` on the .pdf, which supports text, images, audio and PDF. There is no page range, so read the whole file and transcribe it section by section. |
 | Any other host | Ask the user for a text export, or run `pdftotext -layout` where it is available and say that the layout came from a text extractor. Never write a page that was not read, never simulate a PDF tool in prose, and never fall back to another host's PDF path. |
 

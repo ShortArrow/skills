@@ -151,8 +151,8 @@ a dependency that passes every check above can still be one the project may not 
 - SLSA Specification v1.2 (Approved),
   slsa.dev — Build track levels L0–L3 and their requirements,
   from the build-track-basics page;
-  wording checked on 2026-09-04. v1.0's levels page is marked retired.
-- OpenSSF Scorecard, `docs/checks.md` in github.com/ossf/scorecard — the twenty check names and their risk levels as listed on 2026-09-04.
+  wording checked against the page. v1.0's levels page is marked retired.
+- OpenSSF Scorecard, `docs/checks.md` in github.com/ossf/scorecard — the twenty check names and their risk levels as listed there.
   Checks are added over time; the list here is that date's.
 - SPDX and CycloneDX are named as formats only;
   neither is relied on for a rule here.

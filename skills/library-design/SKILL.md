@@ -199,5 +199,5 @@ which is the moment they stop being speculative.
   clause 1 (public API MUST be declared),
   clauses 6–8 (PATCH, MINOR, MAJOR increments), clause 4 (0.y.z),
   and the FAQ entry on deprecation (document it, then issue a minor release with the deprecation in place).
-  Wording checked against the page on 2026-09-04.
+  Wording checked against the page.
 - Hyrum's law is an observation, not a standard, and is cited as one.

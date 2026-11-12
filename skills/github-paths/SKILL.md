@@ -118,7 +118,7 @@ The rule is only that a file meant for a slot goes in the slot.
 
 ## Sources
 
-- GitHub Docs, docs.github.com, read on 2026-09-04:
+- GitHub Docs, docs.github.com:
   "Creating a default community health file" (the file list, the three locations, the `.github` > root > `docs` precedence, the organisation `.github` repository, and that a license cannot be defaulted);
   "About code owners" (three locations, first found wins, read from the base branch);
   "About READMEs" (three locations and their order, the profile README);
@@ -130,7 +130,7 @@ The rule is only that a file meant for a slot goes in the slot.
   "Dependabot options reference" (`.github/dependabot.yml`, default branch);
   "Adding repository custom instructions for GitHub Copilot" (the three instruction paths).
   GitHub Docs carry no version number; the date is the reference.
-- github-linguist, `docs/overrides.md`, read on 2026-09-04:
+- github-linguist, `docs/overrides.md`:
   the five `linguist-*` attributes and which affect statistics, diffs,
   or both.
 - joelparkerhenderson/github-special-files-and-paths (GPL-2.0-or-later) was the map of what to look up;

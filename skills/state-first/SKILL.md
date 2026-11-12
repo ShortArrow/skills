@@ -148,8 +148,7 @@ and that is the moment to stop and list them.
 ## Sources
 
 - nrs, 「バイブコーディングで GUI が壊れていく理由とその対策プロンプト」,
-  zenn.dev/nrs/articles/9ba91aea587bf5,
-  published 2026-09-15 and read 2026-09-17:
+  zenn.dev/nrs/articles/9ba91aea587bf5, published 2026-09-15:
   the screen whose modes live in separate variables, the lock,
   the delay and the retry added after the first collision,
   and the state machine that ignores an input its current state does not admit.

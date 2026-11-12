@@ -292,11 +292,11 @@ both are tests whose ability to fail was assumed, not shown.
 
 ## Sources
 
-- ISTQB Certified Tester Foundation Level Syllabus v4.0.1, 2024-09-15,
-  istqb.org: §1.5.3 Independence of Testing,
-  §4.2.1 Equivalence Partitioning, §4.2.2 Boundary Value Analysis,
-  §4.2.3 Decision Table Testing, §4.2.4 State Transition Testing.
-  Section numbers and quoted wording checked against the PDF on 2026-09-04. §4.1 points onward to ISO/IEC/IEEE 29119-4,
+- ISTQB Certified Tester Foundation Level Syllabus v4.0.1, istqb.org:
+  §1.5.3 Independence of Testing, §4.2.1 Equivalence Partitioning,
+  §4.2.2 Boundary Value Analysis, §4.2.3 Decision Table Testing,
+  §4.2.4 State Transition Testing.
+  Section numbers and quoted wording checked against the PDF. §4.1 points onward to ISO/IEC/IEEE 29119-4,
   which is not free and is not relied on here.
 - Konstantinou, Degiovanni, Papadakis,
   "Do LLMs generate test oracles that capture the actual or the expected program behaviour?",
