@@ -7,6 +7,7 @@ not write would be shadowed or overwritten.
 import contextlib
 import importlib.util
 import os
+import pathlib
 import subprocess
 import tempfile
 
@@ -23,15 +24,20 @@ ISOLATING = ('GIT_CONFIG_GLOBAL', 'GIT_CONFIG_NOSYSTEM')
 
 @contextlib.contextmanager
 def isolated(tmp_path):
-    """Point git at an empty global config for the block, so this machine's hooksPath does not leak in."""
+    """Point git at an empty global config for the block, so this machine's hooksPath does not leak in.
+
+    The config and any global hooks live in a directory of their own, outside the clone and removed afterwards.
+    """
     saved = {k: os.environ.get(k) for k in ISOLATING}
-    empty = tmp_path.parent / f'{tmp_path.name}.gitconfig'
-    empty.write_text('', encoding='utf-8')
-    os.environ['GIT_CONFIG_GLOBAL'] = str(empty)
+    outside = tempfile.TemporaryDirectory()
+    empty = os.path.join(outside.name, 'gitconfig')
+    open(empty, 'w', encoding='utf-8').close()
+    os.environ['GIT_CONFIG_GLOBAL'] = empty
     os.environ['GIT_CONFIG_NOSYSTEM'] = '1'
     try:
         yield
     finally:
+        outside.cleanup()
         for k, v in saved.items():
             if v is None:
                 os.environ.pop(k, None)
@@ -106,7 +112,7 @@ def global_hooks(tmp_path, pre_push):
     """A global core.hooksPath whose pre-push holds pre_push (None: no pre-push there)."""
     temp = os.path.realpath(tempfile.gettempdir())
     assert os.path.realpath(os.environ.get('GIT_CONFIG_GLOBAL', '')).startswith(temp), 'global config not isolated'
-    shared = tmp_path.parent / f'{tmp_path.name}.hooks'
+    shared = pathlib.Path(os.environ['GIT_CONFIG_GLOBAL']).parent / 'hooks'
     shared.mkdir()
     if pre_push is not None:
         (shared / 'pre-push').write_text(pre_push, encoding='utf-8')
