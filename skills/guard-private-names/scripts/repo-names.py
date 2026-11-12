@@ -1,7 +1,8 @@
 """pre-push: refuse a push whose commits name a repository the user keeps private.
 
-    git config core.hooksPath .githooks          enable it in a clone
-    python .githooks/repo-names.py --explain ID  in your own terminal, to see a name
+    python repo-names.py --explain ID  in your own terminal, to see a name
+
+The guard-private-names skill installs it; its SKILL.md says how.
 
 The names come from two places: the repositories `gh` lists for the signed-in
 account that are not public, and the clones `ghq list` finds, less those GitHub
@@ -234,7 +235,7 @@ def scan(repo, pushes, names, remote, words=frozenset()):
     return found
 
 
-def report(found, allowed_path):
+def report(found, allowed_path, script):
     lines = [f'pre-push: refused. {len(found)} place(s) carry the name of a repository you keep private',
              'or a clone ghq found. Names are not printed; each is shown as an 8-character id.',
              'By id, with the number of places:']
@@ -250,9 +251,17 @@ def report(found, allowed_path):
         lines.append(f'  {where}  {f["id"]}  {f["kind"]}')
     if len(found) > SHOWN:
         lines.append(f'  ... and {len(found) - SHOWN} more')
-    lines.append('See a name, in your own terminal: python .githooks/repo-names.py --explain ID')
+    lines.append(f'See a name, in your own terminal: python {script} --explain ID')
     lines.append(f'If it is an ordinary word and not a leak, add it on its own line to {allowed_path}')
     return '\n'.join(lines)
+
+
+def shown_path(path, cwd):
+    """path relative to cwd for the message; absolute when on another drive."""
+    try:
+        return os.path.relpath(path, cwd).replace(os.sep, '/')
+    except ValueError:
+        return path
 
 
 def explain(an_id, names):
@@ -286,7 +295,7 @@ def main(argv):
     allowed, allowed_path = _allowed(repo)
     found = scan(repo, parse_pushes(sys.stdin.read()), drop(names, allowed, url), remote or 'origin', load_words())
     if found:
-        print(report(found, allowed_path), file=sys.stderr)
+        print(report(found, allowed_path, shown_path(os.path.abspath(__file__), repo)), file=sys.stderr)
         return 1
     return 0
 

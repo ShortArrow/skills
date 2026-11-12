@@ -252,6 +252,7 @@
         ]
       },
       "skills": [
+        "./skills/guard-private-names",
         "./skills/plan-delegate-verify",
         "./skills/adversarial-verify",
         "./skills/assumption-breaking",

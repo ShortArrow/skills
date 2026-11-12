@@ -1,4 +1,4 @@
-"""Tests for .githooks/repo-names.py, written before the hook exists.
+"""Tests for skills/guard-private-names/scripts/repo-names.py, written before the hook exists.
 
 The pre-push hook refuses a push whose commits carry the name of a repository
 the user belongs to privately or keeps a clone of. Each case fixes one decision:
@@ -10,7 +10,7 @@ import importlib.util
 import os
 import subprocess
 
-HOOK = os.path.join(os.path.dirname(__file__), '..', '.githooks', 'repo-names.py')
+HOOK = os.path.join(os.path.dirname(__file__), '..', 'skills', 'guard-private-names', 'scripts', 'repo-names.py')
 spec = importlib.util.spec_from_file_location('repo_names', HOOK)
 hook = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(hook)
@@ -218,7 +218,7 @@ def test_the_report_never_prints_a_name(tmp_path):
     r = repo(tmp_path)
     tip = commit(r, {'a.md': 'SecretProj here\n'})
     found = hook.scan(str(r), [('refs/heads/main', tip, 'refs/heads/main', ZERO)], {'secretproj': 'private'}, 'origin')
-    text = hook.report(found, allowed_path='.git/info/repo-names-allowed')
+    text = hook.report(found, allowed_path='.git/info/repo-names-allowed', script='x')
     assert 'secretproj' not in text.lower()
     assert 'a.md:1:' in text and ident('secretproj') in text
 
@@ -227,9 +227,15 @@ def test_the_report_counts_every_id_even_past_the_shown_places():
     found = [{'commit': 'c', 'path': f'f{i}.md', 'line': 1, 'col': 1, 'id': 'aaaaaaaa', 'kind': 'private'}
              for i in range(hook.SHOWN + 5)]
     found.append({'commit': 'c', 'path': 'z.md', 'line': 1, 'col': 1, 'id': 'bbbbbbbb', 'kind': 'ghq'})
-    text = hook.report(found, allowed_path='x')
+    text = hook.report(found, allowed_path='x', script='x')
     assert f'aaaaaaaa  private  {hook.SHOWN + 5}' in text
     assert 'bbbbbbbb  ghq  1' in text
+
+
+def test_the_report_names_the_script_where_it_was_installed():
+    found = [{'commit': 'c', 'path': 'a.md', 'line': 1, 'col': 1, 'id': 'aaaaaaaa', 'kind': 'private'}]
+    text = hook.report(found, allowed_path='x', script='.git/hooks/repo-names.py')
+    assert 'python .git/hooks/repo-names.py --explain ID' in text
 
 
 def test_explain_maps_an_id_back_to_its_name():

@@ -1,5 +1,5 @@
 English words with a Zipf frequency of 2.0 or more, lowercase, ASCII letters and digits only,
-exported from wordfreq 3.1.1 (Robyn Speer, https://github.com/rspeer/wordfreq) on 2026-11-12:
+exported from wordfreq 3.1.1 (Robyn Speer, https://github.com/rspeer/wordfreq):
 top_n_list('en', 2_000_000), kept where zipf_frequency(word, 'en') >= 2.0.
 
 wordfreq's data files are redistributable under the Creative Commons
