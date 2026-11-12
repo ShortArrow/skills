@@ -60,6 +60,9 @@ Two things stay with the person at the keyboard:
 - **Seeing the name.** `python <hooks>/repo-names.py --explain ID` prints it.
   An agent does not run it:
   the name would land in the transcript the id exists to keep it out of.
+  Nor does it offer the command in a form the host runs inside the session,
+  such as Claude Code's `!` prefix,
+  since that output enters the transcript too.
 - **Allowing a name.** A name that is an ordinary word and not a leak goes on its own line in the clone's `info/repo-names-allowed`,
   which is never pushed.
   An agent does not edit that file;
