@@ -79,5 +79,11 @@ or to a wider version of the same one.
 - **If the action is still refused after approval,
   stop.** Say what was attempted and what it needs,
   and let the user run it.
+  Put the command last in the reply, alone in a one-line code block,
+  with `! ` before it when it can run through this session and without it,
+  with a word on why, when it cannot,
+  and after the block say only what in its output decides the next step:
+  a command inside a sentence wraps,
+  and its copy does not paste back as one line.
   Do not reach for a different tool to get the same effect.
 - **The question is the record.** Someone reading the transcript later should be able to tell what was authorised without reconstructing it.
