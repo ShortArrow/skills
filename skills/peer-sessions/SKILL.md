@@ -52,6 +52,17 @@ and it names the product, the hardware or the issue as often as not.
 2. **Ask a peer nothing that would bring its content down.** Where the peer's level is unknown,
    take it to be higher than this session's.
 
+Where the user names sessions `<level>-<machine>-<repository>` (for example `public-home-skills` or `internal-work-billing`),
+the first part is the session's stated level.
+A name not in that form states no level.
+When this session's name, or one in a listing, is not in that form,
+offer the user `/rename <level>-<machine>-<repository>`,
+typed in the session it belongs to,
+and leave the level part blank when the user has not stated one.
+The one exception is a session that oversees every level:
+its name is neutral, carrying no level, machine or repository,
+and is left as it is.
+
 ## Claude Code
 
 `scripts/peer-sessions.sh [minutes]` prints one row per session active in the window — last activity,
