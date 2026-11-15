@@ -51,6 +51,7 @@ A draft in another language uses the body alone.
 | bold a second phrase in a section | one or two per section, at the places where a misreading would cost; elsewhere, word order carries the weight |
 | say the same thing again in other words | once; a second sentence on the same subject is only a repeat if it adds no proposition |
 | write "confirmed" about something not checked | write the range that was checked; where an example looks contrived, admit it and give the reason it still happens |
+| call a draft clear because it reads clearly to you | hand the finished text alone to a reader with no context, and compare what comes back with what you meant (Read it back) |
 
 ## The three questions for an ambush
 
@@ -187,6 +188,32 @@ Write the range that was checked — Linux, three hosts,
 twenty-four hours.
 Where an example looks contrived, say so before the reader does,
 and give the reason it happens anyway in terms of the reader's own experience ("this symptom is not rare").
+
+## Read it back
+
+Every rule above is applied by the writer,
+and the writer cannot unknow what the text was meant to say.
+Whether the map reached a reader is checked on a reader.
+Hand the finished text, and nothing else,
+to a reader who has not seen the work;
+a subagent started without the conversation is one.
+Ask for a few lines on what is happening and why.
+Pass neither the intent nor the conclusion nor the question the text answers:
+whatever is passed comes back,
+and the read-back then measures the brief, not the text.
+
+Compare what comes back with the structure the writer meant:
+which things exist, how they connect, what causes what.
+A cause that came back reversed, a step that vanished,
+two things merged into one — each marks a place the text did not carry,
+and that place is revised with the rules above.
+Say a design note on log forwarding comes back as "logs are lost when the disk fills" where the text meant they are kept until the collector returns:
+the paragraph that said so likely listed the spool's properties before saying it was a buffer.
+
+The read-back is not an answer key.
+The writer compares and decides,
+and a read-back that adds what the text never said marks the reader's guess,
+not a gap to fill.
 
 ## What this is not for
 
