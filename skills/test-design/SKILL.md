@@ -28,6 +28,9 @@ the count — only executes that decision.
 | test a feature by its main flow | read the alternate and exception flows off the use case; each is a class |
 | grade a suite by reading it | count it against the specification: classes, both bounds, rules, transitions |
 | add a fifth test to a covered class | spend it on an uncovered class — the fifth buys runtime and no coverage |
+| leave a case out because the type system rules it out | the type rules out structural errors only; a misreading of the input type-checks, so write the concrete input that shows the reading (below) |
+| test a port to another language on its own | run the old and the new on the same recorded real inputs and diff the outputs; each difference is a defect on one side or an unsettled specification (below) |
+| reach for a proof, or for one example per combination, on a parser whose inputs combine without end | examples for the specified classes, and one property-based test for the combinations (below) |
 
 ## Attack the specification, not the implementation
 
@@ -45,6 +48,36 @@ and it is marked as such so nobody later mistakes a pinned bug for a requirement
 
 A useful smell: if every test was green on its first run,
 the suite was derived from the implementation, whatever the intent was.
+
+## A type checks the structure, not the reading
+
+A type system catches what is wrong with the program's shape:
+an error left unhandled, a case missing from a match,
+a value of the wrong kind.
+It cannot catch a wrong reading of what the input means,
+because the wrong reading has the right type.
+A completion hint drawn in an input line, taken for text the user sent;
+the `2` in a 24-bit colour sequence `38;2;R;G;B`,
+taken for the dim attribute; a timestamp in UTC,
+compared with one in local time.
+Each compiles, and each is wrong.
+Only a test that feeds the concrete input and states the expected reading catches it,
+so the classes of a parser are the readings of its input,
+not the types of its output.
+
+## A port is checked against what it replaces
+
+When an implementation moves to another language or library,
+the old one is the only oracle that already agrees with production.
+Record real inputs — captured screens, logged requests,
+files from use — run both implementations on them, and diff the outputs.
+A difference is not the new code's bug by default:
+it is a defect on one side or a question the specification never settled,
+and each is decided against the specification and given a test of its own.
+Twenty captured screens run through a parser of terminal screens and its port found the old one answering "empty" for a screen it had failed to read.
+The old output is never pasted in as the expected value;
+that asserts its bugs,
+the failure "Attack the specification, not the implementation" describes.
 
 ## Equivalence classes: count classes, not tests
 
@@ -280,6 +313,19 @@ Nor is it the unreachable arm `architect` puts in a decider:
 that path must never run, and reaching it is a bug,
 while an unimplemented path is expected to run and to refuse.
 
+## Rigor the specification can pay for
+
+Example tests, integration tests and static analysis run in CI on every change and are cheap to rewrite.
+A formal model or a proof is paid for again each time the specification moves,
+so it fits where the specification holds still and a wrong answer is expensive,
+and not where it is redrawn as often as a screen layout.
+Between them sits the property-based test (QuickCheck, Hypothesis, proptest):
+it states a rule every input must keep — parsing never panics,
+rendering what was parsed gives back the same attributes — and generates the inputs.
+It earns its place where the input space is a combination too large to list,
+such as a parser of terminal escape sequences whose attributes combine freely,
+and the specified classes keep their example tests beside it.
+
 ## A test that can skip is a test that can lie
 
 A fixture that fails to build,
@@ -301,3 +347,9 @@ both are tests whose ability to fail was assumed, not shown.
 - Konstantinou, Degiovanni, Papadakis,
   "Do LLMs generate test oracles that capture the actual or the expected program behaviour?",
   arXiv:2410.21136, 2024.
+- William M. McKeeman, "Differential Testing for Software",
+  Digital Technical Journal 10(1), 1998:
+  running implementations of one specification on the same inputs and treating each disagreement as a candidate defect.
+- Koen Claessen and John Hughes,
+  "QuickCheck: A Lightweight Tool for Random Testing of Haskell Programs",
+  ICFP 2000: properties stated over generated inputs.
