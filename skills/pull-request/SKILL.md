@@ -202,7 +202,7 @@ and each host covers the command for the session that skips the procedure:
 
 | Host | Cover |
 |---|---|
-| Claude Code | The writing-skills plugin runs a PreToolUse hook on `gh pr create` and `gh pr edit` that injects this rule as context before the command runs (`hooks/pr-body-context.sh`) |
+| Claude Code | The writing-skills plugin runs a PreToolUse hook (`hooks/pr-body-context.sh`) that injects this rule as context before `gh pr create` and `gh pr edit` run, and the rule of A reply to a review before a reply is posted through `gh pr comment`, `gh pr review` with a body, or `gh api` on a pull request's comment or review endpoint, `issues/<n>/comments` included |
 | Codex | `PreToolUse` in `.codex/hooks.json` or `config.toml` intercepts shell commands (learn.chatgpt.com/docs/hooks); this catalogue does not wire it, so a project adds the same script there or relies on step 1 of the procedure |
 | Copilot | `preToolUse` in `.github/hooks/<name>.json` for Copilot agents (docs.github.com); whether Copilot CLI reads it is not stated there. Not wired by this catalogue; step 1 of the procedure covers the command |
 | Cursor | `beforeShellExecution` or `preToolUse` in `.cursor/hooks.json` (cursor.com/docs/agent/hooks). Not wired by this catalogue; step 1 of the procedure covers the command |

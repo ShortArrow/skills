@@ -41,6 +41,19 @@
                 "statusMessage": "PR body: applying the writing skills"
               }
             ]
+          },
+          {
+            "matcher": "Bash",
+            "if": "Bash(gh api *)",
+            "hooks": [
+              {
+                "type": "command",
+                "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/pr-body-context.sh\"",
+                "shell": "bash",
+                "timeout": 10,
+                "statusMessage": "PR comment: applying the writing skills"
+              }
+            ]
           }
         ]
       },
