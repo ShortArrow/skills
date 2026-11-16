@@ -1,7 +1,7 @@
 ---
 name: pull-request
 description: |
-  The body of a pull request, triggered by the moments that pad it or starve it: about to describe what the diff already shows, about to explain the change by the author's own circumstances, about to paste a stack trace, a log or a "verified" section, about to quote the repository's own code in a code block, about to write "X breaks" without naming the function and the line, about to send a body nobody has seen in full, about to open a pull request with its whole body in one command, or about to send a large project's template with a section left thin. The scale sets the coverage: a large open-source project's template, issue link, test plan, breaking changes and checklist are filled in full; a small project or a team's own repository gets only what the diff cannot say. In both, repository code is linked at a commit-pinned line and a newline renders as a visible break. Use when writing or revising a pull request body or a reply to a review.
+  The body of a pull request, triggered by the moments that pad it or starve it: about to describe what the diff already shows, about to explain the change by the author's own circumstances, about to paste a stack trace, a log or a "verified" section, about to quote the repository's own code in a code block, about to write "X breaks" without naming the function and the line, about to send a body nobody has seen in full, about to open a pull request with its whole body in one command, about to send a large project's template with a section left thin, about to ask a reviewer what the code says, or about to cite another comment by its number alone. The scale sets the coverage: a large open-source project's template is filled in full; a small project or a team's own repository gets only what the diff cannot say. In both, repository code is linked at a commit-pinned line and a newline renders as a visible break. Use when writing or revising a pull request body or a reply to a review.
 allowed-tools: Read, Grep, Glob, Bash, Edit, Write
 ---
 
@@ -27,6 +27,8 @@ and that is the whole of what the body is for.
 | send the body straight from the command | show the whole text first; a body typed inside a command is never read as a document |
 | open a pull request with its whole body in one command | open it as a draft with a body of at most 120 characters, then write the body as a file and put it in with `gh pr edit --body-file` (Procedure) |
 | rewrite the body after one review comment | change what the comment named and nothing else |
+| ask a reviewer how many, which or in what order, when the code decides it | say what the code makes happen, then ask only whether what they saw differs (A reply to a review) |
+| answer one comment by pointing at another by its number alone | say the cause in one sentence and link that comment |
 
 ## Two scales
 
@@ -173,6 +175,24 @@ locate it, then write.
    A comment on one paragraph is not a request to rewrite the body,
    and a rewrite hands the reviewer a new document to read from the top.
 
+## A reply to a review
+
+A reviewer who reports what they saw knows the run,
+and the author knows the code; a reply puts the two side by side.
+
+**Say what the code predicts,
+then ask for the difference.** How many windows open and what their titles start with,
+how many times a request is retried, what is written to the log:
+the code decides these, and the author has it open.
+"One window should open, with a title starting `Export`; tell me if you saw a different number, or a title that does not start that way" costs the reviewer one comparison.
+"How many windows were open, and what were their titles?" makes them count what the author could have read.
+
+**Point at another comment with its reason and its link.** "Same cause as [the comment on the export dialog](https://github.com/<owner>/<repo>/pull/<n>#discussion_r<id>): the dialog is created before the main window is hidden." A number repeated alone,
+"answered in #58", sends the reviewer to find it and still leaves them to work out whether it applies.
+
+Both are settled before the reply is written,
+since rewording cannot repair a question that should not have been asked.
+
 ## Host branches
 
 The moment inside `gh pr create --body` is one no description can see.
@@ -197,6 +217,10 @@ and both outrank every rule here on that project.
 not the reviewer; this skill says which of the reader's questions the body may answer at all.
 `document-structure` shapes whatever remains.
 `unmachine-prose` catches the closer and the "verified" section on their way in.
+`grill-me`'s first check,
+whether the answer is already somewhere readable,
+applies to a reviewer as it does to the user:
+a reply asks the reviewer only for what they saw.
 The rules here rest on practice.
 
 ## Sources

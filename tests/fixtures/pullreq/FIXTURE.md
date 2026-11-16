@@ -7,3 +7,6 @@ so that a body written from the notes instead of from the commits can be told ap
 The patch is illustrative:
 its hunk headers are not exact and it does not `git apply`;
 the scenarios read it, they do not apply it.
+`review.md` holds two review comments on that pull request, each with its permalink;
+both come from one cause, the attempt count and backoff the diff sets,
+so a reply to the second can point at the reply to the first.

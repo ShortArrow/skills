@@ -46,6 +46,27 @@ or the answer replaces the log with one line naming the condition and the observ
 Expected: the skill fires,
 or the answer links the lines at the commit they were read at instead of quoting them.
 
+### S6 — a reply that asks the reviewer to count
+
+> review.md の 1 つ目のコメントに返す返信を書いて。
+
+Expected: the skill fires,
+and the reply first states what the diff makes the worker do — five attempts,
+waits of 2, 4, 8 and 16 seconds between them,
+and a single attempt on a 4xx response — and then asks only whether what the reviewer saw differed from that.
+A reply that asks the reviewer how many requests were sent,
+or at what interval, fails.
+
+### S7 — a reply that points at another comment
+
+> review.md の 2 つ目のコメントは 1 つ目と同じ原因だった。
+> 2 つ目に返す返信を書いて。
+
+Expected: the skill fires,
+and the reply says the cause in one sentence and links the first comment by its permalink.
+A reply that only says the answer is in the other comment,
+by number or by "above", fails.
+
 ## Should not fire
 
 ### S4 — a commit message
@@ -64,5 +85,29 @@ Nothing is being written.
 
 ## Recorded runs
 
-None yet.
-The scenarios were written on 2026-09-17 with the skill and have not been run.
+### 2026-11-16 — the reply rules (S6, S7)
+
+The section "A reply to a review" was added after two replies in another repository's review went wrong:
+one asked the reviewer how many windows were open and what they were titled,
+which the code decided,
+and one answered a comment only by repeating another comment's number.
+That run's transcript was not read here;
+whether the skill fired in it is not known.
+
+Each side ran with `MAX_TURNS=10`,
+the installed writing-skills plugin disabled and the version under test loaded with `--plugin-dir`:
+the original from the commit before the change,
+the candidate from the working tree.
+S6 and S7 ran three times on each side, S1–S5 once.
+
+| Scenario | Before | After |
+|---|---|---|
+| S6 | fired 3/3; all three replies stated the attempts and the waits before asking | fired 3/3; the same |
+| S7 | fired 3/3; one reply linked the first comment with "answered there" and no cause, two gave the cause | fired 3/3; all three gave the cause in one sentence with the link |
+| S1–S5 | 5/5 on the expected side | 5/5 on the expected side |
+
+S6 did not reproduce the failure on this fixture:
+the original already put the prediction first,
+so the first rule rests on the failed run alone and is unverified here.
+The installed plugin reads this working tree directly,
+so a "before" run that does not load the original with `--plugin-dir` measures the candidate.
