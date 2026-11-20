@@ -165,6 +165,95 @@ def test_verdict_is_a_deny_on_push_only():
           verdict('git push', [{'sha': '7' * 40, 'paths': ['README.md']}]), None)
 
 
+# --- which repository the push runs in -----------------------------------
+
+def test_push_target_follows_cd_and_dash_c():
+    """The hook's cwd is the session's, not the push's. A `cd` before the push
+    and git's -C both move the repository the push sends from, and the outgoing
+    commits are read there."""
+    def target(command, cwd='/a', windows=False):
+        got = hook.push_target(command, cwd, windows=windows)
+        return None if got is None else got.replace('\\', '/')
+
+    check('a bare push runs in cwd', target('git push origin main'), '/a')
+    check('cd to an absolute path', target('cd /b && git push'), '/b')
+    check('cd to a relative path', target('cd sub && git push'), '/a/sub')
+    check('cd then ; then push', target('cd /b; git push'), '/b')
+    check('a quoted path with a space', target('cd "/b c" && git push'), '/b c')
+    check('a command between cd and push', target('cd /b && git status && git push'), '/b')
+    check('a cd after the push does not count', target('git push && cd /b'), '/a')
+    check('two cds compose', target('cd /b && cd c && git push'), '/b/c')
+    check('git -C absolute', target('git -C /b push'), '/b')
+    check('git -C relative', target('git -C sub push'), '/a/sub')
+    check('cd then git -C relative', target('cd /b && git -C c push'), '/b/c')
+    check('two -C compose', target('git -C /b -C c push'), '/b/c')
+    check('-c before -C is skipped', target('git -c x.y=1 -C /b push'), '/b')
+    check('an env prefix before git', target('cd /b && GIT_TRACE=0 git push'), '/b')
+    check('newline separates commands', target('cd /b\ngit push'), '/b')
+    check('PowerShell Set-Location', target('Set-Location /b; git push'), '/b')
+    check('PowerShell Set-Location -Path', target('Set-Location -Path /b; git push'), '/b')
+    check('cd - cannot be followed', target('cd - && git push'), None)
+    check('Git Bash drive path on Windows',
+          target('cd /v/github.com/x && git push', cwd='C:/w', windows=True), 'V:/github.com/x')
+    check('a single-letter root is not a drive off Windows',
+          target('cd /v/x && git push'), '/v/x')
+    check('no push, no target', target('cd /b && git status'), None)
+
+
+def _git(cwd, *args):
+    subprocess.run(['git', '-c', 'commit.gpgsign=false', '-c', 'core.hooksPath=' + _NO_HOOKS]
+                   + list(args), cwd=cwd, check=True, capture_output=True)
+
+
+_NO_HOOKS = None
+
+
+def _clone_with(tmp, name, path):
+    """A clone of its own bare remote, one commit ahead that touches `path`."""
+    bare = os.path.join(tmp, name + '.git')
+    work = os.path.join(tmp, name)
+    _git(tmp, 'init', '--bare', '-b', 'main', bare)
+    _git(tmp, 'clone', bare, work)
+    _git(work, 'config', 'user.email', 'x@example.invalid')
+    _git(work, 'config', 'user.name', 'x')
+    with open(os.path.join(work, 'README.md'), 'w') as f:
+        f.write('x\n')
+    _git(work, 'add', '.')
+    _git(work, 'commit', '-m', 'base')
+    _git(work, 'push', 'origin', 'main')
+    os.makedirs(os.path.dirname(os.path.join(work, path)), exist_ok=True)
+    with open(os.path.join(work, path), 'w') as f:
+        f.write('y\n')
+    _git(work, 'add', '.')
+    _git(work, 'commit', '-m', 'ahead')
+    return work
+
+
+def test_the_pushed_repository_is_the_one_checked():
+    """End to end: the session sits in a clean clone and pushes another one whose
+    outgoing commit changes a hook alone. The other clone is the one judged."""
+    import tempfile
+    global _NO_HOOKS
+    with tempfile.TemporaryDirectory() as tmp:
+        _NO_HOOKS = os.path.join(tmp, 'no-hooks')
+        os.makedirs(_NO_HOOKS)
+        clean = _clone_with(tmp, 'clean', 'README.md')
+        bare = _clone_with(tmp, 'bare', 'hooks/x.py')
+
+        def run(command, cwd):
+            payload = json.dumps({'tool_input': {'command': command}, 'cwd': cwd})
+            proc = subprocess.run([sys.executable, HOOK], input=payload.encode(),
+                                  capture_output=True)
+            return b'"deny"' in proc.stdout
+
+        fwd = bare.replace('\\', '/')
+        check('cd into the bare clone is refused', run(f'cd "{fwd}" && git push', clean), True)
+        check('git -C the bare clone is refused', run(f'git -C "{fwd}" push', clean), True)
+        check('pushing the clean clone from the bare one passes',
+              run(f'cd "{clean.replace(chr(92), "/")}" && git push', bare), False)
+        check('a bare push from the bare clone is still refused', run('git push', bare), True)
+
+
 def test_unreadable_input_lets_the_call_through():
     """verify-reports.py's rule: the gate is a check on the agent, not a lock on
     the user. A git failure must not strand the push."""
