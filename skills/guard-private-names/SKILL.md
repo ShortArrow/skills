@@ -1,12 +1,14 @@
 ---
 name: guard-private-names
-description: Install a git pre-push hook into one clone that refuses a push whose commits carry the name of a repository the signed-in gh account keeps private, or of a ghq clone GitHub does not confirm as public. Use when about to make a repository public, create one as public, or push for the first time to a public remote from a clone without the hook; or when asked to guard a clone against leaking private repository names. The hook is copied into the clone's own hooks directory, which git never pushes. It checks names only, not credentials or other secrets.
+description: Install a git pre-push hook into one clone that refuses a push whose commits carry the name of a repository the signed-in gh account keeps private, or of a ghq clone GitHub does not confirm as public, or a host from ~/.ssh/config, or an IPv4 address other than a documentation one or 127.0.0.1. Use when about to make a repository public, create one as public, or push for the first time to a public remote from a clone without the hook; or when asked to guard a clone against leaking private repository names, hosts or addresses. The hook is copied into the clone's own hooks directory, which git never pushes. It checks names and addresses only, not credentials or other secrets.
 ---
 
 # Guard private names
 
 A public repository that names a private one leaks that the private one exists,
 and what it is called often says what it is for.
+A host name from an ssh config or an address on a private network leaks the same way,
+and says where the work is done.
 This skill installs a pre-push hook that refuses such a push before it leaves the machine.
 
 ## Install
@@ -51,19 +53,23 @@ where `<path>` holds `repo-names.py` and `words.txt` copied from `scripts/`.
 
 ## What a refusal means
 
-A refusal lists each place and an 8-character id, never the name,
+A refusal lists each place and an 8-character id, never the value,
 because the message lands in terminals, agent transcripts and CI logs.
-Remove the name from the commits and push again.
+Remove the value from the commits and push again; in a document,
+an address becomes one from the documentation ranges and a host becomes `host.example.invalid`.
 
 Two things stay with the person at the keyboard:
 
-- **Seeing the name.** `python <hooks>/repo-names.py --explain ID` prints it.
-  An agent does not run it:
-  the name would land in the transcript the id exists to keep it out of.
+- **Seeing the value.** `python <hooks>/repo-names.py --explain ID` prints a repository name or an ssh host.
+  An address has no list to look it up in,
+  so it is read at the place the refusal names.
+  An agent does not run `--explain` or read the place out:
+  the value would land in the transcript the id exists to keep it out of.
   Nor does it offer the command in a form the host runs inside the session,
   such as Claude Code's `!` prefix,
   since that output enters the transcript too.
-- **Allowing a name.** A name that is an ordinary word and not a leak goes on its own line in the clone's `info/repo-names-allowed`,
+- **Allowing a value.** A name,
+  host or address that is not a leak goes on its own line in the clone's `info/repo-names-allowed`,
   which is never pushed.
   An agent does not edit that file;
   widening what passes is the owner's call.
@@ -82,6 +88,15 @@ and each word is looked up in `scripts/words.txt`, an English word list:
   since its words joined otherwise are ordinary prose.
 - A name that is one listed word is not checked.
 
+The `Host` and `HostName` values of `~/.ssh/config` join the names under the same rule.
+A line with `*` or `?` is skipped, since a pattern names no host,
+and a `HostName` that is an address is left to the address check.
+
+Every IPv4 address is refused except `127.0.0.1` and the documentation ranges of RFC 5737:
+`192.0.2.0/24`, `198.51.100.0/24` and `203.0.113.0/24`.
+A dotted run inside a longer one,
+such as the build number `10.0.26300.1`, is not an address.
+
 Matches are whole words,
 in the tree of every pushed tip and in the lines every other pushed commit adds,
 so a name added and later removed is still refused.
@@ -91,6 +106,9 @@ so a name added and later removed is still refused.
 - Git 2.50.1, githooks(5),
   sections `pre-push` (the arguments and the lines on standard input) and the description of `core.hooksPath` in git-config(1):
   a set `core.hooksPath` replaces the hooks directory.
+- RFC 5737, "IPv4 Address Blocks Reserved for Documentation":
+  the three ranges a document uses in place of a real address.
+- ssh_config(5), the `Host` and `HostName` keywords and the `*` and `?` of a pattern.
 - wordfreq 3.1.1 (Robyn Speer), the source of `scripts/words.txt`;
   the list and its license, CC BY-SA 4.0,
   are described in the file's header.

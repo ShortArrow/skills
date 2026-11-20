@@ -14,10 +14,14 @@ name that is one listed word is not checked, being an ordinary word. Matches are
 whole words, in the tree of every pushed tip and in the lines every other pushed
 commit adds.
 
+The Host and HostName values of ~/.ssh/config join the names, less lines with
+* or ?. Every IPv4 address is refused too, except 127.0.0.1 and the
+documentation ranges of RFC 5737.
+
 A refusal prints where each hit is and an 8-character id, never the name: the
 message lands in terminals, agent transcripts and CI logs, and printing the name
 there would be the leak it exists to stop. `--explain` maps an id back to its name
-for the person at the keyboard. A name that is an ordinary word goes in the clone's
+for the person at the keyboard. A value that is not a leak goes in the clone's
 untracked `info/repo-names-allowed` (one per line), which is never pushed, because
 an allow list of private names published would be the same leak.
 
@@ -25,6 +29,7 @@ When `gh` cannot list the names, the push is refused: a check that passes becaus
 it could not look is not a check.
 """
 import hashlib
+import ipaddress
 import json
 import os
 import re
@@ -39,6 +44,11 @@ MIN_LENGTH = 3
 SHOWN = 60
 WORDS = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'words.txt')
 SEPARATOR = '[-_. ]?'
+SSH_CONFIG = os.path.join(os.path.expanduser('~'), '.ssh', 'config')
+IPV4 = re.compile(r'(?<![\w.])(?:[0-9]{1,3}\.){3}[0-9]{1,3}(?!\w|\.[0-9])')
+IPV4_GREP = r'[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}'
+DOCUMENTATION = [ipaddress.ip_network(n) for n in ('192.0.2.0/24', '198.51.100.0/24', '203.0.113.0/24')]
+LOOPBACK = ipaddress.ip_address('127.0.0.1')
 
 
 class NamesUnknown(Exception):
@@ -139,6 +149,49 @@ def load_names(run=run):
     return {n: k for n, k in names.items() if len(n) >= MIN_LENGTH and n.lower() not in public}
 
 
+def load_ssh_names(path=SSH_CONFIG):
+    """The Host and HostName values of an ssh config, less every line with * or ?.
+
+    A HostName that is an IP address is left to the address check."""
+    try:
+        with open(path, encoding='utf-8', errors='replace') as handle:
+            lines = handle.read().splitlines()
+    except OSError:
+        return set()
+    names = set()
+    for line in lines:
+        match = re.match(r'\s*(host|hostname)\s*(?:=\s*|\s+)(.*)', line, re.IGNORECASE)
+        if not match or '*' in line or '?' in line:
+            continue
+        for value in match.group(2).split('#')[0].split():
+            value = value.strip('"')
+            if match.group(1).lower() == 'hostname' and _is_ipv4(value):
+                continue
+            if value and not value.startswith('!'):
+                names.add(value)
+    return names
+
+
+def _is_ipv4(text):
+    try:
+        ipaddress.IPv4Address(text)
+    except ValueError:
+        return False
+    return True
+
+
+def _addresses(text, allowed):
+    """(start, address) for each IPv4 address in text that is not documentation, loopback or allowed."""
+    for match in IPV4.finditer(text):
+        try:
+            address = ipaddress.IPv4Address(match.group())
+        except ValueError:
+            continue
+        if address == LOOPBACK or any(address in n for n in DOCUMENTATION) or str(address) in allowed:
+            continue
+        yield match.start(), str(address)
+
+
 def drop(names, allowed, own):
     """names less the allowed ones and the name of the repository being pushed to."""
     own_name = re.sub(r'\.git$', '', (own or '').rstrip('/').replace('\\', '/').split('/')[-1].split(':')[-1]).lower()
@@ -179,65 +232,82 @@ def _hits(matcher, ordered, text):
         yield match.start(), ordered[int(match.lastgroup[1:])]
 
 
-def _scan_tree(repo, sha, names, targets, matcher):
-    with tempfile.NamedTemporaryFile('w', delete=False, encoding='utf-8', suffix='.txt') as handle:
-        handle.write('\n'.join(needle for _, needle in targets.values()) + '\n')
-        patterns = handle.name
-    ordered = list(targets)
-    try:
-        out = _git(repo, 'grep', '-n', '-I', '-i', '-F', '-f', patterns, sha, '--')
-    finally:
-        os.unlink(patterns)
+def _scan_tree(repo, sha, finders):
+    """Hits in the tree at sha: each finder is (git grep options, patterns, text -> (start, value, kind))."""
     found = []
-    for line in out.splitlines():
-        rest = line[len(sha) + 1:] if line.startswith(sha + ':') else line
-        path, _, rest = rest.partition(':')
-        number, _, text = rest.partition(':')
-        for start, name in _hits(matcher, ordered, text):
-            found.append({'commit': sha[:7], 'path': path, 'line': int(number),
-                          'col': start + 1, 'id': ident(name), 'kind': names[name]})
+    for options, patterns, find in finders:
+        with tempfile.NamedTemporaryFile('w', delete=False, encoding='utf-8', suffix='.txt') as handle:
+            handle.write(patterns + '\n')
+            pattern_file = handle.name
+        try:
+            out = _git(repo, 'grep', '-n', '-I', *options, '-f', pattern_file, sha, '--')
+        finally:
+            os.unlink(pattern_file)
+        for line in out.splitlines():
+            rest = line[len(sha) + 1:] if line.startswith(sha + ':') else line
+            path, _, rest = rest.partition(':')
+            number, _, text = rest.partition(':')
+            for start, value, kind in find(text):
+                found.append({'commit': sha[:7], 'path': path, 'line': int(number),
+                              'col': start + 1, 'id': ident(value), 'kind': kind})
     return found
 
 
-def _scan_added_lines(repo, commit, names, targets, matcher):
-    found, seen, path, ordered = [], set(), None, list(targets)
+def _scan_added_lines(repo, commit, finders):
+    found, seen, path = [], set(), None
     for line in _git(repo, 'show', '--format=', '--no-color', '--no-renames', '-U0', commit).splitlines():
         if line.startswith('+++ '):
             path = line[6:] if line.startswith('+++ b/') else None
         elif line.startswith('+') and path:
-            for _, name in _hits(matcher, ordered, line[1:]):
-                key = (path, name)
-                if key not in seen:
-                    seen.add(key)
-                    found.append({'commit': commit[:7], 'path': path, 'line': None, 'col': None,
-                                  'id': ident(name), 'kind': names[name]})
+            for _, _, find in finders:
+                for _, value, kind in find(line[1:]):
+                    key = (path, value.lower())
+                    if key not in seen:
+                        seen.add(key)
+                        found.append({'commit': commit[:7], 'path': path, 'line': None, 'col': None,
+                                      'id': ident(value), 'kind': kind})
     return found
 
 
-def scan(repo, pushes, names, remote, words=frozenset()):
-    """Every hit in what the pushes would send: each tip's tree, and the lines other new commits add."""
+def _finders(names, words, allowed):
+    """The finders for the names, by the dictionary rule, and for IPv4 addresses."""
+    finders = []
     targets = _targets(names, words)
-    if not targets:
-        return []
-    matcher = _matcher(targets)
+    if targets:
+        matcher, ordered = _matcher(targets), list(targets)
+        finders.append((('-i', '-F'), '\n'.join(needle for _, needle in targets.values()),
+                        lambda text: ((s, n, names[n]) for s, n in _hits(matcher, ordered, text))))
+    allowed = {a.lower() for a in allowed}
+    finders.append((('-E',), IPV4_GREP,
+                    lambda text: ((s, a, 'ipv4') for s, a in _addresses(text, allowed))))
+    return finders
+
+
+def scan(repo, pushes, names, remote, words=frozenset(), allowed=frozenset()):
+    """Every hit in what the pushes would send: each tip's tree, and the lines other new commits add.
+
+    IPv4 addresses are checked beside the names, less documentation addresses,
+    127.0.0.1 and the allowed ones."""
+    finders = _finders(names, words, allowed)
     found = []
     for _, local, _, remote_sha in pushes:
         if local == ZERO:
             continue
-        found += _scan_tree(repo, local, names, targets, matcher)
+        found += _scan_tree(repo, local, finders)
         if remote_sha == ZERO:
             commits = _git(repo, 'rev-list', local, '--not', f'--remotes={remote}').split()
         else:
             commits = _git(repo, 'rev-list', f'{remote_sha}..{local}').split()
         for commit in commits:
             if commit != local:
-                found += _scan_added_lines(repo, commit, names, targets, matcher)
+                found += _scan_added_lines(repo, commit, finders)
     return found
 
 
 def report(found, allowed_path, script):
-    lines = [f'pre-push: refused. {len(found)} place(s) carry the name of a repository you keep private',
-             'or a clone ghq found. Names are not printed; each is shown as an 8-character id.',
+    lines = [f'pre-push: refused. {len(found)} place(s) carry the name of a repository you keep private,',
+             'a clone ghq found, a host from ~/.ssh/config or an IPv4 address.',
+             'Values are not printed; each is shown as an 8-character id.',
              'By id, with the number of places:']
     counts, kinds = {}, {}
     for f in found:
@@ -252,7 +322,7 @@ def report(found, allowed_path, script):
     if len(found) > SHOWN:
         lines.append(f'  ... and {len(found) - SHOWN} more')
     lines.append(f'See a name, in your own terminal: python {script} --explain ID')
-    lines.append(f'If it is an ordinary word and not a leak, add it on its own line to {allowed_path}')
+    lines.append(f'If it is not a leak, its owner adds it on its own line to {allowed_path}')
     return '\n'.join(lines)
 
 
@@ -279,10 +349,14 @@ def _allowed(repo):
     return entries, path
 
 
+def _ssh_kinds():
+    return {name: 'ssh' for name in load_ssh_names()}
+
+
 def main(argv):
     repo = os.getcwd()
     if len(argv) >= 3 and argv[1] == '--explain':
-        for name in explain(argv[2], load_names()):
+        for name in explain(argv[2], {**_ssh_kinds(), **load_names()}):
             print(name)
         return 0
     remote, url = (argv[1:3] + ['', ''])[:2]
@@ -292,8 +366,10 @@ def main(argv):
         print(f'pre-push: refused. The private repository names could not be listed ({error}).\n'
               'Sign in with gh and push again; nothing is passed unchecked.', file=sys.stderr)
         return 1
+    names = {**_ssh_kinds(), **names}
     allowed, allowed_path = _allowed(repo)
-    found = scan(repo, parse_pushes(sys.stdin.read()), drop(names, allowed, url), remote or 'origin', load_words())
+    found = scan(repo, parse_pushes(sys.stdin.read()), drop(names, allowed, url), remote or 'origin',
+                 load_words(), allowed)
     if found:
         print(report(found, allowed_path, shown_path(os.path.abspath(__file__), repo)), file=sys.stderr)
         return 1

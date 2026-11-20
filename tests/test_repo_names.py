@@ -240,3 +240,78 @@ def test_the_report_names_the_script_where_it_was_installed():
 
 def test_explain_maps_an_id_back_to_its_name():
     assert hook.explain(ident('secretproj'), {'secretproj': 'private', 'other': 'ghq'}) == ['secretproj']
+
+
+# --- IPv4 addresses ----------------------------------------------------------
+
+def test_an_ipv4_address_in_the_pushed_tree_is_refused_by_id(tmp_path):
+    found = scan_text(tmp_path, 'db at 10.20.30.40 and\nproxy 172.16.5.9:8080\n', {}, set())
+    assert [(f['line'], f['id'], f['kind']) for f in found] == [
+        (1, ident('10.20.30.40'), 'ipv4'), (2, ident('172.16.5.9'), 'ipv4')]
+    text = hook.report(found, allowed_path='x', script='x')
+    assert '10.20.30.40' not in text and '172.16.5.9' not in text
+
+
+def test_an_ipv4_address_added_then_removed_is_refused(tmp_path):
+    r = repo(tmp_path)
+    commit(r, {'a.md': 'clean\n'})
+    commit(r, {'b.md': 'host 10.20.30.40\n'})
+    tip = commit(r, {'b.md': None})
+    found = hook.scan(str(r), [('refs/heads/main', tip, 'refs/heads/main', ZERO)], {}, 'origin')
+    assert [(f['path'], f['kind']) for f in found] == [('b.md', 'ipv4')]
+
+
+def test_documentation_addresses_and_loopback_pass(tmp_path):
+    text = '192.0.2.10\n198.51.100.7\n203.0.113.250\n127.0.0.1\n'
+    assert scan_text(tmp_path, text, {}, set()) == []
+
+
+def test_an_address_in_the_allow_file_passes(tmp_path):
+    r = repo(tmp_path)
+    tip = commit(r, {'a.md': 'db at 10.20.30.40\n'})
+    found = hook.scan(str(r), [('refs/heads/main', tip, 'refs/heads/main', ZERO)], {}, 'origin',
+                      allowed={'10.20.30.40'})
+    assert found == []
+
+
+def test_what_is_not_an_address_passes(tmp_path):
+    text = 'version 1.2.3\nbuild 10.0.26300.1\n256.1.1.1\n1.2.3.4.5\nv10.20.30.40x\n'
+    assert scan_text(tmp_path, text, {}, set()) == []
+
+
+# --- names from ~/.ssh/config -------------------------------------------------
+
+SSH_CONFIG = '''# a comment naming commentqzx
+Host qzxbox
+    HostName qzxbox.lab.example.invalid
+    User me
+Host alpha-qzx beta-qzx
+  hostname 10.20.30.40
+Host=eqzx
+Host *
+    ForwardAgent no
+Host qz?x wildqzx
+Match host matchqzx
+'''
+
+
+def test_ssh_config_hosts_and_hostnames_are_read_except_wildcard_lines(tmp_path):
+    path = tmp_path / 'config'
+    path.write_text(SSH_CONFIG, encoding='utf-8')
+    assert hook.load_ssh_names(str(path)) == {
+        'qzxbox', 'qzxbox.lab.example.invalid', 'alpha-qzx', 'beta-qzx', 'eqzx'}
+
+
+def test_a_missing_ssh_config_gives_no_names(tmp_path):
+    assert hook.load_ssh_names(str(tmp_path / 'absent')) == set()
+
+
+def test_an_ssh_config_name_in_the_pushed_tree_is_refused_by_id(tmp_path):
+    found = scan_text(tmp_path, 'deploy to qzxbox tonight\n', {'qzxbox': 'ssh'}, set())
+    assert [(f['line'], f['id'], f['kind']) for f in found] == [(1, ident('qzxbox'), 'ssh')]
+    assert 'qzxbox' not in hook.report(found, allowed_path='x', script='x')
+
+
+def test_an_ssh_config_name_in_the_allow_file_passes():
+    assert hook.drop({'qzxbox': 'ssh', 'secretproj': 'private'}, allowed={'QZXBOX'}, own='') == {
+        'secretproj': 'private'}
