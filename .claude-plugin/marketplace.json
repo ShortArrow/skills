@@ -186,6 +186,13 @@
                 "shell": "bash",
                 "timeout": 10,
                 "statusMessage": "Publishing: checking every subagent report was verified"
+              },
+              {
+                "type": "command",
+                "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/check-ssh-task-registration.sh\" || true",
+                "shell": "bash",
+                "timeout": 10,
+                "statusMessage": "Checking for a scheduled task registered on the ssh line"
               }
             ]
           },
@@ -247,6 +254,13 @@
                 "shell": "bash",
                 "timeout": 10,
                 "statusMessage": "Publishing: checking every subagent report was verified"
+              },
+              {
+                "type": "command",
+                "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/check-ssh-task-registration.sh\" || true",
+                "shell": "bash",
+                "timeout": 10,
+                "statusMessage": "Checking for a scheduled task registered on the ssh line"
               }
             ]
           },

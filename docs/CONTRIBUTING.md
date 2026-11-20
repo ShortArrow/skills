@@ -342,7 +342,19 @@ Earlier versions blocked watchers the transcript did not show as running:
 a command moved to the background by its timeout,
 a subagent resumed by a message, and tasks a restarted client had lost.
 
-Every Python hook command ends in `|| true` and runs in bash.
+`hooks/check-ssh-task-registration.sh` holds `hyperv-clean-vm`'s line on scheduled tasks over SSH.
+It is PreToolUse on Bash and on PowerShell, with no `if` filter,
+because the line it refuses often starts with `scp ... &&`,
+`&` or a quoted path to `ssh.exe` rather than with `ssh`;
+the script leaves at once when the input has no `ssh` in it.
+It refuses a command that runs `ssh` in command position and,
+from there on,
+creates, changes or deletes a task with `schtasks` or a `ScheduledTask` cmdlet,
+and lets querying, running and ending a task through.
+`tests/test_check_ssh_task_registration.py` holds the shapes it refuses and lets through,
+and runs the marketplace's own command for each shell.
+
+Every script hook command ends in `|| true` and runs in bash.
 A marketplace update makes the client read the new hook commands while the installed plugin may still be the old commit,
 whose cache lacks the script they name;
 Python then exits 2 on the missing file,
