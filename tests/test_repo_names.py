@@ -279,6 +279,16 @@ def test_what_is_not_an_address_passes(tmp_path):
     assert scan_text(tmp_path, text, {}, set()) == []
 
 
+def test_any_address_netmasks_and_the_whole_loopback_block_pass(tmp_path):
+    text = 'listen 0.0.0.0\nmask 255.0.0.0\nmask 255.255.255.0\nmask 255.255.255.255\n127.0.1.1\n127.255.255.254\n'
+    assert scan_text(tmp_path, text, {}, set()) == []
+
+
+def test_an_address_that_only_looks_like_a_netmask_is_refused(tmp_path):
+    found = scan_text(tmp_path, 'mask 255.255.0.255\nnext 128.0.0.1\n', {}, set())
+    assert [(f['line'], f['kind']) for f in found] == [(1, 'ipv4'), (2, 'ipv4')]
+
+
 # --- names from ~/.ssh/config -------------------------------------------------
 
 SSH_CONFIG = '''# a comment naming commentqzx
@@ -288,6 +298,18 @@ Host qzxbox
 Host alpha-qzx beta-qzx
   hostname 10.20.30.40
 Host=eqzx
+Host github.com
+    HostName ssh.github.com
+Host nas
+    HostName nas.qzx.local
+Host build
+    HostName build.qzx.LAN
+Host db
+    HostName db.qzx.internal
+Host media
+    HostName media.qzx.home
+Host tail
+    HostName tail-qzx.ts.net
 Host *
     ForwardAgent no
 Host qz?x wildqzx
@@ -295,11 +317,25 @@ Match host matchqzx
 '''
 
 
-def test_ssh_config_hosts_and_hostnames_are_read_except_wildcard_lines(tmp_path):
+def test_ssh_config_aliases_internal_names_and_addresses_are_read(tmp_path):
     path = tmp_path / 'config'
     path.write_text(SSH_CONFIG, encoding='utf-8')
     assert hook.load_ssh_names(str(path)) == {
-        'qzxbox', 'qzxbox.lab.example.invalid', 'alpha-qzx', 'beta-qzx', 'eqzx'}
+        'qzxbox', 'alpha-qzx', 'beta-qzx', '10.20.30.40', 'eqzx',
+        'nas', 'nas.qzx.local', 'build', 'build.qzx.LAN', 'db', 'db.qzx.internal',
+        'media', 'media.qzx.home', 'tail', 'tail-qzx.ts.net'}
+
+
+def test_a_public_name_from_ssh_config_is_not_read(tmp_path):
+    path = tmp_path / 'config'
+    path.write_text(SSH_CONFIG, encoding='utf-8')
+    names = hook.load_ssh_names(str(path))
+    assert not {'github.com', 'ssh.github.com', 'qzxbox.lab.example.invalid'} & names
+
+
+def test_an_ssh_config_address_is_reported_once(tmp_path):
+    found = scan_text(tmp_path, 'ssh to 10.20.30.40\n', {'10.20.30.40': 'ssh'}, set())
+    assert [(f['line'], f['id'], f['kind']) for f in found] == [(1, ident('10.20.30.40'), 'ssh')]
 
 
 def test_a_missing_ssh_config_gives_no_names(tmp_path):

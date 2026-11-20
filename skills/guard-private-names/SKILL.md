@@ -1,6 +1,6 @@
 ---
 name: guard-private-names
-description: Install a git pre-push hook into one clone that refuses a push whose commits carry the name of a repository the signed-in gh account keeps private, or of a ghq clone GitHub does not confirm as public, or a host from ~/.ssh/config, or an IPv4 address other than a documentation one or 127.0.0.1. Use when about to make a repository public, create one as public, or push for the first time to a public remote from a clone without the hook; or when asked to guard a clone against leaking private repository names, hosts or addresses. The hook is copied into the clone's own hooks directory, which git never pushes. It checks names and addresses only, not credentials or other secrets.
+description: Install a git pre-push hook into one clone that refuses a push whose commits carry the name of a repository the signed-in gh account keeps private, or of a ghq clone GitHub does not confirm as public, or a private host from ~/.ssh/config, or an IPv4 address that names a machine. Use when about to make a repository public, create one as public, or push for the first time to a public remote from a clone without the hook; or when asked to guard a clone against leaking private repository names, hosts or addresses. The hook is copied into the clone's own hooks directory, which git never pushes. It checks names and addresses only, not credentials or other secrets.
 ---
 
 # Guard private names
@@ -88,12 +88,19 @@ and each word is looked up in `scripts/words.txt`, an English word list:
   since its words joined otherwise are ordinary prose.
 - A name that is one listed word is not checked.
 
-The `Host` and `HostName` values of `~/.ssh/config` join the names under the same rule.
-A line with `*` or `?` is skipped, since a pattern names no host,
-and a `HostName` that is an address is left to the address check.
+The private `Host` and `HostName` values of `~/.ssh/config` join the names under the same rule:
+an alias with no dot, a name ending in `.local`, `.lan`, `.internal`,
+`.home` or `.ts.net`, and an address.
+A public name such as `github.com` is not taken:
+it would stop every push that mentions it,
+and an allow file that has to be filled for the obvious invites switching the check off.
+A line with `*` or `?` is skipped, since a pattern names no host.
 
-Every IPv4 address is refused except `127.0.0.1` and the documentation ranges of RFC 5737:
-`192.0.2.0/24`, `198.51.100.0/24` and `203.0.113.0/24`.
+Every IPv4 address is refused except those that name no machine:
+`127.0.0.0/8`, `0.0.0.0`,
+a netmask from `255.0.0.0` to `255.255.255.255`,
+and the documentation ranges of RFC 5737, `192.0.2.0/24`,
+`198.51.100.0/24` and `203.0.113.0/24`.
 A dotted run inside a longer one,
 such as the build number `10.0.26300.1`, is not an address.
 

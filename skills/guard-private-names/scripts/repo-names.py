@@ -14,8 +14,10 @@ name that is one listed word is not checked, being an ordinary word. Matches are
 whole words, in the tree of every pushed tip and in the lines every other pushed
 commit adds.
 
-The Host and HostName values of ~/.ssh/config join the names, less lines with
-* or ?. Every IPv4 address is refused too, except 127.0.0.1 and the
+The private Host and HostName values of ~/.ssh/config join the names: an alias
+with no dot, a name ending in .local, .lan, .internal, .home or .ts.net, or an
+address; lines with * or ? are skipped. Every IPv4 address is refused too,
+except 127.0.0.0/8, 0.0.0.0, a netmask from 255.0.0.0 up, and the
 documentation ranges of RFC 5737.
 
 A refusal prints where each hit is and an 8-character id, never the name: the
@@ -47,8 +49,9 @@ SEPARATOR = '[-_. ]?'
 SSH_CONFIG = os.path.join(os.path.expanduser('~'), '.ssh', 'config')
 IPV4 = re.compile(r'(?<![\w.])(?:[0-9]{1,3}\.){3}[0-9]{1,3}(?!\w|\.[0-9])')
 IPV4_GREP = r'[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}'
-DOCUMENTATION = [ipaddress.ip_network(n) for n in ('192.0.2.0/24', '198.51.100.0/24', '203.0.113.0/24')]
-LOOPBACK = ipaddress.ip_address('127.0.0.1')
+PASSED_NETWORKS = [ipaddress.ip_network(n) for n in
+                   ('192.0.2.0/24', '198.51.100.0/24', '203.0.113.0/24', '127.0.0.0/8')]
+INTERNAL_SUFFIXES = ('.local', '.lan', '.internal', '.home', '.ts.net')
 
 
 class NamesUnknown(Exception):
@@ -150,9 +153,11 @@ def load_names(run=run):
 
 
 def load_ssh_names(path=SSH_CONFIG):
-    """The Host and HostName values of an ssh config, less every line with * or ?.
+    """The private Host and HostName values of an ssh config, less every line with * or ?.
 
-    A HostName that is an IP address is left to the address check."""
+    Private means an alias with no dot, a name ending in an internal suffix, or
+    an IPv4 address; a public name such as github.com would stop every push that
+    mentions it."""
     try:
         with open(path, encoding='utf-8', errors='replace') as handle:
             lines = handle.read().splitlines()
@@ -165,11 +170,14 @@ def load_ssh_names(path=SSH_CONFIG):
             continue
         for value in match.group(2).split('#')[0].split():
             value = value.strip('"')
-            if match.group(1).lower() == 'hostname' and _is_ipv4(value):
-                continue
-            if value and not value.startswith('!'):
+            if value and not value.startswith('!') and _is_private_host(value):
                 names.add(value)
     return names
+
+
+def _is_private_host(value):
+    name = value.rstrip('.').lower()
+    return '.' not in name or name.endswith(INTERNAL_SUFFIXES) or _is_ipv4(name)
 
 
 def _is_ipv4(text):
@@ -180,14 +188,22 @@ def _is_ipv4(text):
     return True
 
 
-def _addresses(text, allowed):
-    """(start, address) for each IPv4 address in text that is not documentation, loopback or allowed."""
+def _says_nothing(address):
+    """True for an address that names no machine: documentation, loopback, any, or a netmask."""
+    if any(address in n for n in PASSED_NETWORKS) or int(address) == 0:
+        return True
+    host_bits = ~int(address) & 0xFFFFFFFF
+    return address.packed[0] == 255 and host_bits & (host_bits + 1) == 0
+
+
+def _addresses(text, skipped):
+    """(start, address) for each IPv4 address in text that says something and is not skipped."""
     for match in IPV4.finditer(text):
         try:
             address = ipaddress.IPv4Address(match.group())
         except ValueError:
             continue
-        if address == LOOPBACK or any(address in n for n in DOCUMENTATION) or str(address) in allowed:
+        if _says_nothing(address) or str(address) in skipped:
             continue
         yield match.start(), str(address)
 
@@ -277,17 +293,17 @@ def _finders(names, words, allowed):
         matcher, ordered = _matcher(targets), list(targets)
         finders.append((('-i', '-F'), '\n'.join(needle for _, needle in targets.values()),
                         lambda text: ((s, n, names[n]) for s, n in _hits(matcher, ordered, text))))
-    allowed = {a.lower() for a in allowed}
+    skipped = {a.lower() for a in allowed} | {n.lower() for n in names}
     finders.append((('-E',), IPV4_GREP,
-                    lambda text: ((s, a, 'ipv4') for s, a in _addresses(text, allowed))))
+                    lambda text: ((s, a, 'ipv4') for s, a in _addresses(text, skipped))))
     return finders
 
 
 def scan(repo, pushes, names, remote, words=frozenset(), allowed=frozenset()):
     """Every hit in what the pushes would send: each tip's tree, and the lines other new commits add.
 
-    IPv4 addresses are checked beside the names, less documentation addresses,
-    127.0.0.1 and the allowed ones."""
+    IPv4 addresses are checked beside the names, less those that name no
+    machine, the allowed ones and those already among the names."""
     finders = _finders(names, words, allowed)
     found = []
     for _, local, _, remote_sha in pushes:
