@@ -9,3 +9,4 @@
 # the excuse cannot outlive what it excused. A path would be a permanent hole.
 # Once the commit is pushed the entry is spent, and every refusal lists the spent
 # ones so they can be deleted.
+62a2a2584fd872a43c15ac39444f4a769a9a0395  candidate own-the-call judge not registered yet; e5b48e3 registers it and carries docs/CONTRIBUTING.md

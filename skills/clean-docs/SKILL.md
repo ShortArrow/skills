@@ -331,6 +331,8 @@ Three properties make it survivable rather than something switched off within a 
   a commit's contents never change,
   so the excuse cannot outlive what it excused,
   and a path would be a permanent hole.
+  The file itself is not a surface,
+  or the commit that adds an excuse would need one of its own.
   Every refusal lists the entries that no longer match an outgoing commit,
   because an expired entry reads exactly like a working one.
 

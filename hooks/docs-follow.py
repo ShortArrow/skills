@@ -36,6 +36,7 @@ FULL_SHA = re.compile(r'^([0-9a-f]{40})\s+(\S.*)$')
 SURFACE = ('hooks/', 'scripts/', '.claude-plugin/')
 DOCUMENT = ('readme', 'docs/')
 RECORDS = ('changelog.md', 'release-notes.md')
+EXCEPTIONS = 'hooks/docs-follow-exceptions.txt'
 
 REASON = (
     'Not yet: {count} outgoing commit(s) change a surface with no living document following in the '
@@ -58,7 +59,7 @@ def classify(path):
     p = path.replace('\\', '/').lower()
     if os.path.basename(p) in RECORDS:
         return 'record'
-    if p.startswith('tests/'):
+    if p.startswith('tests/') or p == EXCEPTIONS:
         return None
     if p.startswith(SURFACE):
         return 'surface'
@@ -142,7 +143,7 @@ def outgoing(cwd):
 
 
 def exceptions(cwd):
-    path = os.path.join(cwd, 'hooks', 'docs-follow-exceptions.txt')
+    path = os.path.join(cwd, *EXCEPTIONS.split('/'))
     try:
         with open(path, encoding='utf-8') as f:
             return parse_exceptions(f.read())

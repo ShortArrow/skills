@@ -50,6 +50,8 @@ def test_classify():
     check('fixture is neither', hook.classify('tests/fixtures/sweep/kilo.py'), None)
     check('CHANGELOG is a record, not a document',
           hook.classify('CHANGELOG.md'), 'record')
+    check('the exceptions file is neither, or excusing a commit needs another excuse',
+          hook.classify('hooks/docs-follow-exceptions.txt'), None)
 
 
 def test_records_are_never_required_to_follow():
