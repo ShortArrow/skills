@@ -62,6 +62,19 @@ Each host's own directories,
 and how a skill that names a host's tools stays correct on the others,
 are in [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md).
 
+## Where a hook lives
+
+A hook that turns a skill's rule into a check,
+and holds for anyone who installs that skill,
+lives in `hooks/` and ships in the skill's own plugin.
+A hook that rests on one person's setup — commands they wrote,
+a particular machine or path,
+rules that bind only them — lives in that person's dotfiles,
+and so does every entry in their `~/.claude/settings.json`.
+No hook lives in both places: it would run twice,
+and the two copies would drift apart.
+How a plugin hook is wired is in [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md).
+
 ## Other collections
 
 Added rather than copied in:
