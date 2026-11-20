@@ -279,14 +279,15 @@ and a sample of 25 were all decisions handed back without a pick.
 
 A phrase list catches the words of a hand-back, not its shape:
 a closing can say 「進めてよいですか？」 with only the benefit named and pass it.
-So two prompt hooks (`type: "prompt"`) ask a second,
+So two judges ask a second,
 small model to refute every question put to the user against `own-the-call`'s four parts.
-One is PreToolUse on `AskUserQuestion` with `continueOnBlock`,
+One is a prompt hook (`type: "prompt"`), PreToolUse on `AskUserQuestion` with `continueOnBlock`,
 so a failing question comes back to the agent as the tool's error and is rewritten;
-the other runs at Stop beside the phrase list and reads the closing.
+the other, `hooks/own-the-call-judge.py`, runs at Stop beside the phrase list and reads the closing.
 Both let a question for a fact only the user holds through,
 because that is `grill-me`'s and has no position to take.
-The prompts live inline in the marketplace entry,
+The question's prompt lives inline in the marketplace entry,
+the closing's in `hooks/own-the-call-judge.prompt.txt`,
 and `tests/own-the-call/judge-prompts.py` replays them on 21 fixed questions and closings,
 three times each; it scored 51 of 51 twice,
 after a first version had failed fact questions for not naming a cost.
@@ -305,8 +306,19 @@ Judging with `sonnet` instead of the default model passed nothing that should fa
 but blocked a fact question whose closing named the likely answer 3 times of 3,
 and it would put a larger model's call at every turn end;
 the hooks documentation names a `model` field without listing its values.
-The Stop hook costs one small-model call at every turn end,
-up to its 30-second timeout.
+The Stop judge was a prompt hook too, and was moved out of one.
+A prompt hook's evaluator saw more than the hook input:
+in one project's sessions it was refused by the API's safety check at 132 of 2,204 distinct turn endings,
+the refusals came in unbroken runs that began and ended at compactions or mid-session,
+and the same 10 refused replies sent alone, with the same prompt, were refused 0 times by haiku or sonnet.
+A refusal lets the turn end unjudged, and a prompt hook cannot narrow what its evaluator is given.
+The command hook cuts the closing (the trailing paragraphs that fit in 1,200 characters),
+sends only that to `claude -p --model haiku` with no tools and hooks disabled,
+and lets the turn end, with a note on stderr, when claude is missing, fails, times out, is refused or answers without a verdict.
+On the 10 refused replies it reached a verdict every time, twice.
+The price is time: the prompt hook took a median 2.6 s (p90 5.7 s) over 4,116 turn endings,
+and a `claude -p` call takes 7 to 17 s, median about 9 s, on a machine whose antivirus taxes every process start,
+so the timeout is 60 s.
 
 `hooks/verify-reports.py` holds `adversarial-verify`'s line on subagent reports at the two places a claim leaves the session.
 As a PreToolUse hook, with one `if` filter per command so that no other shell call starts Python,

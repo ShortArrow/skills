@@ -1,15 +1,17 @@
-"""Replays the own-the-call prompt hooks on fixed questions and closings.
+"""Replays the own-the-call judges on fixed questions and closings.
 
-The two prompt hooks in .claude-plugin/marketplace.json (PreToolUse on
-AskUserQuestion, and Stop) are judged by a small model, so their check is a
-sample, not a proof. This script sends each case to `claude -p --model haiku`
-with the hook's own prompt, n times, and prints the verdicts that disagree
-with the expected one. Each call costs a fraction of a cent; run it after any
-edit to either prompt.
+The prompt hook on AskUserQuestion in .claude-plugin/marketplace.json and the
+Stop hook hooks/own-the-call-judge.py are judged by a small model, so their
+check is a sample, not a proof. This script sends each case to
+`claude -p --model haiku` with the judge's own prompt (for Stop, the prompt
+file with only the closing the hook would cut), n times, and prints the
+verdicts that disagree with the expected one. Each call costs a fraction of a
+cent; run it after any edit to either prompt.
 
     python tests/own-the-call/judge-prompts.py [n]
 """
 import concurrent.futures as cf
+import importlib.util
 import json
 import os
 import re
@@ -31,8 +33,18 @@ def prompt_hook(event, matcher=None):
     raise LookupError(event)
 
 
+def stop_judge():
+    path = os.path.join(os.path.dirname(__file__), '..', '..', 'hooks', 'own-the-call-judge.py')
+    spec = importlib.util.spec_from_file_location('own_the_call_judge', path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 ASK = prompt_hook('PreToolUse', 'AskUserQuestion')
-STOP = prompt_hook('Stop')
+STOP_JUDGE = stop_judge()
+with open(STOP_JUDGE.PROMPT_FILE, encoding='utf-8') as f:
+    STOP = f.read()
 
 
 def q(header, question, *options):
@@ -111,9 +123,8 @@ def jobs(n):
         for i in range(n):
             yield 'ask:' + name, want, ASK.replace('$ARGUMENTS', json.dumps(payload, ensure_ascii=False))
     for name, (want, message) in STOP_CASES.items():
-        payload = {'hook_event_name': 'Stop', 'stop_hook_active': False, 'last_assistant_message': message}
         for i in range(n):
-            yield 'stop:' + name, want, STOP.replace('$ARGUMENTS', json.dumps(payload, ensure_ascii=False))
+            yield 'stop:' + name, want, STOP.replace('$CLOSING', STOP_JUDGE.closing(message))
 
 
 def main(n):
