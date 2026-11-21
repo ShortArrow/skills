@@ -226,6 +226,19 @@ def test_blocks_a_report_of_success_when_the_watcher_failed_or_was_killed():
         assert stop('The checks are green, so I merged it.', entries), status
 
 
+def test_a_watcher_that_failed_before_the_users_last_message_is_not_held_against_a_later_success():
+    """The failure was reported in its own turn; the user asked for a rerun, and that one passed."""
+    entries = (PUSHED + started('u1', 'b1') + [notified('u1', 'b1', 'failed')]
+               + [prompt('もう一度流して')] + started('u2', 'b2') + [notified('u2', 'b2', 'completed')])
+    assert stop('CI はすべて通りました。マージできます。', entries) is None
+
+
+def test_a_watcher_that_failed_after_the_users_last_message_still_blocks():
+    entries = ([prompt('もう一度流して')] + PUSHED + started('u1', 'b1') + [notified('u1', 'b1', 'failed')]
+               + started('u2', 'b2') + [notified('u2', 'b2', 'completed')])
+    assert stop('CI はすべて通りました。マージできます。', entries)
+
+
 def test_a_completed_watcher_lets_a_report_of_success_through():
     entries = PUSHED + started('u1', 'b1') + [notified('u1', 'b1', 'completed')]
     assert stop('CI はすべて通りました。マージできます。', entries) is None
