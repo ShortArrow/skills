@@ -139,6 +139,19 @@ function Test-SandboxRunning {
   return (Get-SandboxPids).Count -gt 0
 }
 
+# Everything alive now was started here: the check before the launch ran under
+# the lock and found nothing. A guest that could not shut itself down leaves
+# a VM worker and a RemoteSession behind, several hundred MB to several
+# GB, and they keep holding the machine's only slot.
+function Stop-SandboxStartedHere([object[]]$PriorIds) {
+  foreach ($id in (Get-SandboxEnvironmentIds | Where-Object { $_ -notin $PriorIds })) {
+    try { & $wsbCli.Source stop --id $id 2>&1 | Out-Null } catch {}
+  }
+  foreach ($proc in Get-Process -Name $killableProcessNames -ErrorAction SilentlyContinue) {
+    try { Stop-Process -Id $proc.Id -Force -ErrorAction Stop } catch {}
+  }
+}
+
 # SW_FORCEMINIMIZE (11) minimizes even a window that is not pumping messages,
 # and does not activate the next window in the z-order.
 #
@@ -274,16 +287,7 @@ finally {
   if ($KeepSandbox -and $launched) {
     Write-Host "-KeepSandbox: the sandbox is still running and holds the machine's only slot until it is closed." -ForegroundColor Yellow
   } elseif ($launched) {
-    # Everything alive now was started here: the check above ran under the
-    # lock and found nothing. A guest that could not shut itself down leaves
-    # a VM worker and a RemoteSession behind, several hundred MB to several
-    # GB, and they keep holding the machine's only slot.
-    foreach ($id in (Get-SandboxEnvironmentIds | Where-Object { $_ -notin $priorIds })) {
-      try { & $wsbCli.Source stop --id $id 2>&1 | Out-Null } catch {}
-    }
-    foreach ($proc in Get-Process -Name $killableProcessNames -ErrorAction SilentlyContinue) {
-      try { Stop-Process -Id $proc.Id -Force -ErrorAction Stop } catch {}
-    }
+    Stop-SandboxStartedHere -PriorIds $priorIds
   }
   Remove-Item -LiteralPath $wsb -ErrorAction SilentlyContinue
   Exit-SandboxLock $lock
