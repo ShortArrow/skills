@@ -405,6 +405,7 @@ Run before every commit:
 ```powershell
 pwsh -File tests/check-portability.ps1
 python tests/skill-doctor.py --strict
+python -m pytest tests
 ```
 
 The first checks the host rows and their string invariants,
@@ -436,6 +437,10 @@ It exits 1 on an error, and with `--strict` on a warning;
 `--json` prints the same report as one object.
 It takes any skills directory as its argument,
 so it also serves for a catalogue that is not this one.
+
+The third runs the tests of the hooks and scripts.
+Most of them are pytest functions,
+so a file run with `python` alone runs none of them and exits 0.
 
 Enable this repository's git hooks once per clone:
 
