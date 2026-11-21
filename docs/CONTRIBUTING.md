@@ -281,9 +281,11 @@ A phrase list catches the words of a hand-back, not its shape:
 a closing can say 「進めてよいですか？」 with only the benefit named and pass it.
 So two judges ask a second,
 small model to refute every question put to the user against `own-the-call`'s four parts.
-One is a prompt hook (`type: "prompt"`), PreToolUse on `AskUserQuestion` with `continueOnBlock`,
+One is a prompt hook (`type: "prompt"`),
+PreToolUse on `AskUserQuestion` with `continueOnBlock`,
 so a failing question comes back to the agent as the tool's error and is rewritten;
-the other, `hooks/own-the-call-judge.py`, runs at Stop beside the phrase list and reads the closing.
+the other, `hooks/own-the-call-judge.py`,
+runs at Stop beside the phrase list and reads the closing.
 Both let a question for a fact only the user holds through,
 because that is `grill-me`'s and has no position to take.
 The question's prompt lives inline in the marketplace entry,
@@ -310,14 +312,18 @@ The Stop judge was a prompt hook too, and was moved out of one.
 A prompt hook's evaluator saw more than the hook input:
 in one project's sessions it was refused by the API's safety check at 132 of 2,204 distinct turn endings,
 the refusals came in unbroken runs that began and ended at compactions or mid-session,
-and the same 10 refused replies sent alone, with the same prompt, were refused 0 times by haiku or sonnet.
-A refusal lets the turn end unjudged, and a prompt hook cannot narrow what its evaluator is given.
+and the same 10 refused replies sent alone, with the same prompt,
+were refused 0 times by haiku or sonnet.
+A refusal lets the turn end unjudged,
+and a prompt hook cannot narrow what its evaluator is given.
 The command hook cuts the closing (the trailing paragraphs that fit in 1,200 characters),
 sends only that to `claude -p --model haiku` with no tools and hooks disabled,
-and lets the turn end, with a note on stderr, when claude is missing, fails, times out, is refused or answers without a verdict.
+and lets the turn end, with a note on stderr, when claude is missing,
+fails, times out, is refused or answers without a verdict.
 On the 10 refused replies it reached a verdict every time, twice.
 The price is time: the prompt hook took a median 2.6 s (p90 5.7 s) over 4,116 turn endings,
-and a `claude -p` call takes 7 to 17 s, median about 9 s, on a machine whose antivirus taxes every process start,
+and a `claude -p` call takes 7 to 17 s, median about 9 s,
+on a machine whose antivirus taxes every process start,
 so the timeout is 60 s.
 
 `hooks/verify-reports.py` holds `adversarial-verify`'s line on subagent reports at the two places a claim leaves the session.
