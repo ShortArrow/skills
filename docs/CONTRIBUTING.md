@@ -286,11 +286,19 @@ PreToolUse on `AskUserQuestion` with `continueOnBlock`,
 so a failing question comes back to the agent as the tool's error and is rewritten;
 the other, `hooks/own-the-call-judge.py`,
 runs at Stop beside the phrase list and reads the closing.
-Both let a question for a fact only the user holds through,
+Both first ask for the ground: a line in the ask,
+`Why ask:` or 「聞く根拠：」,
+naming which of `own-the-call`'s six it is,
+and refuse an ask with no ground line or one the ask does not fit;
+the refusal says to decide and report rather than to rewrite.
+The rule came from one evening's session that asked about a restart,
+copying its own mod and a file name,
+and was asked back why any of that needed the user.
+A question for a fact only the user holds passes on its ground line alone,
 because that is `grill-me`'s and has no position to take.
 The question's prompt lives inline in the marketplace entry,
 the closing's in `hooks/own-the-call-judge.prompt.txt`,
-and `tests/own-the-call/judge-prompts.py` replays them on 21 fixed questions and closings,
+and `tests/own-the-call/judge-prompts.py` replays them on fixed questions and closings (21 at first, 37 now),
 three times each; it scored 51 of 51 twice,
 after a first version had failed fact questions for not naming a cost.
 Later that day the four bundle cases were added:
@@ -308,6 +316,11 @@ Judging with `sonnet` instead of the default model passed nothing that should fa
 but blocked a fact question whose closing named the likely answer 3 times of 3,
 and it would put a larger model's call at every turn end;
 the hooks documentation names a `model` field without listing its values.
+The ground rule was measured the same way on 2026-11-21.
+Before it, the twelve cases that ask with no fitting ground (no line, a ground outside the six, a mislabelled restart, mod copy, file name or folder) passed 24 of 36 calls;
+after it all 37 cases scored 111 of 111, three runs each.
+Writing those cases showed that the old pass cases asked go-aheads with no ground and offered options with no cost;
+the cases were rewritten, and the judge was not loosened to fit them.
 The Stop judge was a prompt hook too, and was moved out of one.
 A prompt hook's evaluator saw more than the hook input:
 in one project's sessions it was refused by the API's safety check at 132 of 2,204 distinct turn endings,

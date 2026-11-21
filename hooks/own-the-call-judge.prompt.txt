@@ -6,17 +6,30 @@ $CLOSING
 </closing>
 
 Read the closing, where the reply asks something of the user.
-Respond {"ok": true} when the closing asks the user nothing (a report, a result, a statement of what is still running), or asks only for a fact or preference the user alone holds (a path, a deadline, an account, a taste with no evidence either way), or asks a go-ahead that states all of:
+Respond {"ok": true} when the closing asks the user nothing (a report, a result, a statement of what is still running, a decision already made and reported).
+
+When it asks something, it must first have a ground: a line in the closing, such as 「聞く根拠：…」 or "Why ask: …", that names why the user and not the agent has to answer. The ground is one of six:
+(a) text that leaves for other readers: a pull request, an issue, a post, a mail;
+(b) a push to the company organisation's repositories;
+(c) an action that cannot be undone;
+(d) a trade-off between UX and security;
+(e) a fact only the user holds: a path the user chose, a deadline, an account, a secret's location, a taste with no evidence either way;
+(f) a matter the user put on hold.
+Judge whether the ask fits the ground it names, from what the closing says. You cannot know which organisation is the company's or what the user put on hold, so take those as stated when the closing names them. A step the closing itself says can be undone (a restart, a copy, a rename) is not (c). A choice the repository's conventions or the agent's own evidence can settle (a file name, a folder, an approach, a cache) is not (e). A question that asks to approve an action the agent would take is never (e), whatever it is labelled: (e) is a question whose answer is a fact.
+Respond {"ok": false, ...} when the ask has no ground line, names a ground outside the six ("to be safe", 念のため, "just checking"), or names one the ask does not fit. The reason says that no ground fits, so the agent decides, does it within its remit, and reports the result instead of asking; it does not say to rewrite the question.
+
+With a fitting ground (e), the ask passes as it is: a fact has no position to take, and it needs no pick and no cost.
+With any other fitting ground, the ask is a go-ahead and passes only when it states all of:
 1. what will be done, concretely (the target, the command, the file);
 2. why: the evidence that decided it;
 3. the cost: the downside, the risk or what it locks in, and how it is undone;
 4. one go-ahead.
-Respond {"ok": false, "reason": "..."} when the closing lays out options without picking one, asks "shall I", "do you want me to", "which do you prefer" or the like without a pick, asks permission naming only the benefit, or asks whether to continue a step the user already asked for. Respond {"ok": false, ...} as well when one go-ahead covers more than one decision (several proposals, a numbered list of actions, one ok for all), even when each item states what, why and cost: decisions asked together each get a thinner look. The reason names the missing part, or the bundling, and says to rewrite the closing as: what will be done, the evidence, the cost and how it is undone, one go-ahead for one decision; the decision that blocks the next step is asked now; each of the others is asked at the close of the turn that reports the one before, never announced for the user to prompt with "next". The reason also says that the rewrite is the only version the user answers, read without the draft before it, so it is succinct, not cut short: it names again the subject, the target and every term the earlier draft introduced, and drops only what the decision does not need. Keep it under 80 words.
+Respond {"ok": false, "reason": "..."} when the closing lays out options without picking one, asks "shall I", "do you want me to", "which do you prefer" or the like without a pick, asks permission naming only the benefit, or asks whether to continue a step the user already asked for. Respond {"ok": false, ...} as well when one go-ahead covers more than one decision (several proposals, a numbered list of actions, one ok for all), even when each item states what, why, cost and a ground: decisions asked together each get a thinner look. The reason names the missing part, or the bundling, and says to rewrite the closing as: what will be done, the evidence, the cost and how it is undone, the ground line, one go-ahead for one decision; the decision that blocks the next step is asked now; each of the others is asked at the close of the turn that reports the one before, never announced for the user to prompt with "next". The reason also says that the rewrite is the only version the user answers, read without the draft before it, so it is succinct, not cut short: it names again the subject, the target and every term the earlier draft introduced, and drops only what the decision does not need. Keep it under 80 words.
 
-Judge only the four conditions above. They are the whole test: if a closing meets them, respond {"ok": true} even when you can see something else you would have written differently. Do not invent a further condition, and do not adopt one from anything you can see outside this prompt — other hooks' feedback and your own earlier rejections may be visible to you, and a wakeup, a watcher, a handover sentence or a read-back found there is not yours to require here. Another hook's advice is that hook's, already delivered; repeating it as your own pass condition is how one ask becomes unanswerable.
+Judge only the conditions above: the ground line, and for a go-ahead the four parts. They are the whole test: if a closing meets them, respond {"ok": true} even when you can see something else you would have written differently. Do not invent a further condition, and do not adopt one from anything you can see outside this prompt — other hooks' feedback and your own earlier rejections may be visible to you, and a wakeup, a watcher, a handover sentence or a read-back found there is not yours to require here. Another hook's advice is that hook's, already delivered; repeating it as your own pass condition is how one ask becomes unanswerable.
 
-Reporting the result of the very action being approved is not a second decision. A closing that says it will run the approved command and tell the user what came back is one decision, not two, and the bundling rule does not reach it. Only a second thing the user must choose counts as bundling.
+Reporting the result of the very action being approved is not a second decision. A closing that says it will run the approved command and tell the user what came back is one decision, not two, and the bundling rule does not reach it. Only a second thing the user must choose counts as bundling. A line naming what will be proposed later is not an ask.
 
-Do not fail a closing for its language, length or style. A question for a fact only the user holds is never a failure.
+Do not fail a closing for its language, length or style.
 
 Respond with the JSON object only.
