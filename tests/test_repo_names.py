@@ -111,6 +111,31 @@ def test_history_already_on_the_remote_is_not_scanned_again(tmp_path):
     assert found == []
 
 
+def test_history_is_scanned_when_the_remote_tip_was_never_fetched(tmp_path):
+    """A force push over a remote commit this clone lacks: git cannot list remote..local,
+    and an empty list would pass the history unread."""
+    r = repo(tmp_path)
+    commit(r, {'a.md': 'clean\n'})
+    commit(r, {'b.md': 'secretproj leaked\n'})
+    tip = commit(r, {'b.md': None})
+    unfetched = '1' * 40
+    found = hook.scan(str(r), [('refs/heads/main', tip, 'refs/heads/main', unfetched)],
+                      {'secretproj': 'private'}, 'origin')
+    assert [(f['path'], f['line']) for f in found] == [('b.md', None)]
+
+
+def test_a_git_failure_while_scanning_refuses_the_push(tmp_path):
+    """git grep exits 128 on an object it cannot read; reading that as no match would pass the push."""
+    r = repo(tmp_path)
+    commit(r, {'a.md': 'clean\n'})
+    missing = '2' * 40
+    try:
+        hook.scan(str(r), [('refs/heads/main', missing, 'refs/heads/main', ZERO)], {'secretproj': 'private'}, 'origin')
+    except hook.ScanFailed:
+        return
+    raise AssertionError('a tip git cannot read was passed as clean')
+
+
 # --- how a name is matched, by whether its words are in the dictionary ------
 
 def test_a_name_splits_into_words_at_case_changes_separators_and_digits():

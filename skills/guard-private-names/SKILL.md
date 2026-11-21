@@ -26,6 +26,7 @@ and an old copy keeps the old rules.
 
 The hook needs Python on `PATH` and `gh` signed in.
 When `gh` cannot list the names, every push from that clone is refused,
+and so is a push git cannot read,
 because a check that passes when it could not look is not a check.
 `ghq` is read when it is installed.
 
@@ -107,6 +108,8 @@ such as the build number `10.0.26300.1`, is not an address.
 Matches are whole words,
 in the tree of every pushed tip and in the lines every other pushed commit adds,
 so a name added and later removed is still refused.
+Where the remote's tip was never fetched, as before a force push,
+every pushed commit not on the remote's branches is read.
 
 ## Sources
 

@@ -27,8 +27,8 @@ for the person at the keyboard. A value that is not a leak goes in the clone's
 untracked `info/repo-names-allowed` (one per line), which is never pushed, because
 an allow list of private names published would be the same leak.
 
-When `gh` cannot list the names, the push is refused: a check that passes because
-it could not look is not a check.
+When `gh` cannot list the names, or git cannot read what the push would send,
+the push is refused: a check that passes because it could not look is not a check.
 """
 import hashlib
 import ipaddress
@@ -52,6 +52,10 @@ IPV4_GREP = r'[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}'
 PASSED_NETWORKS = [ipaddress.ip_network(n) for n in
                    ('192.0.2.0/24', '198.51.100.0/24', '203.0.113.0/24', '127.0.0.0/8')]
 INTERNAL_SUFFIXES = ('.local', '.lan', '.internal', '.home', '.ts.net')
+
+
+class ScanFailed(Exception):
+    """git could not read what the push would send, so nothing can be passed."""
 
 
 class NamesUnknown(Exception):
@@ -215,9 +219,18 @@ def drop(names, allowed, own):
     return {n: k for n, k in names.items() if n.lower() not in allowed and n.lower() != own_name}
 
 
-def _git(repo, *args):
-    return subprocess.run(['git', '-C', repo, *args], capture_output=True, text=True,
-                          encoding='utf-8', errors='replace').stdout
+def _git(repo, *args, ok=(0,)):
+    """stdout of git in repo; ScanFailed when it exits with a code outside ok."""
+    proc = subprocess.run(['git', '-C', repo, *args], capture_output=True, text=True,
+                          encoding='utf-8', errors='replace')
+    if proc.returncode not in ok:
+        raise ScanFailed(f'git {args[0]} exited {proc.returncode}: {proc.stderr.strip()[:200]}')
+    return proc.stdout
+
+
+def _is_commit(repo, sha):
+    return subprocess.run(['git', '-C', repo, 'cat-file', '-e', f'{sha}^{{commit}}'],
+                          capture_output=True).returncode == 0
 
 
 def _target(name, words):
@@ -256,7 +269,7 @@ def _scan_tree(repo, sha, finders):
             handle.write(patterns + '\n')
             pattern_file = handle.name
         try:
-            out = _git(repo, 'grep', '-n', '-I', *options, '-f', pattern_file, sha, '--')
+            out = _git(repo, 'grep', '-n', '-I', *options, '-f', pattern_file, sha, '--', ok=(0, 1))
         finally:
             os.unlink(pattern_file)
         for line in out.splitlines():
@@ -310,7 +323,7 @@ def scan(repo, pushes, names, remote, words=frozenset(), allowed=frozenset()):
         if local == ZERO:
             continue
         found += _scan_tree(repo, local, finders)
-        if remote_sha == ZERO:
+        if remote_sha == ZERO or not _is_commit(repo, remote_sha):
             commits = _git(repo, 'rev-list', local, '--not', f'--remotes={remote}').split()
         else:
             commits = _git(repo, 'rev-list', f'{remote_sha}..{local}').split()
@@ -383,9 +396,14 @@ def main(argv):
               'Sign in with gh and push again; nothing is passed unchecked.', file=sys.stderr)
         return 1
     names = {**_ssh_kinds(), **names}
-    allowed, allowed_path = _allowed(repo)
-    found = scan(repo, parse_pushes(sys.stdin.read()), drop(names, allowed, url), remote or 'origin',
-                 load_words(), allowed)
+    try:
+        allowed, allowed_path = _allowed(repo)
+        found = scan(repo, parse_pushes(sys.stdin.read()), drop(names, allowed, url), remote or 'origin',
+                     load_words(), allowed)
+    except ScanFailed as error:
+        print(f'pre-push: refused. What the push would send could not be read ({error}).\n'
+              'Nothing is passed unchecked.', file=sys.stderr)
+        return 1
     if found:
         print(report(found, allowed_path, shown_path(os.path.abspath(__file__), repo)), file=sys.stderr)
         return 1
