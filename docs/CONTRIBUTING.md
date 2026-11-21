@@ -288,7 +288,7 @@ the other, `hooks/own-the-call-judge.py`,
 runs at Stop beside the phrase list and reads the closing.
 Both first ask for the ground: a line in the ask,
 `Why ask:` or 「聞く根拠：」,
-naming which of `own-the-call`'s six it is,
+naming which of `own-the-call`'s five it is,
 and refuse an ask with no ground line or one the ask does not fit;
 the refusal says to decide and report rather than to rewrite.
 The rule came from one evening's session that asked about a restart,
@@ -298,7 +298,7 @@ A question for a fact only the user holds passes on its ground line alone,
 because that is `grill-me`'s and has no position to take.
 The question's prompt lives inline in the marketplace entry,
 the closing's in `hooks/own-the-call-judge.prompt.txt`,
-and `tests/own-the-call/judge-prompts.py` replays them on fixed questions and closings (21 at first, 37 now),
+and `tests/own-the-call/judge-prompts.py` replays them on fixed questions and closings (21 at first, 41 now),
 three times each; it scored 51 of 51 twice,
 after a first version had failed fact questions for not naming a cost.
 Later that day the four bundle cases were added:
@@ -319,6 +319,14 @@ the hooks documentation names a `model` field without listing its values.
 The ground rule was measured the same way on 2026-11-21.
 Before it, the twelve cases that ask with no fitting ground (no line, a ground outside the six, a mislabelled restart, mod copy, file name or folder) passed 24 of 36 calls;
 after it all 37 cases scored 111 of 111, three runs each.
+The same night the grounds went from six to five: a push to any remote,
+a pull request,
+a release and a publishing setting joined text as "something that goes out",
+and the company organisation's push folded into it.
+With the public-repository push pair added the 41 cases scored 121 of 123;
+one miss passed a push proposal with no ground line,
+so the prompts now say the line is required even when the ground is plain,
+and the rerun scored 123 of 123.
 Writing those cases showed that the old pass cases asked go-aheads with no ground and offered options with no cost;
 the cases were rewritten, and the judge was not loosened to fit them.
 The Stop judge was a prompt hook too, and was moved out of one.

@@ -8,17 +8,16 @@ $CLOSING
 Read the closing, where the reply asks something of the user.
 Respond {"ok": true} when the closing asks the user nothing (a report, a result, a statement of what is still running, a decision already made and reported).
 
-When it asks something, it must first have a ground: a line in the closing, such as 「聞く根拠：…」 or "Why ask: …", that names why the user and not the agent has to answer. The ground is one of six:
-(a) text that leaves for other readers: a pull request, an issue, a post, a mail;
-(b) a push to the company organisation's repositories;
-(c) an action that cannot be undone;
-(d) a trade-off between UX and security;
-(e) a fact only the user holds: a path the user chose, a deadline, an account, a secret's location, a taste with no evidence either way;
-(f) a matter the user put on hold.
-Judge whether the ask fits the ground it names, from what the closing says. You cannot know which organisation is the company's or what the user put on hold, so take those as stated when the closing names them. A step the closing itself says can be undone (a restart, a copy, a rename) is not (c). A choice the repository's conventions or the agent's own evidence can settle (a file name, a folder, an approach, a cache) is not (e). A question that asks to approve an action the agent would take is never (e), whatever it is labelled: (e) is a question whose answer is a fact.
-Respond {"ok": false, ...} when the ask has no ground line, names a ground outside the six ("to be safe", 念のため, "just checking"), or names one the ask does not fit. The reason says that no ground fits, so the agent decides, does it within its remit, and reports the result instead of asking; it does not say to rewrite the question.
+When it asks something, it must first have a ground: a line in the closing, such as 「聞く根拠：…」 or "Why ask: …", that names why the user and not the agent has to answer. The line is required even when the ask plainly fits a ground: a ground the reader would have to infer is not written, and an ask without the line fails. The ground is one of five:
+(a) something that goes out: text for other readers (an issue, a post, a mail), a push to any remote, the company organisation's included, a pull request, a release, a publishing setting;
+(b) an action that cannot be undone;
+(c) a trade-off between UX and security;
+(d) a fact only the user holds: a path the user chose, a deadline, an account, a secret's location, a taste with no evidence either way;
+(e) a matter the user put on hold.
+Judge whether the ask fits the ground it names, from what the closing says. You cannot know what the user put on hold, so take it as stated when the closing names them. A step the closing itself says can be undone (a restart, a copy, a rename) is not (b). A choice the repository's conventions or the agent's own evidence can settle (a file name, a folder, an approach, a cache) is not (d). A question that asks to approve an action the agent would take is never (d), whatever it is labelled: (d) is a question whose answer is a fact.
+Respond {"ok": false, ...} when the ask has no ground line, names a ground outside the five ("to be safe", 念のため, "just checking"), or names one the ask does not fit. The reason says that no ground fits, so the agent decides, does it within its remit, and reports the result instead of asking; it does not say to rewrite the question.
 
-With a fitting ground (e), the ask passes as it is: a fact has no position to take, and it needs no pick and no cost.
+With a fitting ground (d), the ask passes as it is: a fact has no position to take, and it needs no pick and no cost.
 With any other fitting ground, the ask is a go-ahead and passes only when it states all of:
 1. what will be done, concretely (the target, the command, the file);
 2. why: the evidence that decided it;

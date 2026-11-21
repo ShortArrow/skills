@@ -84,26 +84,28 @@ Only something the user must choose counts against this rule.
 
 The agent asks only on a ground,
 and writes the ground as one line in the ask,
-`Why ask:` or 「聞く根拠：」 followed by which of six it is:
+`Why ask:` or 「聞く根拠：」 followed by which of five it is:
 
-1. **Text that leaves** for other readers: a pull request, an issue,
-   a post, a mail
-2. **A push to the company organisation's** repositories
-3. **An action that cannot be undone**
-4. **A trade-off between UX and security**
-5. **A fact only the user holds**: where the user wants a thing,
+1. **Something that goes out**:
+   text for other readers (an issue, a post, a mail), a push to any remote,
+   the company organisation's included, a pull request, a release,
+   a publishing setting
+2. **An action that cannot be undone**
+3. **A trade-off between UX and security**
+4. **A fact only the user holds**: where the user wants a thing,
    when it is due, which account, a taste with no evidence either way
-6. **A matter the user put on hold**
+5. **A matter the user put on hold**
 
 Everything else the agent decides, does within its remit, and reports.
 A session restart, copying its own file,
-a file name the repository's conventions settle are none of the six,
+a file name the repository's conventions settle are none of the five,
 and asking about them spends the user's attention on a call the agent was placed to make.
 A ground the ask does not fit is the same failure with a label on it:
-a restart the agent can undo is not ground 3,
-and a name the conventions decide is not ground 5.
+a restart the agent can undo is not ground 2,
+and a name the conventions decide is not ground 4.
+A local commit is none of them; the push that publishes it is ground 1.
 
-On ground 5 the answer is a fact,
+On ground 4 the answer is a fact,
 and the question takes the form `grill-me` gives it.
 For a preference with no evidence either way the agent still states its lean,
 labelled as one, so that silence has a default.
@@ -186,7 +188,7 @@ which is the one thing this state is not.
 
 On Claude Code the engineering-skills plugin checks every question before the user sees it.
 A second, small model reads each `AskUserQuestion` call and each closing,
-and tries to show that it asks without a ground line that fits one of the six,
+and tries to show that it asks without a ground line that fits one of the five,
 hands a decision back without the four parts above,
 or puts more than one decision under a single ask.
 A question with no fitting ground comes back to be decided and reported,
