@@ -409,10 +409,15 @@ and the tests time them on repeated options.
 
 ## Commit messages
 
-A commit message is one line, `update: <what>`,
-where `<what>` names what the commit changes: `skill`, `docs`,
-`submodule`, `adr` and the like.
-No body is written.
+A commit message is a subject line, a blank line and a body.
+The subject is `type(scope): summary`, where the type is `feat`, `fix`,
+`refactor`, `docs`, `test`, `style` or `chore`,
+the scope names the skill, hook or document changed,
+and the summary says what the commit changes in one clause.
+The body says why, in one or two sentences;
+a decision recorded elsewhere is named there by its title,
+not argued again.
+A structural change and a behavioural change go in separate commits.
 
 ## Sources
 
