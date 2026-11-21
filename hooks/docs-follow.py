@@ -21,7 +21,8 @@ as a full commit sha in docs-follow-exceptions.txt, never as a path — a path
 would be a permanent hole, while a sha stops matching as soon as the next commit
 touches the file.
 
-An unreadable repository lets the call through. The gate is a check on the agent,
+A branch with no upstream is judged by the commits no remote has yet, and
+`git -C <dir> push` by <dir>. An unreadable repository lets the call through. The gate is a check on the agent,
 not a lock on the user.
 """
 import json
@@ -132,14 +133,28 @@ def git(cwd, *args):
 
 
 def outgoing(cwd):
-    """The commits a push would send, newest first, each with the paths it touched."""
-    upstream = git(cwd, 'rev-parse', '--abbrev-ref', '--symbolic-full-name', '@{upstream}').strip()
-    shas = git(cwd, 'rev-list', f'{upstream}..HEAD').split()
+    """The commits a push would send, newest first, each with the paths it touched.
+
+    Without an upstream, as on a branch's first push, that is every commit no
+    remote has yet."""
+    try:
+        upstream = git(cwd, 'rev-parse', '--abbrev-ref', '--symbolic-full-name', '@{upstream}').strip()
+        shas = git(cwd, 'rev-list', f'{upstream}..HEAD').split()
+    except OSError:
+        shas = git(cwd, 'rev-list', 'HEAD', '--not', '--remotes').split()
     commits = []
     for sha in shas:
         raw = git(cwd, 'show', '--no-show-signature', '--pretty=format:', '--name-only', sha)
         commits.append({'sha': sha, 'paths': paths_of(raw)})
     return commits
+
+
+def pushed_from(command, cwd):
+    """The directory git pushes from: cwd, then each `-C <dir>` of the push in turn."""
+    found = PUSH.search(command)
+    for m in re.finditer(r'(?:^|\s)-C\s+(\S+)', found.group(0) if found else ''):
+        cwd = os.path.join(cwd, m.group(1).strip('"\''))
+    return cwd
 
 
 def exceptions(cwd):
@@ -178,7 +193,7 @@ def main():
             return
         if not PUSH.search((payload.get('tool_input') or {}).get('command') or ''):
             return
-        cwd = payload.get('cwd') or os.getcwd()
+        cwd = pushed_from(payload['tool_input']['command'], payload.get('cwd') or os.getcwd())
         commits = outgoing(cwd)
         excused = exceptions(cwd)
     except (ValueError, KeyError, TypeError, OSError, subprocess.SubprocessError):

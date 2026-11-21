@@ -319,6 +319,9 @@ because a surface change and the document that describes it are each correct alo
 and nothing before the push compares them.
 `hooks/docs-follow.py` refuses `git push` while an outgoing commit changes a surface — a skill body,
 a hook, a script, the marketplace — and no living document changed with it.
+An outgoing commit is one the upstream lacks, or,
+on a branch with no upstream yet, one no remote has,
+so the first push of a new branch is judged too.
 
 Three properties make it survivable rather than something switched off within a month:
 

@@ -176,6 +176,58 @@ def test_unreadable_input_lets_the_call_through():
     check('exit 0 on an unreadable repository', proc.returncode, 0)
 
 
+def _repo_with_a_bare_surface_commit_on_a_new_branch(base):
+    """A clone whose main is on its remote, and a branch feat, never pushed, whose
+    one commit changes a hook with no document."""
+    def run(cwd, *args):
+        subprocess.run(['git', '-c', 'user.name=t', '-c', 'user.email=t@example.com',
+                        '-c', 'commit.gpgsign=false', *args], cwd=cwd, check=True, capture_output=True)
+    remote, clone = os.path.join(base, 'remote.git'), os.path.join(base, 'clone')
+    run(base, 'init', '-q', '--bare', '-b', 'main', remote)
+    run(base, 'init', '-q', '-b', 'main', clone)
+    with open(os.path.join(clone, 'README.md'), 'w', encoding='utf-8') as f:
+        f.write('r\n')
+    run(clone, 'add', '-A')
+    run(clone, 'commit', '-q', '-m', 'base')
+    run(clone, 'remote', 'add', 'origin', remote)
+    run(clone, 'push', '-q', 'origin', 'main')
+    run(clone, 'switch', '-q', '-c', 'feat')
+    os.makedirs(os.path.join(clone, 'hooks'))
+    with open(os.path.join(clone, 'hooks', 'x.py'), 'w', encoding='utf-8') as f:
+        f.write('x = 1\n')
+    run(clone, 'add', '-A')
+    run(clone, 'commit', '-q', '-m', 'surface')
+    return clone
+
+
+def _decision(command, cwd):
+    proc = subprocess.run([sys.executable, HOOK], capture_output=True,
+                          input=json.dumps({'tool_input': {'command': command}, 'cwd': cwd}).encode('utf-8'))
+    out = json.loads(proc.stdout) if proc.stdout.strip() else {}
+    return out.get('hookSpecificOutput', {}).get('permissionDecision')
+
+
+def test_a_branch_with_no_upstream_is_judged_by_what_no_remote_has():
+    """The first push of a new branch is the gate's commonest case; no upstream is
+    not an unreadable repository."""
+    import tempfile
+    with tempfile.TemporaryDirectory() as base:
+        clone = _repo_with_a_bare_surface_commit_on_a_new_branch(base)
+        check('the new branch\'s outgoing commit is the one no remote has',
+              [len(c['sha']) for c in hook.outgoing(clone)], [40])
+        check('its first push is refused', _decision('git push -u origin feat', clone), 'deny')
+
+
+def test_git_dash_c_names_the_repository_judged():
+    """`git -C <dir> push` pushes <dir>, not the session's directory."""
+    import tempfile
+    with tempfile.TemporaryDirectory() as base:
+        _repo_with_a_bare_surface_commit_on_a_new_branch(base)
+        check('the -C directory is judged', _decision('git -C clone push -u origin feat', base), 'deny')
+        check('a quoted -C directory is judged',
+              _decision('git -C "clone" push -u origin feat', base), 'deny')
+
+
 def test_non_json_stdin_is_survived():
     proc = subprocess.run([sys.executable, HOOK], input=b'not json', capture_output=True)
     check('no verdict on junk stdin', proc.stdout, b'')
