@@ -30,7 +30,7 @@ import re
 import subprocess
 import sys
 
-PUSH = re.compile(r'\bgit\b(?:\s+(?:-C\s+\S+|-c\s+\S+|--?[\w-]+(?:=\S+)?))*\s+push\b')
+PUSH = re.compile(r'\bgit\b(?:\s+(?:-[cC]\s+\S+|-(?![cC]\s|-)[\w-]+(?:=\S+)?|--[\w-]+(?:=\S+)?))*\s+push\b')
 FULL_SHA = re.compile(r'^([0-9a-f]{40})\s+(\S.*)$')
 
 SURFACE = ('hooks/', 'scripts/', '.claude-plugin/')

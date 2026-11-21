@@ -381,6 +381,10 @@ Once that blocked Bash in fresh sessions until `claude plugin update` caught the
 The scripts report a verdict as JSON on exit 0,
 so `|| true` loses nothing;
 `tests/test_hook_commands.py` runs every hook against an empty plugin root and refuses exit 2.
+A hook that runs past its timeout gives no verdict either,
+so a gate passes the call;
+the patterns that read a command line are written so that no input can make them backtrack exponentially,
+and the tests time them on repeated options.
 
 ## Commit messages
 

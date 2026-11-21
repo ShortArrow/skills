@@ -67,7 +67,7 @@ import re
 import sys
 
 PUBLISH = re.compile(
-    r'\bgit\b(?:\s+(?:-C\s+\S+|-c\s+\S+|--?[\w-]+(?:=\S+)?))*\s+push\b'
+    r'\bgit\b(?:\s+(?:-[cC]\s+\S+|-(?![cC]\s|-)[\w-]+(?:=\S+)?|--[\w-]+(?:=\S+)?))*\s+push\b'
     r'|\bgh\s+pr\s+(?:create|ready)\b'
     r'|\bgh\s+issue\s+create\b'
 )

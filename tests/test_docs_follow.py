@@ -182,6 +182,17 @@ def test_non_json_stdin_is_survived():
     check('exit 0 on junk stdin', proc.returncode, 0)
 
 
+
+def test_push_detection_stays_fast_on_repeated_options():
+    """A hook that runs past its timeout gives no verdict, and the push goes through."""
+    import time
+    for command in ('git ' + '-c ' * 34 + 'x; git status', 'git ' + '--x ' * 34 + 'status'):
+        started = time.perf_counter()
+        hook.PUSH.search(command)
+        check(f'{command[:12]}... is judged in under half a second', time.perf_counter() - started < 0.5, True)
+    check('git -c k=v push is still a push', bool(hook.PUSH.search('git -c k=v -C dir --no-pager push')), True)
+
+
 def main():
     for fn in list(globals().values()):
         if callable(fn) and getattr(fn, '__name__', '').startswith('test_'):
