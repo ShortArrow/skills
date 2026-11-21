@@ -108,6 +108,9 @@ such as the build number `10.0.26300.1`, is not an address.
 Matches are whole words,
 in the tree of every pushed tip and in the lines every other pushed commit adds,
 so a name added and later removed is still refused.
+The message of every pushed commit and annotated tag is read too,
+merge messages included,
+since they carry the branch and repository merged.
 Where the remote's tip was never fetched, as before a force push,
 every pushed commit not on the remote's branches is read.
 

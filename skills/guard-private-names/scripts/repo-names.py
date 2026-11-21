@@ -11,8 +11,8 @@ and digits, and the words are looked up in `words.txt` (an English word list):
 a name with a word outside the list is matched however its words are joined and
 cased; a name of two or more listed words is matched only exactly as written; a
 name that is one listed word is not checked, being an ordinary word. Matches are
-whole words, in the tree of every pushed tip and in the lines every other pushed
-commit adds.
+whole words, in the tree of every pushed tip, in the lines every other pushed
+commit adds, and in the message of every pushed commit and annotated tag.
 
 The private Host and HostName values of ~/.ssh/config join the names: an alias
 with no dot, a name ending in .local, .lan, .internal, .home or .ts.net, or an
@@ -327,10 +327,26 @@ def scan(repo, pushes, names, remote, words=frozenset(), allowed=frozenset()):
             commits = _git(repo, 'rev-list', local, '--not', f'--remotes={remote}').split()
         else:
             commits = _git(repo, 'rev-list', f'{remote_sha}..{local}').split()
+        if _git(repo, 'cat-file', '-t', local).strip() == 'tag':
+            body = _git(repo, 'cat-file', 'tag', local).partition('\n\n')[2]
+            found += _scan_message(body, local, '(tag message)', finders)
         for commit in commits:
             if commit != local:
                 found += _scan_added_lines(repo, commit, finders)
+            body = _git(repo, 'show', '-s', '--no-show-signature', '--format=%B', commit)
+            found += _scan_message(body, commit, '(commit message)', finders)
     return found
+
+
+def _scan_message(text, sha, label, finders):
+    """Hits in a commit or tag message, one per value; the label stands where a path would."""
+    seen = set()
+    for _, _, find in finders:
+        for _, value, kind in find(text):
+            if value.lower() not in seen:
+                seen.add(value.lower())
+                yield {'commit': sha[:7], 'path': label, 'line': None, 'col': None,
+                       'id': ident(value), 'kind': kind}
 
 
 def report(found, allowed_path, script):

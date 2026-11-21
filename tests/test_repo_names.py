@@ -20,7 +20,7 @@ ZERO = '0' * 40
 
 def git(cwd, *args):
     return subprocess.run(['git', '-c', 'user.name=t', '-c', 'user.email=t@example.com',
-                           '-c', 'commit.gpgsign=false', *args],
+                           '-c', 'commit.gpgsign=false', '-c', 'tag.gpgsign=false', *args],
                           cwd=cwd, check=True, capture_output=True, text=True).stdout.strip()
 
 
@@ -122,6 +122,25 @@ def test_history_is_scanned_when_the_remote_tip_was_never_fetched(tmp_path):
     found = hook.scan(str(r), [('refs/heads/main', tip, 'refs/heads/main', unfetched)],
                       {'secretproj': 'private'}, 'origin')
     assert [(f['path'], f['line']) for f in found] == [('b.md', None)]
+
+
+def test_a_name_in_a_pushed_commit_message_is_found(tmp_path):
+    r = repo(tmp_path)
+    commit(r, {'a.md': 'clean\n'})
+    commit(r, {'b.md': 'clean\n'}, message='port the parser from SecretProj')
+    tip = commit(r, {'c.md': 'clean\n'}, message='tip mentions secretproj too')
+    found = hook.scan(str(r), [('refs/heads/main', tip, 'refs/heads/main', ZERO)], {'secretproj': 'private'}, 'origin')
+    assert sorted((f['path'], f['line']) for f in found) == [('(commit message)', None)] * 2
+    assert {f['commit'] for f in found} == {tip[:7], git(r, 'rev-parse', 'HEAD~1')[:7]}
+
+
+def test_a_name_in_a_pushed_tag_message_is_found(tmp_path):
+    r = repo(tmp_path)
+    commit(r, {'a.md': 'clean\n'})
+    git(r, 'tag', '-a', 'v1', '-m', 'built for secretproj')
+    tag = git(r, 'rev-parse', 'v1')
+    found = hook.scan(str(r), [('refs/tags/v1', tag, 'refs/tags/v1', ZERO)], {'secretproj': 'private'}, 'origin')
+    assert [(f['path'], f['id']) for f in found] == [('(tag message)', ident('secretproj'))]
 
 
 def test_a_git_failure_while_scanning_refuses_the_push(tmp_path):
