@@ -120,13 +120,16 @@ $wsbCli = Get-Command wsb -CommandType Application -ErrorAction SilentlyContinue
 
 # The only reliable liveness check. A sandbox whose window has gone still
 # holds the slot, and shows up here with no WindowsSandboxClient process.
+# $null, not an empty list, when wsb is missing or its answer cannot be read:
+# a failed look is not a free slot.
 function Get-SandboxEnvironmentIds {
-  if (-not $wsbCli) { return @() }
+  if (-not $wsbCli) { return $null }
   try {
     $raw = & $wsbCli.Source list --raw 2>$null | Out-String
-    if (-not $raw.Trim()) { return @() }
-    @(($raw | ConvertFrom-Json).WindowsSandboxEnvironments | ForEach-Object { $_.Id })
-  } catch { @() }
+    if ($LASTEXITCODE -ne 0) { return $null }
+    if (-not $raw.Trim()) { return ,@() }
+    return ,@(($raw | ConvertFrom-Json).WindowsSandboxEnvironments | ForEach-Object { $_.Id })
+  } catch { return $null }
 }
 
 function Get-SandboxPids {
@@ -135,19 +138,23 @@ function Get-SandboxPids {
 }
 
 function Test-SandboxRunning {
-  if ($wsbCli) { return (Get-SandboxEnvironmentIds).Count -gt 0 }
+  $ids = Get-SandboxEnvironmentIds
+  if ($null -ne $ids) { return $ids.Count -gt 0 }
   return (Get-SandboxPids).Count -gt 0
 }
 
-# Everything alive now was started here: the check before the launch ran under
-# the lock and found nothing. A guest that could not shut itself down leaves
+# Only what appeared after the launch is stopped, so a sandbox the liveness
+# check could not see is left alone. A guest that could not shut itself down leaves
 # a VM worker and a RemoteSession behind, several hundred MB to several
 # GB, and they keep holding the machine's only slot.
-function Stop-SandboxStartedHere([object[]]$PriorIds) {
-  foreach ($id in (Get-SandboxEnvironmentIds | Where-Object { $_ -notin $PriorIds })) {
+function Stop-SandboxStartedHere([object[]]$PriorIds, [object[]]$PriorPids) {
+  $ids = Get-SandboxEnvironmentIds
+  foreach ($id in $ids) {
+    if ($id -in $PriorIds) { continue }
     try { & $wsbCli.Source stop --id $id 2>&1 | Out-Null } catch {}
   }
-  foreach ($proc in Get-Process -Name $killableProcessNames -ErrorAction SilentlyContinue) {
+  foreach ($proc in Get-Process -Name $killableProcessNames -ErrorAction SilentlyContinue |
+                      Where-Object { $_.Id -notin $PriorPids }) {
     try { Stop-Process -Id $proc.Id -Force -ErrorAction Stop } catch {}
   }
 }
@@ -236,11 +243,13 @@ try {
   # -- a hand-started one, or a -KeepSandbox run left open. Refuse rather
   # than take the machine's only slot away from them.
   if (Test-SandboxRunning) {
-    $who = if ($wsbCli) { "environment $((Get-SandboxEnvironmentIds) -join ', ')" }
+    $ids = Get-SandboxEnvironmentIds
+    $who = if ($null -ne $ids) { "environment $($ids -join ', ')" }
            else { "PID $((Get-SandboxPids) -join ', ')" }
     throw "A Windows Sandbox is already running outside this runner ($who). It was not started here, so it will not be terminated. Close it -- wsb stop --id <id> -- and try again."
   }
   $priorIds = Get-SandboxEnvironmentIds
+  $priorPids = Get-SandboxPids
 
   $savedForeground = [SbxWin]::GetForegroundWindow()
   Write-Host "Starting Windows Sandbox..." -ForegroundColor Cyan
@@ -287,7 +296,7 @@ finally {
   if ($KeepSandbox -and $launched) {
     Write-Host "-KeepSandbox: the sandbox is still running and holds the machine's only slot until it is closed." -ForegroundColor Yellow
   } elseif ($launched) {
-    Stop-SandboxStartedHere -PriorIds $priorIds
+    Stop-SandboxStartedHere -PriorIds $priorIds -PriorPids $priorPids
   }
   Remove-Item -LiteralPath $wsb -ErrorAction SilentlyContinue
   Exit-SandboxLock $lock
