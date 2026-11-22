@@ -154,6 +154,38 @@ Everything else — contrast, spacing, target size, focus, reflow,
 component choice, diagram shape,
 placement that follows a task — is decided and reported.
 
+## Machine checks to copy into a project
+
+A rule a machine can judge goes into the project as a check,
+so it holds on the hundredth change as on the first.
+Each one here is a file to copy, run by the project's own test command.
+
+### Layout: every box holds its content
+
+`scripts/layout/layout-check.mjs` and `scripts/layout/layout.test.mjs` go into the project's `tests/`,
+and `layout.config.json` at its root names the built site (`dir`) or a running one (`baseUrl`),
+the pages, and optionally the widths and the root selector.
+`node --test tests/` opens each page in headless Chrome at each width,
+with no npm dependency, and fails on:
+
+- a child element whose box lies outside its parent's,
+  unless the parent scrolls or the child is absolutely or fixed positioned;
+- text an element holds directly lying outside the element's box,
+  which is what a fixed height does to text,
+  whether it is cut off or spills;
+- the page scrolling sideways.
+
+A width the page was not laid out at,
+or a page with nothing under the root, fails the run,
+so it cannot pass by looking at nothing.
+The widths default to 375, 601, 1040 and 1280 CSS px.
+WCAG's reflow width, 320, is not among them;
+a project bound by 1.4.10 adds it to `widths`.
+What the check cannot see is what overlaps without leaving a box:
+two absolutely placed elements on top of each other,
+or text hidden under a sibling.
+That is still a screenshot read by a person, as above.
+
 ## Checklist
 
 - [ ] Contrast computed, not eyeballed: 4.5:1 text, 3:1 large and non-text
