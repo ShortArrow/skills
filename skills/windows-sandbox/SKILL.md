@@ -89,8 +89,10 @@ whatever it is written in.
    hand-started or left open for debugging.
    Refuse the run.
    Never terminate it
-4. **Clean up only what you started.** Rule 3 makes that "everything alive now",
-   since you began with none
+4. **Clean up only what you started.** Note the environments and processes alive before the launch,
+   and stop only those that appeared after it;
+   a `wsb list` that fails reads as "unknown", never as "none",
+   so the process list decides rule 3 and nothing seen before the launch is stopped
 
 A runner outside the protocol will not appear in the lock,
 only in the sandbox itself.
