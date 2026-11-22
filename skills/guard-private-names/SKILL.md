@@ -104,6 +104,8 @@ and the documentation ranges of RFC 5737, `192.0.2.0/24`,
 `198.51.100.0/24` and `203.0.113.0/24`.
 A dotted run inside a longer one,
 such as the build number `10.0.26300.1`, is not an address.
+Nor are four numbers joined to a letter or a `~` in front,
+such as the version in `OpenSSH.Server~~~~0.0.1.0`.
 
 Matches are whole words,
 in the tree of every pushed tip and in the lines every other pushed commit adds,

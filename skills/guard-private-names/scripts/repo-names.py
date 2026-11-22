@@ -18,7 +18,8 @@ The private Host and HostName values of ~/.ssh/config join the names: an alias
 with no dot, a name ending in .local, .lan, .internal, .home or .ts.net, or an
 address; lines with * or ? are skipped. Every IPv4 address is refused too,
 except 127.0.0.0/8, 0.0.0.0, a netmask from 255.0.0.0 up, and the
-documentation ranges of RFC 5737.
+documentation ranges of RFC 5737. Four numbers joined to a letter, a dot or a
+`~` in front are a version, as in `OpenSSH.Server~~~~0.0.1.0`, not an address.
 
 A refusal prints where each hit is and an 8-character id, never the name: the
 message lands in terminals, agent transcripts and CI logs, and printing the name
@@ -47,7 +48,7 @@ SHOWN = 60
 WORDS = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'words.txt')
 SEPARATOR = '[-_. ]?'
 SSH_CONFIG = os.path.join(os.path.expanduser('~'), '.ssh', 'config')
-IPV4 = re.compile(r'(?<![\w.])(?:[0-9]{1,3}\.){3}[0-9]{1,3}(?!\w|\.[0-9])')
+IPV4 = re.compile(r'(?<![\w.~])(?:[0-9]{1,3}\.){3}[0-9]{1,3}(?!\w|\.[0-9])')
 IPV4_GREP = r'[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}'
 PASSED_NETWORKS = [ipaddress.ip_network(n) for n in
                    ('192.0.2.0/24', '198.51.100.0/24', '203.0.113.0/24', '127.0.0.0/8')]
