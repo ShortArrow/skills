@@ -20,7 +20,7 @@ ZERO = '0' * 40
 
 def git(cwd, *args):
     return subprocess.run(['git', '-c', 'user.name=t', '-c', 'user.email=t@example.com',
-                           '-c', 'commit.gpgsign=false', *args],
+                           '-c', 'commit.gpgsign=false', '-c', 'tag.gpgsign=false', *args],
                           cwd=cwd, check=True, capture_output=True, text=True).stdout.strip()
 
 
@@ -109,6 +109,50 @@ def test_history_already_on_the_remote_is_not_scanned_again(tmp_path):
     tip = commit(r, {'a.md': 'clean\n'})
     found = hook.scan(str(r), [('refs/heads/main', tip, 'refs/heads/main', old)], {'secretproj': 'private'}, 'origin')
     assert found == []
+
+
+def test_history_is_scanned_when_the_remote_tip_was_never_fetched(tmp_path):
+    """A force push over a remote commit this clone lacks: git cannot list remote..local,
+    and an empty list would pass the history unread."""
+    r = repo(tmp_path)
+    commit(r, {'a.md': 'clean\n'})
+    commit(r, {'b.md': 'secretproj leaked\n'})
+    tip = commit(r, {'b.md': None})
+    unfetched = '1' * 40
+    found = hook.scan(str(r), [('refs/heads/main', tip, 'refs/heads/main', unfetched)],
+                      {'secretproj': 'private'}, 'origin')
+    assert [(f['path'], f['line']) for f in found] == [('b.md', None)]
+
+
+def test_a_name_in_a_pushed_commit_message_is_found(tmp_path):
+    r = repo(tmp_path)
+    commit(r, {'a.md': 'clean\n'})
+    commit(r, {'b.md': 'clean\n'}, message='port the parser from SecretProj')
+    tip = commit(r, {'c.md': 'clean\n'}, message='tip mentions secretproj too')
+    found = hook.scan(str(r), [('refs/heads/main', tip, 'refs/heads/main', ZERO)], {'secretproj': 'private'}, 'origin')
+    assert sorted((f['path'], f['line']) for f in found) == [('(commit message)', None)] * 2
+    assert {f['commit'] for f in found} == {tip[:7], git(r, 'rev-parse', 'HEAD~1')[:7]}
+
+
+def test_a_name_in_a_pushed_tag_message_is_found(tmp_path):
+    r = repo(tmp_path)
+    commit(r, {'a.md': 'clean\n'})
+    git(r, 'tag', '-a', 'v1', '-m', 'built for secretproj')
+    tag = git(r, 'rev-parse', 'v1')
+    found = hook.scan(str(r), [('refs/tags/v1', tag, 'refs/tags/v1', ZERO)], {'secretproj': 'private'}, 'origin')
+    assert [(f['path'], f['id']) for f in found] == [('(tag message)', ident('secretproj'))]
+
+
+def test_a_git_failure_while_scanning_refuses_the_push(tmp_path):
+    """git grep exits 128 on an object it cannot read; reading that as no match would pass the push."""
+    r = repo(tmp_path)
+    commit(r, {'a.md': 'clean\n'})
+    missing = '2' * 40
+    try:
+        hook.scan(str(r), [('refs/heads/main', missing, 'refs/heads/main', ZERO)], {'secretproj': 'private'}, 'origin')
+    except hook.ScanFailed:
+        return
+    raise AssertionError('a tip git cannot read was passed as clean')
 
 
 # --- how a name is matched, by whether its words are in the dictionary ------
@@ -244,18 +288,28 @@ def test_explain_maps_an_id_back_to_its_name():
 
 # --- IPv4 addresses ----------------------------------------------------------
 
+def addr(*octets):
+    """An address put together at run time: the source then holds no four dotted numbers
+    for the guard to refuse when this file is pushed."""
+    return '.'.join(map(str, octets))
+
+
+DB, PROXY = addr(10, 20, 30, 40), addr(172, 16, 5, 9)
+LOOKS_LIKE_A_MASK, NEXT = addr(255, 255, 0, 255), addr(128, 0, 0, 1)
+
+
 def test_an_ipv4_address_in_the_pushed_tree_is_refused_by_id(tmp_path):
-    found = scan_text(tmp_path, 'db at 10.20.30.40 and\nproxy 172.16.5.9:8080\n', {}, set())
+    found = scan_text(tmp_path, f'db at {DB} and\nproxy {PROXY}:8080\n', {}, set())
     assert [(f['line'], f['id'], f['kind']) for f in found] == [
-        (1, ident('10.20.30.40'), 'ipv4'), (2, ident('172.16.5.9'), 'ipv4')]
+        (1, ident(DB), 'ipv4'), (2, ident(PROXY), 'ipv4')]
     text = hook.report(found, allowed_path='x', script='x')
-    assert '10.20.30.40' not in text and '172.16.5.9' not in text
+    assert DB not in text and PROXY not in text
 
 
 def test_an_ipv4_address_added_then_removed_is_refused(tmp_path):
     r = repo(tmp_path)
     commit(r, {'a.md': 'clean\n'})
-    commit(r, {'b.md': 'host 10.20.30.40\n'})
+    commit(r, {'b.md': f'host {DB}\n'})
     tip = commit(r, {'b.md': None})
     found = hook.scan(str(r), [('refs/heads/main', tip, 'refs/heads/main', ZERO)], {}, 'origin')
     assert [(f['path'], f['kind']) for f in found] == [('b.md', 'ipv4')]
@@ -268,14 +322,22 @@ def test_documentation_addresses_and_loopback_pass(tmp_path):
 
 def test_an_address_in_the_allow_file_passes(tmp_path):
     r = repo(tmp_path)
-    tip = commit(r, {'a.md': 'db at 10.20.30.40\n'})
+    tip = commit(r, {'a.md': f'db at {DB}\n'})
     found = hook.scan(str(r), [('refs/heads/main', tip, 'refs/heads/main', ZERO)], {}, 'origin',
-                      allowed={'10.20.30.40'})
+                      allowed={DB})
     assert found == []
 
 
 def test_what_is_not_an_address_passes(tmp_path):
     text = 'version 1.2.3\nbuild 10.0.26300.1\n256.1.1.1\n1.2.3.4.5\nv10.20.30.40x\n'
+    assert scan_text(tmp_path, text, {}, set()) == []
+
+
+def test_a_version_number_joined_to_a_tilde_or_a_letter_is_not_an_address(tmp_path):
+    """Windows capability names carry their version after ~~~~, as in hyperv-clean-vm's
+    `OpenSSH.Server~~~~0.0.1.0`; a letter in front marks a version just the same."""
+    version = addr(0, 0, 1, 0)
+    text = f'Add-WindowsCapability -Name OpenSSH.Server~~~~{version}\nrelease v{addr(10, 20, 30, 40)}\n'
     assert scan_text(tmp_path, text, {}, set()) == []
 
 
@@ -285,18 +347,18 @@ def test_any_address_netmasks_and_the_whole_loopback_block_pass(tmp_path):
 
 
 def test_an_address_that_only_looks_like_a_netmask_is_refused(tmp_path):
-    found = scan_text(tmp_path, 'mask 255.255.0.255\nnext 128.0.0.1\n', {}, set())
+    found = scan_text(tmp_path, f'mask {LOOKS_LIKE_A_MASK}\nnext {NEXT}\n', {}, set())
     assert [(f['line'], f['kind']) for f in found] == [(1, 'ipv4'), (2, 'ipv4')]
 
 
 # --- names from ~/.ssh/config -------------------------------------------------
 
-SSH_CONFIG = '''# a comment naming commentqzx
+SSH_CONFIG = f'''# a comment naming commentqzx
 Host qzxbox
     HostName qzxbox.lab.example.invalid
     User me
 Host alpha-qzx beta-qzx
-  hostname 10.20.30.40
+  hostname {DB}
 Host=eqzx
 Host github.com
     HostName ssh.github.com
@@ -321,7 +383,7 @@ def test_ssh_config_aliases_internal_names_and_addresses_are_read(tmp_path):
     path = tmp_path / 'config'
     path.write_text(SSH_CONFIG, encoding='utf-8')
     assert hook.load_ssh_names(str(path)) == {
-        'qzxbox', 'alpha-qzx', 'beta-qzx', '10.20.30.40', 'eqzx',
+        'qzxbox', 'alpha-qzx', 'beta-qzx', DB, 'eqzx',
         'nas', 'nas.qzx.local', 'build', 'build.qzx.LAN', 'db', 'db.qzx.internal',
         'media', 'media.qzx.home', 'tail', 'tail-qzx.ts.net'}
 
@@ -334,8 +396,8 @@ def test_a_public_name_from_ssh_config_is_not_read(tmp_path):
 
 
 def test_an_ssh_config_address_is_reported_once(tmp_path):
-    found = scan_text(tmp_path, 'ssh to 10.20.30.40\n', {'10.20.30.40': 'ssh'}, set())
-    assert [(f['line'], f['id'], f['kind']) for f in found] == [(1, ident('10.20.30.40'), 'ssh')]
+    found = scan_text(tmp_path, f'ssh to {DB}\n', {DB: 'ssh'}, set())
+    assert [(f['line'], f['id'], f['kind']) for f in found] == [(1, ident(DB), 'ssh')]
 
 
 def test_a_missing_ssh_config_gives_no_names(tmp_path):

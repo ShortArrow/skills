@@ -72,6 +72,9 @@ A dead watcher leaves the wait where it was — the job is still running,
 finished or never started, and which one is now unknown.
 Reporting it as finished is worse than reporting it as unknown,
 because an unobserved success is the one claim nobody checks.
+Once that unknown has been reported and the user has spoken again,
+the dead watcher is history:
+a rerun the user asked for is judged by its own notification.
 
 ## Waiting on a person
 

@@ -37,7 +37,10 @@ REASON = (
     'Apply own-the-call (read its SKILL.md if it is not loaded): '
     'if the step is inside what the request asked for, do it and report; '
     'otherwise rewrite the closing as a proposal: what will be done, the evidence that decided it, '
-    'what it costs and how it is undone, and one go-ahead naming the fact that would change the plan. '
+    'what it costs and how it is undone, a line naming why the user must answer (something that goes out: '
+    'text, a push, a pull request, a release or a publishing setting; an action that cannot be undone, a UX and security trade-off, '
+    'a fact only the user holds, a matter the user put on hold), and one go-ahead naming the fact that '
+    'would change the plan; with none of those grounds, decide and report instead of asking. '
     'A question for a fact only the user holds stays, in the form grill-me gives it.'
 )
 

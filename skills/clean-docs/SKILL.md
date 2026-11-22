@@ -319,6 +319,12 @@ because a surface change and the document that describes it are each correct alo
 and nothing before the push compares them.
 `hooks/docs-follow.py` refuses `git push` while an outgoing commit changes a surface — a skill body,
 a hook, a script, the marketplace — and no living document changed with it.
+It reads the repository the push runs in,
+following a `cd` earlier on the line and git's `-C`,
+not the directory the session sits in.
+An outgoing commit is one the upstream lacks, or,
+on a branch with no upstream yet, one no remote has,
+so the first push of a new branch is judged too.
 A commit a branch of the remote already has is not outgoing,
 so a branch that merged main does not answer for main's commits,
 a bot's dependency bump among them.
