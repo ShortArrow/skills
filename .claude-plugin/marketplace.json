@@ -16,7 +16,6 @@
       "strict": false,
       "skills": [
         "./skills/any-screenshot",
-        "./skills/last-screenshot",
         "./skills/windows-screenshot",
         "./skills/avalonia-screenshot",
         "./skills/flaui-screenshot",
@@ -323,6 +322,15 @@
       "strict": false,
       "skills": [
         "./skills/new-combination"
+      ]
+    },
+    {
+      "name": "user-context",
+      "description": "Handing the agent what the user prepared on their own machine, such as the screenshot they just took, so a question about \"this\" on their screen is answered from it instead of asked back",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/last-screenshot"
       ]
     },
     {
