@@ -11,14 +11,15 @@ and digits, and the words are looked up in `words.txt` (an English word list):
 a name with a word outside the list is matched however its words are joined and
 cased; a name of two or more listed words is matched only exactly as written; a
 name that is one listed word is not checked, being an ordinary word. Matches are
-whole words, in the tree of every pushed tip and in the lines every other pushed
-commit adds.
+whole words, in the tree of every pushed tip, in the lines every other pushed
+commit adds, and in the message of every pushed commit and annotated tag.
 
 The private Host and HostName values of ~/.ssh/config join the names: an alias
 with no dot, a name ending in .local, .lan, .internal, .home or .ts.net, or an
 address; lines with * or ? are skipped. Every IPv4 address is refused too,
 except 127.0.0.0/8, 0.0.0.0, a netmask from 255.0.0.0 up, and the
-documentation ranges of RFC 5737.
+documentation ranges of RFC 5737. Four numbers joined to a letter, a dot or a
+`~` in front are a version, as in `OpenSSH.Server~~~~0.0.1.0`, not an address.
 
 A refusal prints where each hit is and an 8-character id, never the name: the
 message lands in terminals, agent transcripts and CI logs, and printing the name
@@ -27,8 +28,8 @@ for the person at the keyboard. A value that is not a leak goes in the clone's
 untracked `info/repo-names-allowed` (one per line), which is never pushed, because
 an allow list of private names published would be the same leak.
 
-When `gh` cannot list the names, the push is refused: a check that passes because
-it could not look is not a check.
+When `gh` cannot list the names, or git cannot read what the push would send,
+the push is refused: a check that passes because it could not look is not a check.
 """
 import hashlib
 import ipaddress
@@ -47,11 +48,15 @@ SHOWN = 60
 WORDS = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'words.txt')
 SEPARATOR = '[-_. ]?'
 SSH_CONFIG = os.path.join(os.path.expanduser('~'), '.ssh', 'config')
-IPV4 = re.compile(r'(?<![\w.])(?:[0-9]{1,3}\.){3}[0-9]{1,3}(?!\w|\.[0-9])')
+IPV4 = re.compile(r'(?<![\w.~])(?:[0-9]{1,3}\.){3}[0-9]{1,3}(?!\w|\.[0-9])')
 IPV4_GREP = r'[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}'
 PASSED_NETWORKS = [ipaddress.ip_network(n) for n in
                    ('192.0.2.0/24', '198.51.100.0/24', '203.0.113.0/24', '127.0.0.0/8')]
 INTERNAL_SUFFIXES = ('.local', '.lan', '.internal', '.home', '.ts.net')
+
+
+class ScanFailed(Exception):
+    """git could not read what the push would send, so nothing can be passed."""
 
 
 class NamesUnknown(Exception):
@@ -215,9 +220,18 @@ def drop(names, allowed, own):
     return {n: k for n, k in names.items() if n.lower() not in allowed and n.lower() != own_name}
 
 
-def _git(repo, *args):
-    return subprocess.run(['git', '-C', repo, *args], capture_output=True, text=True,
-                          encoding='utf-8', errors='replace').stdout
+def _git(repo, *args, ok=(0,)):
+    """stdout of git in repo; ScanFailed when it exits with a code outside ok."""
+    proc = subprocess.run(['git', '-C', repo, *args], capture_output=True, text=True,
+                          encoding='utf-8', errors='replace')
+    if proc.returncode not in ok:
+        raise ScanFailed(f'git {args[0]} exited {proc.returncode}: {proc.stderr.strip()[:200]}')
+    return proc.stdout
+
+
+def _is_commit(repo, sha):
+    return subprocess.run(['git', '-C', repo, 'cat-file', '-e', f'{sha}^{{commit}}'],
+                          capture_output=True).returncode == 0
 
 
 def _target(name, words):
@@ -256,7 +270,7 @@ def _scan_tree(repo, sha, finders):
             handle.write(patterns + '\n')
             pattern_file = handle.name
         try:
-            out = _git(repo, 'grep', '-n', '-I', *options, '-f', pattern_file, sha, '--')
+            out = _git(repo, 'grep', '-n', '-I', *options, '-f', pattern_file, sha, '--', ok=(0, 1))
         finally:
             os.unlink(pattern_file)
         for line in out.splitlines():
@@ -310,14 +324,30 @@ def scan(repo, pushes, names, remote, words=frozenset(), allowed=frozenset()):
         if local == ZERO:
             continue
         found += _scan_tree(repo, local, finders)
-        if remote_sha == ZERO:
+        if remote_sha == ZERO or not _is_commit(repo, remote_sha):
             commits = _git(repo, 'rev-list', local, '--not', f'--remotes={remote}').split()
         else:
             commits = _git(repo, 'rev-list', f'{remote_sha}..{local}').split()
+        if _git(repo, 'cat-file', '-t', local).strip() == 'tag':
+            body = _git(repo, 'cat-file', 'tag', local).partition('\n\n')[2]
+            found += _scan_message(body, local, '(tag message)', finders)
         for commit in commits:
             if commit != local:
                 found += _scan_added_lines(repo, commit, finders)
+            body = _git(repo, 'show', '-s', '--no-show-signature', '--format=%B', commit)
+            found += _scan_message(body, commit, '(commit message)', finders)
     return found
+
+
+def _scan_message(text, sha, label, finders):
+    """Hits in a commit or tag message, one per value; the label stands where a path would."""
+    seen = set()
+    for _, _, find in finders:
+        for _, value, kind in find(text):
+            if value.lower() not in seen:
+                seen.add(value.lower())
+                yield {'commit': sha[:7], 'path': label, 'line': None, 'col': None,
+                       'id': ident(value), 'kind': kind}
 
 
 def report(found, allowed_path, script):
@@ -383,9 +413,14 @@ def main(argv):
               'Sign in with gh and push again; nothing is passed unchecked.', file=sys.stderr)
         return 1
     names = {**_ssh_kinds(), **names}
-    allowed, allowed_path = _allowed(repo)
-    found = scan(repo, parse_pushes(sys.stdin.read()), drop(names, allowed, url), remote or 'origin',
-                 load_words(), allowed)
+    try:
+        allowed, allowed_path = _allowed(repo)
+        found = scan(repo, parse_pushes(sys.stdin.read()), drop(names, allowed, url), remote or 'origin',
+                     load_words(), allowed)
+    except ScanFailed as error:
+        print(f'pre-push: refused. What the push would send could not be read ({error}).\n'
+              'Nothing is passed unchecked.', file=sys.stderr)
+        return 1
     if found:
         print(report(found, allowed_path, shown_path(os.path.abspath(__file__), repo)), file=sys.stderr)
         return 1

@@ -482,3 +482,13 @@ def test_a_powershell_block_comment_does_not_hide_what_follows_it():
         entries = [prompt('ask'), *consulted('b1', command)]
         entries[1]['message']['content'][0]['name'] = 'PowerShell'
         assert publish('git push', entries) is not None, command
+
+
+def test_publish_detection_stays_fast_on_repeated_options():
+    """A hook that runs past its timeout gives no verdict, and the publish goes through."""
+    import time
+    for command in ('git ' + '-c ' * 34 + 'x; git status', 'git ' + '--x ' * 34 + 'status'):
+        started = time.perf_counter()
+        hook.publishes(command)
+        assert time.perf_counter() - started < 0.5, command[:12]
+    assert hook.publishes('git -c k=v -C dir --no-pager push')
