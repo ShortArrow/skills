@@ -16,6 +16,7 @@
       "strict": false,
       "skills": [
         "./skills/any-screenshot",
+        "./skills/last-screenshot",
         "./skills/windows-screenshot",
         "./skills/avalonia-screenshot",
         "./skills/flaui-screenshot",
