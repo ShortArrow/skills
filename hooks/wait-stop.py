@@ -200,9 +200,10 @@ def pending(entries):
     """(live, broke): whether something will still resume the session, and whether a watcher died.
 
     `live` is the original question — a background call, a messaged subagent or a wakeup
-    still due. `broke` is separate: a notification came back carrying failed, killed or a
-    non-zero exit code, so the work it was watching has no result, whatever the turn says
-    about it.
+    still due. `broke` is separate: a notification came back since the user last spoke
+    carrying failed, killed or a non-zero exit code, so the work it was watching has no
+    result, whatever the turn says about it. A failure before that message was reported in
+    its own turn and is not held against a later one.
 
     A call is known by its tool-use id and by the task or agent id its result names,
     and is done once a notification or a hand-back names either, unless the notification
@@ -213,7 +214,7 @@ def pending(entries):
     waiting, woken, broke = {}, False, set()
     for entry in entries:
         if is_user_prompt(entry):
-            woken = False
+            woken, broke = False, set()
         at = entry.get('timestamp') or ''
         content = (entry.get('message') or {}).get('content')
         for block in content if isinstance(content, list) else []:

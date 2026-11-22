@@ -281,14 +281,24 @@ A phrase list catches the words of a hand-back, not its shape:
 a closing can say 「進めてよいですか？」 with only the benefit named and pass it.
 So two judges ask a second,
 small model to refute every question put to the user against `own-the-call`'s four parts.
-One is a prompt hook (`type: "prompt"`), PreToolUse on `AskUserQuestion` with `continueOnBlock`,
+One is a prompt hook (`type: "prompt"`),
+PreToolUse on `AskUserQuestion` with `continueOnBlock`,
 so a failing question comes back to the agent as the tool's error and is rewritten;
-the other, `hooks/own-the-call-judge.py`, runs at Stop beside the phrase list and reads the closing.
-Both let a question for a fact only the user holds through,
+the other, `hooks/own-the-call-judge.py`,
+runs at Stop beside the phrase list and reads the closing.
+Both first ask for the ground: a line in the ask,
+`Why ask:` or 「聞く根拠：」,
+naming which of `own-the-call`'s five it is,
+and refuse an ask with no ground line or one the ask does not fit;
+the refusal says to decide and report rather than to rewrite.
+The rule came from one evening's session that asked about a restart,
+copying its own mod and a file name,
+and was asked back why any of that needed the user.
+A question for a fact only the user holds passes on its ground line alone,
 because that is `grill-me`'s and has no position to take.
 The question's prompt lives inline in the marketplace entry,
 the closing's in `hooks/own-the-call-judge.prompt.txt`,
-and `tests/own-the-call/judge-prompts.py` replays them on 21 fixed questions and closings,
+and `tests/own-the-call/judge-prompts.py` replays them on fixed questions and closings (21 at first, 41 now),
 three times each; it scored 51 of 51 twice,
 after a first version had failed fact questions for not naming a cost.
 Later that day the four bundle cases were added:
@@ -306,18 +316,35 @@ Judging with `sonnet` instead of the default model passed nothing that should fa
 but blocked a fact question whose closing named the likely answer 3 times of 3,
 and it would put a larger model's call at every turn end;
 the hooks documentation names a `model` field without listing its values.
+The ground rule was measured the same way on 2026-11-21.
+Before it, the twelve cases that ask with no fitting ground (no line, a ground outside the six, a mislabelled restart, mod copy, file name or folder) passed 24 of 36 calls;
+after it all 37 cases scored 111 of 111, three runs each.
+The same night the grounds went from six to five: a push to any remote,
+a pull request,
+a release and a publishing setting joined text as "something that goes out",
+and the company organisation's push folded into it.
+With the public-repository push pair added the 41 cases scored 121 of 123;
+one miss passed a push proposal with no ground line,
+so the prompts now say the line is required even when the ground is plain,
+and the rerun scored 123 of 123.
+Writing those cases showed that the old pass cases asked go-aheads with no ground and offered options with no cost;
+the cases were rewritten, and the judge was not loosened to fit them.
 The Stop judge was a prompt hook too, and was moved out of one.
 A prompt hook's evaluator saw more than the hook input:
 in one project's sessions it was refused by the API's safety check at 132 of 2,204 distinct turn endings,
 the refusals came in unbroken runs that began and ended at compactions or mid-session,
-and the same 10 refused replies sent alone, with the same prompt, were refused 0 times by haiku or sonnet.
-A refusal lets the turn end unjudged, and a prompt hook cannot narrow what its evaluator is given.
+and the same 10 refused replies sent alone, with the same prompt,
+were refused 0 times by haiku or sonnet.
+A refusal lets the turn end unjudged,
+and a prompt hook cannot narrow what its evaluator is given.
 The command hook cuts the closing (the trailing paragraphs that fit in 1,200 characters),
 sends only that to `claude -p --model haiku` with no tools and hooks disabled,
-and lets the turn end, with a note on stderr, when claude is missing, fails, times out, is refused or answers without a verdict.
+and lets the turn end, with a note on stderr, when claude is missing,
+fails, times out, is refused or answers without a verdict.
 On the 10 refused replies it reached a verdict every time, twice.
 The price is time: the prompt hook took a median 2.6 s (p90 5.7 s) over 4,116 turn endings,
-and a `claude -p` call takes 7 to 17 s, median about 9 s, on a machine whose antivirus taxes every process start,
+and a `claude -p` call takes 7 to 17 s, median about 9 s,
+on a machine whose antivirus taxes every process start,
 so the timeout is 60 s.
 
 `hooks/verify-reports.py` holds `adversarial-verify`'s line on subagent reports at the two places a claim leaves the session.
@@ -375,13 +402,22 @@ Once that blocked Bash in fresh sessions until `claude plugin update` caught the
 The scripts report a verdict as JSON on exit 0,
 so `|| true` loses nothing;
 `tests/test_hook_commands.py` runs every hook against an empty plugin root and refuses exit 2.
+A hook that runs past its timeout gives no verdict either,
+so a gate passes the call;
+the patterns that read a command line are written so that no input can make them backtrack exponentially,
+and the tests time them on repeated options.
 
 ## Commit messages
 
-A commit message is one line, `update: <what>`,
-where `<what>` names what the commit changes: `skill`, `docs`,
-`submodule`, `adr` and the like.
-No body is written.
+A commit message is a subject line, a blank line and a body.
+The subject is `type(scope): summary`, where the type is `feat`, `fix`,
+`refactor`, `docs`, `test`, `style` or `chore`,
+the scope names the skill, hook or document changed,
+and the summary says what the commit changes in one clause.
+The body says why, in one or two sentences;
+a decision recorded elsewhere is named there by its title,
+not argued again.
+A structural change and a behavioural change go in separate commits.
 
 ## Sources
 
@@ -399,6 +435,7 @@ Run before every commit:
 ```powershell
 pwsh -File tests/check-portability.ps1
 python tests/skill-doctor.py --strict
+python -m pytest tests
 ```
 
 The first checks the host rows and their string invariants,
@@ -430,6 +467,10 @@ It exits 1 on an error, and with `--strict` on a warning;
 `--json` prints the same report as one object.
 It takes any skills directory as its argument,
 so it also serves for a catalogue that is not this one.
+
+The third runs the tests of the hooks and scripts.
+Most of them are pytest functions,
+so a file run with `python` alone runs none of them and exits 0.
 
 The tests of the stylelint configuration under `interface-design` run stylelint from `package.json`'s development tools;
 run `npm ci` once per clone and again after `package-lock.json` changes,

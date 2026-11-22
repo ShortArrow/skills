@@ -21,16 +21,18 @@ as a full commit sha in docs-follow-exceptions.txt, never as a path — a path
 would be a permanent hole, while a sha stops matching as soon as the next commit
 touches the file.
 
-An unreadable repository lets the call through. The gate is a check on the agent,
+A branch with no upstream is judged by the commits no remote has yet, and
+`git -C <dir> push` by <dir>. An unreadable repository lets the call through. The gate is a check on the agent,
 not a lock on the user.
 """
 import json
 import os
 import re
+import shlex
 import subprocess
 import sys
 
-PUSH = re.compile(r'\bgit\b(?:\s+(?:-C\s+\S+|-c\s+\S+|--?[\w-]+(?:=\S+)?))*\s+push\b')
+PUSH = re.compile(r'\bgit\b(?:\s+(?:-[cC]\s+\S+|-(?![cC]\s|-)[\w-]+(?:=\S+)?|--[\w-]+(?:=\S+)?))*\s+push\b')
 FULL_SHA = re.compile(r'^([0-9a-f]{40})\s+(\S.*)$')
 
 SURFACE = ('hooks/', 'scripts/', '.claude-plugin/')
@@ -124,6 +126,71 @@ def paths_of(name_only):
     return out
 
 
+CD_WORDS = ('cd', 'chdir', 'pushd', 'set-location', 'sl', 'push-location')
+SEPARATORS = ('&&', '||', ';', '|', '&', '(', ')', ';;')
+ASSIGNMENT = re.compile(r'^[A-Za-z_][A-Za-z0-9_]*=')
+DRIVE = re.compile(r'^/([A-Za-z])(?=/|$)')
+
+
+def _simple_commands(command):
+    """The command line cut into its simple commands, each a list of words."""
+    lexer = shlex.shlex(command.replace('\r', '').replace('\n', ';'),
+                        posix=True, punctuation_chars=True)
+    lexer.whitespace_split = True
+    current = []
+    for token in lexer:
+        if token in SEPARATORS or set(token) <= set('&|;()'):
+            if current:
+                yield current
+            current = []
+        else:
+            current.append(token)
+    if current:
+        yield current
+
+
+def _move(base, arg, windows):
+    """Where `arg` leads from `base`; a Git Bash `/v/...` is drive V: on Windows."""
+    arg = os.path.expanduser(arg)
+    if windows:
+        arg = DRIVE.sub(lambda m: m.group(1).upper() + ':', arg)
+    return os.path.normpath(os.path.join(base, arg))
+
+
+def push_target(command, cwd, windows=os.name == 'nt'):
+    """The directory the first `git push` in `command` runs in, or None.
+
+    The hook's cwd is the session's. A `cd` earlier in the line and git's own -C
+    move the push elsewhere, and the commits to read are that repository's. None
+    when the line has no push or names a place this cannot follow (`cd -`).
+    """
+    here = os.path.normpath(cwd)
+    for words in _simple_commands(command):
+        while words and ASSIGNMENT.match(words[0]):
+            words = words[1:]
+        if not words:
+            continue
+        head = words[0].lower()
+        if head in CD_WORDS:
+            args = [w for w in words[1:] if not (w.startswith('-') and len(w) > 1)]
+            if args and args[0] == '-':
+                return None
+            here = _move(here, args[0], windows) if args else os.path.expanduser('~')
+            continue
+        if head not in ('git', 'git.exe'):
+            continue
+        where, rest = here, words[1:]
+        while rest and rest[0].startswith('-'):
+            option = rest.pop(0)
+            if option in ('-C', '-c') and rest:
+                value = rest.pop(0)
+                if option == '-C':
+                    where = _move(where, value, windows)
+        if rest and rest[0] == 'push':
+            return where
+    return None
+
+
 def git(cwd, *args):
     proc = subprocess.run(('git',) + args, cwd=cwd, capture_output=True, text=True, timeout=20)
     if proc.returncode != 0:
@@ -132,9 +199,15 @@ def git(cwd, *args):
 
 
 def outgoing(cwd):
-    """The commits a push would send, newest first, each with the paths it touched."""
-    upstream = git(cwd, 'rev-parse', '--abbrev-ref', '--symbolic-full-name', '@{upstream}').strip()
-    shas = git(cwd, 'rev-list', f'{upstream}..HEAD').split()
+    """The commits a push would send, newest first, each with the paths it touched.
+
+    Without an upstream, as on a branch's first push, that is every commit no
+    remote has yet."""
+    try:
+        upstream = git(cwd, 'rev-parse', '--abbrev-ref', '--symbolic-full-name', '@{upstream}').strip()
+        shas = git(cwd, 'rev-list', f'{upstream}..HEAD').split()
+    except OSError:
+        shas = git(cwd, 'rev-list', 'HEAD', '--not', '--remotes').split()
     commits = []
     for sha in shas:
         raw = git(cwd, 'show', '--no-show-signature', '--pretty=format:', '--name-only', sha)
@@ -176,9 +249,12 @@ def main():
         payload = json.loads(sys.stdin.buffer.read().decode('utf-8'))
         if not isinstance(payload, dict):
             return
-        if not PUSH.search((payload.get('tool_input') or {}).get('command') or ''):
+        command = (payload.get('tool_input') or {}).get('command') or ''
+        if not PUSH.search(command):
             return
-        cwd = payload.get('cwd') or os.getcwd()
+        cwd = push_target(command, payload.get('cwd') or os.getcwd())
+        if cwd is None:
+            return
         commits = outgoing(cwd)
         excused = exceptions(cwd)
     except (ValueError, KeyError, TypeError, OSError, subprocess.SubprocessError):
