@@ -132,9 +132,14 @@ def git(cwd, *args):
 
 
 def outgoing(cwd):
-    """The commits a push would send, newest first, each with the paths it touched."""
+    """The commits a push would send, newest first, each with the paths it touched.
+
+    A commit any branch of the upstream's remote already has is not sent, so it is
+    left out: a branch that merged main does not answer for main's commits."""
     upstream = git(cwd, 'rev-parse', '--abbrev-ref', '--symbolic-full-name', '@{upstream}').strip()
-    shas = git(cwd, 'rev-list', f'{upstream}..HEAD').split()
+    branch = git(cwd, 'rev-parse', '--abbrev-ref', 'HEAD').strip()
+    remote = git(cwd, 'config', '--get', f'branch.{branch}.remote').strip()
+    shas = git(cwd, 'rev-list', f'{upstream}..HEAD', '--not', f'--remotes={remote}').split()
     commits = []
     for sha in shas:
         raw = git(cwd, 'show', '--no-show-signature', '--pretty=format:', '--name-only', sha)
