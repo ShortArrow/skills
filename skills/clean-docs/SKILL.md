@@ -322,6 +322,9 @@ a hook, a script, the marketplace — and no living document changed with it.
 It reads the repository the push runs in,
 following a `cd` earlier on the line and git's `-C`,
 not the directory the session sits in.
+An outgoing commit is one the upstream lacks, or,
+on a branch with no upstream yet, one no remote has,
+so the first push of a new branch is judged too.
 
 Three properties make it survivable rather than something switched off within a month:
 

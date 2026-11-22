@@ -21,7 +21,8 @@ as a full commit sha in docs-follow-exceptions.txt, never as a path — a path
 would be a permanent hole, while a sha stops matching as soon as the next commit
 touches the file.
 
-An unreadable repository lets the call through. The gate is a check on the agent,
+A branch with no upstream is judged by the commits no remote has yet, and
+`git -C <dir> push` by <dir>. An unreadable repository lets the call through. The gate is a check on the agent,
 not a lock on the user.
 """
 import json
@@ -31,7 +32,7 @@ import shlex
 import subprocess
 import sys
 
-PUSH = re.compile(r'\bgit\b(?:\s+(?:-C\s+\S+|-c\s+\S+|--?[\w-]+(?:=\S+)?))*\s+push\b')
+PUSH = re.compile(r'\bgit\b(?:\s+(?:-[cC]\s+\S+|-(?![cC]\s|-)[\w-]+(?:=\S+)?|--[\w-]+(?:=\S+)?))*\s+push\b')
 FULL_SHA = re.compile(r'^([0-9a-f]{40})\s+(\S.*)$')
 
 SURFACE = ('hooks/', 'scripts/', '.claude-plugin/')
@@ -198,9 +199,15 @@ def git(cwd, *args):
 
 
 def outgoing(cwd):
-    """The commits a push would send, newest first, each with the paths it touched."""
-    upstream = git(cwd, 'rev-parse', '--abbrev-ref', '--symbolic-full-name', '@{upstream}').strip()
-    shas = git(cwd, 'rev-list', f'{upstream}..HEAD').split()
+    """The commits a push would send, newest first, each with the paths it touched.
+
+    Without an upstream, as on a branch's first push, that is every commit no
+    remote has yet."""
+    try:
+        upstream = git(cwd, 'rev-parse', '--abbrev-ref', '--symbolic-full-name', '@{upstream}').strip()
+        shas = git(cwd, 'rev-list', f'{upstream}..HEAD').split()
+    except OSError:
+        shas = git(cwd, 'rev-list', 'HEAD', '--not', '--remotes').split()
     commits = []
     for sha in shas:
         raw = git(cwd, 'show', '--no-show-signature', '--pretty=format:', '--name-only', sha)

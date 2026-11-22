@@ -82,22 +82,35 @@ Only something the user must choose counts against this rule.
 
 ## Whose call it is
 
-The agent decides alone, and reports,
-when the step is inside what the request asked for and is undone by discarding the working tree:
-the edit that was requested, the file read, the test run,
-the scratch script.
+The agent asks only on a ground,
+and writes the ground as one line in the ask,
+`Why ask:` or 「聞く根拠：」 followed by which of five it is:
 
-The agent decides and asks for the go-ahead when the step leaves that boundary:
-a commit, a push, an install,
-a change to shared or persistent state (a scheduled task, a global config, a service),
-work beyond what was asked, a design the user will live with,
-anything that spends money or another person's time.
-The decision is still the agent's; the go-ahead is the user's.
+1. **Something that goes out**:
+   text for other readers (an issue, a post, a mail), a push to any remote,
+   the company organisation's included, a pull request, a release,
+   a publishing setting
+2. **An action that cannot be undone**
+3. **A trade-off between UX and security**
+4. **A fact only the user holds**: where the user wants a thing,
+   when it is due, which account, a taste with no evidence either way
+5. **A matter the user put on hold**
 
-The user decides when the answer is a fact only they hold (where a file should go, when something is due) or a preference with no evidence either way.
-The first is `grill-me`.
-For the second the agent still states its lean, labelled as one,
-so that silence has a default.
+Everything else the agent decides, does within its remit, and reports.
+A session restart, copying its own file,
+a file name the repository's conventions settle are none of the five,
+and asking about them spends the user's attention on a call the agent was placed to make.
+A ground the ask does not fit is the same failure with a label on it:
+a restart the agent can undo is not ground 2,
+and a name the conventions decide is not ground 4.
+A local commit is none of them; the push that publishes it is ground 1.
+
+On ground 4 the answer is a fact,
+and the question takes the form `grill-me` gives it.
+For a preference with no evidence either way the agent still states its lean,
+labelled as one, so that silence has a default.
+On the other grounds the decision is still the agent's and the go-ahead is the user's,
+asked in the shape of a proposal above.
 
 ## Pre-delegated: the user has already given the go-ahead
 
@@ -175,9 +188,12 @@ which is the one thing this state is not.
 
 On Claude Code the engineering-skills plugin checks every question before the user sees it.
 A second, small model reads each `AskUserQuestion` call and each closing,
-and tries to show that it hands a decision back without the four parts above,
+and tries to show that it asks without a ground line that fits one of the five,
+hands a decision back without the four parts above,
 or puts more than one decision under a single ask.
-A question it refutes comes back with the missing part named;
+A question with no fitting ground comes back to be decided and reported,
+not rewritten.
+One refuted on the four parts comes back with the missing part named;
 rewrite it into the shape above, or,
 if it really asks for a fact only the user holds,
 make the options concrete candidates.
