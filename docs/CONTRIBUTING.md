@@ -431,6 +431,12 @@ It exits 1 on an error, and with `--strict` on a warning;
 It takes any skills directory as its argument,
 so it also serves for a catalogue that is not this one.
 
+The tests of the stylelint configuration under `interface-design` run stylelint from `package.json`'s development tools;
+run `npm ci` once per clone and again after `package-lock.json` changes,
+or `tests/test_css_policy.py` fails asking for it.
+The layout check needs Node 22 or later and Chrome,
+and its tests are skipped without them.
+
 Enable this repository's git hooks once per clone:
 
 ```bash
