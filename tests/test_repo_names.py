@@ -333,6 +333,14 @@ def test_what_is_not_an_address_passes(tmp_path):
     assert scan_text(tmp_path, text, {}, set()) == []
 
 
+def test_a_version_number_joined_to_a_tilde_or_a_letter_is_not_an_address(tmp_path):
+    """Windows capability names carry their version after ~~~~, as in hyperv-clean-vm's
+    `OpenSSH.Server~~~~0.0.1.0`; a letter in front marks a version just the same."""
+    version = addr(0, 0, 1, 0)
+    text = f'Add-WindowsCapability -Name OpenSSH.Server~~~~{version}\nrelease v{addr(10, 20, 30, 40)}\n'
+    assert scan_text(tmp_path, text, {}, set()) == []
+
+
 def test_any_address_netmasks_and_the_whole_loopback_block_pass(tmp_path):
     text = 'listen 0.0.0.0\nmask 255.0.0.0\nmask 255.255.255.0\nmask 255.255.255.255\n127.0.1.1\n127.255.255.254\n'
     assert scan_text(tmp_path, text, {}, set()) == []
