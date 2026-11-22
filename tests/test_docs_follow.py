@@ -182,6 +182,58 @@ def test_non_json_stdin_is_survived():
     check('exit 0 on junk stdin', proc.returncode, 0)
 
 
+def test_commits_a_remote_already_has_are_not_judged():
+    """A pull request branch that merged origin/main must not answer for main's commits.
+
+    Main gained a dependency bump (package.json, a surface, no document, as a bot
+    writes it); the branch merged main and adds a documented change of its own.
+    Only the branch's own commit and the merge go out; the bump is already on the remote.
+    """
+    import tempfile
+
+    def run(cwd, *args):
+        return subprocess.run(['git', '-c', 'user.name=t', '-c', 'user.email=t@example.com',
+                               '-c', 'commit.gpgsign=false', *args],
+                              cwd=cwd, check=True, capture_output=True, text=True).stdout.strip()
+
+    def write(cwd, path, text):
+        os.makedirs(os.path.dirname(os.path.join(cwd, path)) or cwd, exist_ok=True)
+        with open(os.path.join(cwd, path), 'w', encoding='utf-8') as f:
+            f.write(text)
+
+    with tempfile.TemporaryDirectory() as base:
+        remote, clone, bot = (os.path.join(base, n) for n in ('remote.git', 'clone', 'bot'))
+        run(base, 'init', '-q', '--bare', '-b', 'main', remote)
+        run(base, 'clone', '-q', remote, clone)
+        write(clone, 'README.md', 'r\n')
+        run(clone, 'add', '-A')
+        run(clone, 'commit', '-q', '-m', 'base')
+        run(clone, 'push', '-q', 'origin', 'main')
+        run(clone, 'switch', '-q', '-c', 'feat')
+        write(clone, 'hooks/x.py', 'x = 1\n')
+        write(clone, 'docs/x.md', 'x\n')
+        run(clone, 'add', '-A')
+        run(clone, 'commit', '-q', '-m', 'feature with its document')
+        run(clone, 'push', '-q', '-u', 'origin', 'feat')
+        run(base, 'clone', '-q', remote, bot)
+        write(bot, 'package.json', '{"dependencies": {"left-pad": "1.3.1"}}\n')
+        run(bot, 'add', '-A')
+        run(bot, 'commit', '-q', '-m', 'build(deps): bump left-pad')
+        bump = run(bot, 'rev-parse', 'HEAD')
+        run(bot, 'push', '-q', 'origin', 'main')
+        run(clone, 'fetch', '-q', 'origin')
+        run(clone, 'merge', '-q', '--no-edit', 'origin/main')
+        write(clone, 'hooks/y.py', 'y = 1\n')
+        write(clone, 'docs/y.md', 'y\n')
+        run(clone, 'add', '-A')
+        run(clone, 'commit', '-q', '-m', 'second feature commit with its document')
+        shas = [c['sha'] for c in hook.outgoing(clone)]
+        check("main's dependency bump is not among the outgoing commits", bump in shas, False)
+        check("the branch's own commits still are", len(shas), 2)
+        out = hook.push_verdict({'tool_input': {'command': 'git push'}}, hook.outgoing(clone))
+        check('the push of a branch that merged main is not refused for main', out, None)
+
+
 def main():
     for fn in list(globals().values()):
         if callable(fn) and getattr(fn, '__name__', '').startswith('test_'):
