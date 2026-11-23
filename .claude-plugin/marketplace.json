@@ -332,6 +332,15 @@
       ]
     },
     {
+      "name": "user-context",
+      "description": "Handing the agent what the user prepared on their own machine, such as the screenshot they just took, so a question about \"this\" on their screen is answered from it instead of asked back",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/last-screenshot"
+      ]
+    },
+    {
       "name": "yomiyasu",
       "description": "nanaism/yomiyasu (MIT) from the fork ShortArrow/yomiyasu, branch shortarrow: upstream unchanged except one paragraph that reads the owner's own rules from references/local/",
       "source": {
