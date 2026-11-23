@@ -9,5 +9,4 @@
 # the excuse cannot outlive what it excused. A path would be a permanent hole.
 # Once the commit is pushed the entry is spent, and every refusal lists the spent
 # ones so they can be deleted.
-62a2a2584fd872a43c15ac39444f4a769a9a0395  candidate own-the-call judge not registered yet; e5b48e3 registers it and carries docs/CONTRIBUTING.md
-18f1845460eb08db80279312b5c48c7c931f7b79  moves the sandbox cleanup into a function with no change in behaviour; the next commit changes it and carries skills/windows-sandbox/SKILL.md
+42e6c56ac2a13f5c13d73013ba2a0e1e6c73a23e  changes only how hooks/run-python.sh picks an interpreter; the next commit documents run-python.sh and its Store-folder rule in docs/CONTRIBUTING.md

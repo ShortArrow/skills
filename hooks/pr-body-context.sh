@@ -13,12 +13,14 @@
 # in a pull request's conversation is posted there; a plain issue comment
 # gets the same rule, which is written to hold for both.
 input="$(cat)"
-command="$(printf '%s' "$input" | python -c 'import json,sys
+python=$(bash "$(dirname "$0")/run-python.sh" --which)
+[ -n "$python" ] || exit 0
+command="$(printf '%s' "$input" | "$python" -c 'import json,sys
 try:
     print(json.load(sys.stdin).get("tool_input", {}).get("command", ""))
 except Exception:
     print("")' 2>/dev/null)"
-kind=$(printf '%s' "$command" | python -c '
+kind=$(printf '%s' "$command" | "$python" -c '
 import re, sys
 c = sys.stdin.read()
 if re.search(r"gh pr (create|edit)\b", c):
