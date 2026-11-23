@@ -25,7 +25,8 @@ TOOLS = ('cat', 'grep', 'tr', 'head', 'dirname')
 CASES = {
     'python3 only': {'python3': 'real'},
     'python only': {'python': 'real'},
-    'a python3 that only prints, then python': {'python3': 'stub', 'python': 'real'},
+    'the Store stub as python3, then python': {'WindowsApps/python3': 'stub', 'python': 'real'},
+    'a Store install as python3 alone': {'WindowsApps/python3': 'real'},
 }
 
 
@@ -44,12 +45,16 @@ def fake_bin(tmp_path, interpreters):
         located = located or os.path.join(os.path.dirname(shell()), '..', 'usr', 'bin', tool + '.exe')
         (path / tool).write_text(f'#!/bin/sh\nexec "{located}" "$@"\n'.replace('\\', '/'), encoding='utf-8', newline='\n')
         os.chmod(path / tool, 0o755)
+    store = tmp_path / 'WindowsApps'
+    store.mkdir()
+    log = str(tmp_path / 'starts.log').replace('\\', '/')
     for name, kind in interpreters.items():
-        body = (f'#!/bin/sh\nexec "{REAL}" "$@"\n' if kind == 'real'
+        body = (f'#!/bin/sh\necho "$*" >> "{log}"\nexec "{REAL}" "$@"\n' if kind == 'real'
                 else '#!/bin/sh\necho "Python was not found; run without arguments to install from the Microsoft Store" >&2\nexit 49\n')
-        (path / name).write_text(body, encoding='utf-8', newline='\n')
-        os.chmod(path / name, 0o755)
-    return str(path)
+        target = tmp_path / name if name.startswith('WindowsApps/') else path / name
+        target.write_text(body, encoding='utf-8', newline='\n')
+        os.chmod(target, 0o755)
+    return f'{path}{os.pathsep}{store}'
 
 
 def hook_commands():
@@ -81,9 +86,18 @@ def test_attack_guard_runs_on_whichever_python_works(tmp_path, case):
     assert verdict['permissionDecision'] == 'deny' and 'canary' in verdict['permissionDecisionReason']
 
 
+def test_a_python_outside_the_store_folder_starts_once_with_no_trial_run(tmp_path):
+    """A trial run costs a process on every tool call; only the Store folder, where the stub lives, needs one."""
+    payload = {'tool_name': 'Bash', 'tool_input': {'command': 'git status'}}
+    path = fake_bin(tmp_path, {'python3': 'real', 'python': 'real'})
+    run(attack_guard_command(), payload, path, ATTACK_GUARD='ask')
+    starts = (tmp_path / 'starts.log').read_text(encoding='utf-8').splitlines()
+    assert len(starts) == 1 and starts[0].endswith('attack-guard.py'), starts
+
+
 def test_attack_guard_without_python_refuses_and_says_why(tmp_path):
     payload = {'tool_name': 'Bash', 'tool_input': {'command': 'git status'}}
-    out = run(attack_guard_command(), payload, fake_bin(tmp_path, {'python3': 'stub'}), ATTACK_GUARD='ask')
+    out = run(attack_guard_command(), payload, fake_bin(tmp_path, {'WindowsApps/python3': 'stub'}), ATTACK_GUARD='ask')
     assert out.returncode == 0, out.stderr
     verdict = json.loads(out.stdout)['hookSpecificOutput']
     assert verdict['permissionDecision'] == 'deny'
