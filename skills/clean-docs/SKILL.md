@@ -325,6 +325,11 @@ not the directory the session sits in.
 An outgoing commit is one the upstream lacks, or,
 on a branch with no upstream yet, one no remote has,
 so the first push of a new branch is judged too.
+A commit a branch of the remote already has is not outgoing,
+so a branch that merged main does not answer for main's commits,
+a bot's dependency bump among them.
+A merge answers only for the lines it wrote itself, its combined diff,
+not for what it took from either side.
 
 Three properties make it survivable rather than something switched off within a month:
 
