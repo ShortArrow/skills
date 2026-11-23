@@ -422,6 +422,14 @@ it refuses a task registered on the ssh line on every machine,
 where this hook may only ask.
 
 Every script hook command ends in `|| true` and runs in bash.
+A Python hook starts through `hooks/run-python.sh`,
+which takes python3 or python, whichever runs as Python 3:
+a Linux machine may have python3 alone,
+and on Windows a python3 on PATH may be the Store stub that only prints a message.
+The shell hooks ask it with `--which` before they parse their input.
+With neither, a hook gives no verdict,
+as it does when its script is missing;
+only attack-guard refuses instead.
 A marketplace update makes the client read the new hook commands while the installed plugin may still be the old commit,
 whose cache lacks the script they name;
 Python then exits 2 on the missing file,

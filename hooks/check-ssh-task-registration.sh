@@ -22,8 +22,10 @@ input="$(cat)"
 shopt -s nocasematch
 [[ $input == *ssh* ]] || exit 0
 shopt -u nocasematch
+python=$(bash "$(dirname "$0")/run-python.sh" --which)
+[ -n "$python" ] || exit 0
 
-command_line="$(printf '%s' "$input" | python -c 'import json,sys
+command_line="$(printf '%s' "$input" | "$python" -c 'import json,sys
 try:
     data = json.loads(sys.stdin.buffer.read().decode("utf-8", "replace"))
     sys.stdout.write(data.get("tool_input", {}).get("command", "").replace("\r", ""))
