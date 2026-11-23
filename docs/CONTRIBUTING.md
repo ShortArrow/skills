@@ -393,10 +393,10 @@ and lets querying, running and ending a task through.
 `tests/test_check_ssh_task_registration.py` holds the shapes it refuses and lets through,
 and runs the marketplace's own command for each shell.
 
-`hooks/attack-guard.py` is the `attack-guard` plugin's one hook.
+`plugins/attack-guard/hooks/attack-guard.py` is the `attack-guard` plugin's one hook.
 An agent's ssh, port probe or key read looks the same to an endpoint detector as an intruder's,
 so a command shaped like a MITRE ATT&CK technique is left to a person at their own terminal.
-The shapes are data, in `hooks/attack-techniques.json`,
+The shapes are data, in `plugins/attack-guard/hooks/attack-techniques.json`,
 so a hook written in another language reads the same table:
 a reader finds it under the `installLocation` that `~/.claude/plugins/known_marketplaces.json` records for this marketplace,
 which is the clone for a directory marketplace and Claude Code's own copy for a GitHub one.
@@ -416,6 +416,14 @@ since a guard that cannot start would otherwise let everything through.
 One fixed line, `echo attack-guard-canary`, is always refused,
 so a machine can see the hook is live without running anything a detector would flag.
 It is a plugin of its own so that a machine can keep it on whatever happens to the others,
+and it lives in a folder of its own, `plugins/attack-guard/`, because it offers no skill:
+a `skills` list adds to the scan of the plugin's own `skills/` folder,
+and only a plugin rooted at the marketplace root that lists specific skills loads just those (code.claude.com/docs/en/plugins-reference),
+so at the root an empty list loaded every skill in the repository under its name.
+A plugin installed from git is copied folder by folder and finds nothing above its root,
+so the folder carries its own copy of `hooks/run-python.sh`,
+which `tests/test_run_python.py` keeps identical;
+`tests/test_plugin_skills.py` counts the skills each plugin offers.
 and so that installing the catalogue does not start asking about every `ssh`.
 `check-ssh-task-registration.sh` stays:
 it refuses a task registered on the ssh line on every machine,

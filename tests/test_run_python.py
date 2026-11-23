@@ -57,6 +57,13 @@ def fake_bin(tmp_path, interpreters):
     return f'{path}{os.pathsep}{store}'
 
 
+def plugin_root(name, root=ROOT):
+    """The folder a plugin's ${CLAUDE_PLUGIN_ROOT} names, under a copy of the repository at root."""
+    with open(MARKETPLACE, encoding='utf-8') as f:
+        source = next(p['source'] for p in json.load(f)['plugins'] if p['name'] == name)
+    return os.path.normpath(os.path.join(root, source))
+
+
 def hook_commands():
     with open(MARKETPLACE, encoding='utf-8') as f:
         plugins = json.load(f)['plugins']
@@ -77,10 +84,14 @@ def attack_guard_command():
     return next(c for p, e, m, c in hook_commands() if 'attack-guard' in c and m == 'Bash')
 
 
+def guard(command, payload, path, **env):
+    return run(command, payload, path, plugin_root('attack-guard'), **env)
+
+
 @pytest.mark.parametrize('case', CASES)
 def test_attack_guard_runs_on_whichever_python_works(tmp_path, case):
     payload = {'tool_name': 'Bash', 'tool_input': {'command': 'echo attack-guard-canary'}}
-    out = run(attack_guard_command(), payload, fake_bin(tmp_path, CASES[case]), ATTACK_GUARD='ask')
+    out = guard(attack_guard_command(), payload, fake_bin(tmp_path, CASES[case]), ATTACK_GUARD='ask')
     assert out.returncode == 0, out.stderr
     verdict = json.loads(out.stdout)['hookSpecificOutput']
     assert verdict['permissionDecision'] == 'deny' and 'canary' in verdict['permissionDecisionReason']
@@ -90,14 +101,14 @@ def test_a_python_outside_the_store_folder_starts_once_with_no_trial_run(tmp_pat
     """A trial run costs a process on every tool call; only the Store folder, where the stub lives, needs one."""
     payload = {'tool_name': 'Bash', 'tool_input': {'command': 'git status'}}
     path = fake_bin(tmp_path, {'python3': 'real', 'python': 'real'})
-    run(attack_guard_command(), payload, path, ATTACK_GUARD='ask')
+    guard(attack_guard_command(), payload, path, ATTACK_GUARD='ask')
     starts = (tmp_path / 'starts.log').read_text(encoding='utf-8').splitlines()
     assert len(starts) == 1 and starts[0].endswith('attack-guard.py'), starts
 
 
 def test_attack_guard_without_python_refuses_and_says_why(tmp_path):
     payload = {'tool_name': 'Bash', 'tool_input': {'command': 'git status'}}
-    out = run(attack_guard_command(), payload, fake_bin(tmp_path, {'WindowsApps/python3': 'stub'}), ATTACK_GUARD='ask')
+    out = guard(attack_guard_command(), payload, fake_bin(tmp_path, {'WindowsApps/python3': 'stub'}), ATTACK_GUARD='ask')
     assert out.returncode == 0, out.stderr
     verdict = json.loads(out.stdout)['hookSpecificOutput']
     assert verdict['permissionDecision'] == 'deny'
@@ -107,10 +118,11 @@ def test_attack_guard_without_python_refuses_and_says_why(tmp_path):
 def stand_in_root(tmp_path):
     """A plugin root whose Python hooks only report that they ran, beside the real launcher and shell hooks."""
     root = tmp_path / 'root'
-    shutil.copytree(os.path.join(ROOT, 'hooks'), root / 'hooks')
-    for name in os.listdir(root / 'hooks'):
-        if name.endswith('.py'):
-            (root / 'hooks' / name).write_text(f'import sys\nsys.stdin.read()\nprint("ran {name}")\n', encoding='utf-8')
+    for hooks in ('hooks', os.path.join('plugins', 'attack-guard', 'hooks')):
+        shutil.copytree(os.path.join(ROOT, hooks), root / hooks)
+        for name in os.listdir(root / hooks):
+            if name.endswith('.py'):
+                (root / hooks / name).write_text(f'import sys\nsys.stdin.read()\nprint("ran {name}")\n', encoding='utf-8')
     return str(root)
 
 
@@ -120,7 +132,7 @@ def test_every_python_hook_starts_on_whichever_python_works(tmp_path, case):
     for plugin, event, matcher, command in hook_commands():
         script = next((w.strip('"').split('/')[-1] for w in command.split() if w.strip('"').endswith('.py')), None)
         if script:
-            out = run(command, {}, path, root)
+            out = run(command, {}, path, plugin_root(plugin, root))
             assert f'ran {script}' in out.stdout, (plugin, event, command, out.stderr)
 
 
@@ -139,5 +151,14 @@ def test_other_hooks_without_python_give_no_verdict_and_do_not_block(tmp_path):
     for plugin, event, matcher, command in hook_commands():
         if 'attack-guard' in command:
             continue
-        out = run(command, {}, path)
+        out = run(command, {}, path, plugin_root(plugin))
         assert out.returncode != 2 and not out.stdout.strip(), (plugin, event, command, out.stdout)
+
+
+def test_attack_guard_carries_the_same_launcher():
+    """attack-guard is installed from a folder of its own, so it carries a copy of the launcher."""
+    def text(path):
+        with open(path, 'rb') as f:
+            return f.read().replace(b'\r\n', b'\n')
+    assert text(os.path.join(ROOT, 'hooks', 'run-python.sh')) == \
+        text(os.path.join(plugin_root('attack-guard'), 'hooks', 'run-python.sh'))

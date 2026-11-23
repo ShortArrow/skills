@@ -325,9 +325,8 @@
     {
       "name": "attack-guard",
       "description": "A PreToolUse guard that stops or asks about Bash and PowerShell commands shaped like a MITRE ATT&CK technique (remote shells, tunnels, key and credential reads, hidden or encoded PowerShell, persistence, disabled defences, tool downloads, port probes), so a person runs them at their own terminal and the agent does not",
-      "source": "./",
+      "source": "./plugins/attack-guard",
       "strict": false,
-      "skills": [],
       "hooks": {
         "PreToolUse": [
           {
