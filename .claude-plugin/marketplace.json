@@ -335,7 +335,7 @@
             "hooks": [
               {
                 "type": "command",
-                "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/attack-guard.py\" || true",
+                "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/run-python.sh\" --deny-without-python \"${CLAUDE_PLUGIN_ROOT}/hooks/attack-guard.py\" || true",
                 "shell": "bash",
                 "timeout": 10,
                 "statusMessage": "Checking for a command shaped like an ATT&CK technique"
@@ -347,7 +347,7 @@
             "hooks": [
               {
                 "type": "command",
-                "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/attack-guard.py\" || true",
+                "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/run-python.sh\" --deny-without-python \"${CLAUDE_PLUGIN_ROOT}/hooks/attack-guard.py\" || true",
                 "shell": "bash",
                 "timeout": 10,
                 "statusMessage": "Checking for a command shaped like an ATT&CK technique"

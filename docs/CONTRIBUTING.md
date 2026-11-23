@@ -409,6 +409,10 @@ Whether a match is refused or asked about belongs to the machine and is never wr
 `ATTACK_GUARD=deny` or `ask` decides,
 and otherwise `~/.claude/attack-guard.json` refuses on the host names and remote URLs its globs list,
 and asks everywhere else.
+It starts through `hooks/run-python.sh` with `--deny-without-python`,
+which takes python3 or python, whichever runs as Python 3,
+and refuses every call with its reason when neither does,
+since a guard that cannot start would otherwise let everything through.
 One fixed line, `echo attack-guard-canary`, is always refused,
 so a machine can see the hook is live without running anything a detector would flag.
 It is a plugin of its own so that a machine can keep it on whatever happens to the others,
