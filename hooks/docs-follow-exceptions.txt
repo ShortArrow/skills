@@ -11,4 +11,3 @@
 # ones so they can be deleted.
 62a2a2584fd872a43c15ac39444f4a769a9a0395  candidate own-the-call judge not registered yet; e5b48e3 registers it and carries docs/CONTRIBUTING.md
 18f1845460eb08db80279312b5c48c7c931f7b79  moves the sandbox cleanup into a function with no change in behaviour; the next commit changes it and carries skills/windows-sandbox/SKILL.md
-6528f7ca07854f1e8d2a58e59da831084d9afe27  merges main into the branch; git show --cc has no hunk of its own, only the two sides combined in marketplace.json
