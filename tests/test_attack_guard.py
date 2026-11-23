@@ -19,7 +19,7 @@ import sys
 import pytest
 
 ROOT = os.path.join(os.path.dirname(__file__), '..')
-SCRIPT = os.path.join(ROOT, 'hooks', 'attack-guard.py')
+SCRIPT = os.path.join(ROOT, 'plugins', 'attack-guard', 'hooks', 'attack-guard.py')
 MARKETPLACE = os.path.join(ROOT, '.claude-plugin', 'marketplace.json')
 GIT_BASH = os.path.join(os.environ.get('ProgramFiles', 'C:/Program Files'), 'Git', 'bin', 'bash.exe')
 H = 'host.example.invalid'
@@ -261,7 +261,7 @@ def test_the_canary_is_always_refused_and_says_so(tmp_path):
 
 def test_the_table_is_portable(tmp_path):
     """Every rule names a known technique, and no regex needs lookaround or a backreference."""
-    with open(os.path.join(ROOT, 'hooks', 'attack-techniques.json'), encoding='utf-8') as f:
+    with open(os.path.join(ROOT, 'plugins', 'attack-guard', 'hooks', 'attack-techniques.json'), encoding='utf-8') as f:
         table = json.load(f)
     assert isinstance(table['version'], int)
     patterns = []
@@ -293,7 +293,7 @@ def test_the_marketplace_wires_it_on_both_shells_and_the_command_decides(tmp_pat
              for hook in group['hooks']
              if 'attack-guard' in hook.get('command', '')]
     assert sorted(matcher for matcher, _ in wired) == ['Bash', 'PowerShell']
-    env = isolated(tmp_path, ATTACK_GUARD='deny', CLAUDE_PLUGIN_ROOT=os.path.abspath(ROOT).replace('\\', '/'))
+    env = isolated(tmp_path, ATTACK_GUARD='deny', CLAUDE_PLUGIN_ROOT=os.path.abspath(os.path.join(ROOT, 'plugins', 'attack-guard')).replace('\\', '/'))
     for matcher, hook in wired:
         assert 'if' not in hook, 'a technique can start anywhere in a line, so no if filter can select it'
         assert hook['command'].endswith('|| true')

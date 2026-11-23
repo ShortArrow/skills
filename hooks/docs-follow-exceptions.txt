@@ -9,4 +9,4 @@
 # the excuse cannot outlive what it excused. A path would be a permanent hole.
 # Once the commit is pushed the entry is spent, and every refusal lists the spent
 # ones so they can be deleted.
-42e6c56ac2a13f5c13d73013ba2a0e1e6c73a23e  changes only how hooks/run-python.sh picks an interpreter; the next commit documents run-python.sh and its Store-folder rule in docs/CONTRIBUTING.md
+9879496dca3ff5c1b9c9af0203b394e928ebba43  makes the commit check read each plugin's skills and hooks from its own source; the next commit documents the folder layout it checks in docs/CONTRIBUTING.md
