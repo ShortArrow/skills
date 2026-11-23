@@ -202,17 +202,29 @@ def outgoing(cwd):
     """The commits a push would send, newest first, each with the paths it touched.
 
     Without an upstream, as on a branch's first push, that is every commit no
-    remote has yet."""
+    remote has yet. A commit any branch of the remote already has is not sent,
+    so it is left out: a branch that merged main does not answer for main's commits."""
     try:
         upstream = git(cwd, 'rev-parse', '--abbrev-ref', '--symbolic-full-name', '@{upstream}').strip()
-        shas = git(cwd, 'rev-list', f'{upstream}..HEAD').split()
+        branch = git(cwd, 'rev-parse', '--abbrev-ref', 'HEAD').strip()
+        remote = git(cwd, 'config', '--get', f'branch.{branch}.remote').strip()
+        shas = git(cwd, 'rev-list', f'{upstream}..HEAD', '--not', f'--remotes={remote}').split()
     except OSError:
         shas = git(cwd, 'rev-list', 'HEAD', '--not', '--remotes').split()
-    commits = []
-    for sha in shas:
-        raw = git(cwd, 'show', '--no-show-signature', '--pretty=format:', '--name-only', sha)
-        commits.append({'sha': sha, 'paths': paths_of(raw)})
-    return commits
+    return [{'sha': sha, 'paths': commit_paths(cwd, sha)} for sha in shas]
+
+
+def commit_paths(cwd, sha):
+    """The paths a commit changed itself.
+
+    For a merge that is what its combined diff (--cc) shows: a file the merge only
+    took from one side or combined from both has no hunk there, though --name-only
+    lists it, and a line the merge wrote while resolving a conflict has one."""
+    parents = git(cwd, 'rev-list', '--parents', '-n', '1', sha).split()[1:]
+    if len(parents) < 2:
+        return paths_of(git(cwd, 'show', '--no-show-signature', '--pretty=format:', '--name-only', sha))
+    combined = git(cwd, 'show', '--no-show-signature', '--pretty=format:', '--cc', sha)
+    return [line[len('diff --cc '):].strip() for line in combined.splitlines() if line.startswith('diff --cc ')]
 
 
 def exceptions(cwd):
