@@ -154,6 +154,79 @@ Everything else — contrast, spacing, target size, focus, reflow,
 component choice, diagram shape,
 placement that follows a task — is decided and reported.
 
+## Machine checks to copy into a project
+
+A rule a machine can judge goes into the project as a check,
+so it holds on the hundredth change as on the first.
+Each one here is a file to copy, run by the project's own test command.
+
+### Layout: every box holds its content
+
+`scripts/layout/layout-check.mjs` and `scripts/layout/layout.test.mjs` go into the project's `tests/`,
+and `layout.config.json` at its root names the built site (`dir`) or a running one (`baseUrl`),
+the pages, and optionally the widths and the root selector.
+`node --test tests/` opens each page in headless Chrome at each width,
+with no npm dependency, and fails on:
+
+- a child element whose box lies outside its parent's,
+  unless the parent scrolls or the child is absolutely or fixed positioned;
+- text an element holds directly lying outside the element's box,
+  which is what a fixed height does to text,
+  whether it is cut off or spills;
+- the page scrolling sideways.
+
+A width the page was not laid out at,
+or a page with nothing under the root, fails the run,
+so it cannot pass by looking at nothing.
+The widths default to 375, 601, 1040 and 1280 CSS px.
+WCAG's reflow width, 320, is not among them;
+a project bound by 1.4.10 adds it to `widths`.
+What the check cannot see is what overlaps without leaving a box:
+two absolutely placed elements on top of each other,
+or text hidden under a sibling.
+That is still a screenshot read by a person, as above.
+
+### Stylesheet: a shared stylelint configuration
+
+`scripts/css/` holds `stylelint.config.mjs` and the two files it loads;
+a project copies the folder,
+installs stylelint (tested with 17.16.0) and extends the configuration.
+It refuses:
+
+- `text-align: justify` and `text-align-last: justify`,
+  through stylelint's own `declaration-property-value-disallowed-list`;
+- `height` or `block-size` set to a length on a rule that can hold text (`shortarrow/no-fixed-text-height`);
+- a `color` and background pair in one rule under 7:1 (`shortarrow/text-contrast`),
+  with `var()` resolved from `:root` once for the base values and once per theme that overrides them.
+
+7:1 is WCAG 1.4.6, the AAA line,
+and stricter than the 4.5:1 of 1.4.3 above:
+the configuration holds this catalogue's own line,
+while the table keeps the conformance level a project may be bound to instead.
+A project bound to AA only passes `{ minimum: 4.5 }`.
+
+### What stays with a person, and why
+
+Each of these was tried as a check and is left in prose because the check cannot decide it:
+
+- **Which elements hold text.** A stylesheet names selectors, not content.
+  The height rule judges by the selector instead,
+  passing media and form elements, scrolling boxes and empty decorations,
+  so it refuses a fixed height on a `div` that only ever holds an icon,
+  and passes one on an `img` used as a text button.
+  The layout check catches what the rule misses,
+  because there the text either fits its box or it does not.
+- **The colours actually painted under the text.** A pair split across rules,
+  a translucent colour, `currentColor`,
+  a gradient or image behind the text,
+  and `color-mix()` all depend on what the browser composites,
+  which the stylesheet does not settle.
+  These are not reported rather than guessed at;
+  the contrast of a rendered page is measured on the rendered page.
+- **Large text.** WCAG relaxes the ratio for text of 18 pt or 14 pt bold,
+  and the size a rule's text renders at depends on inheritance the stylesheet alone does not fix,
+  so every pair is held to the one minimum.
+
 ## Checklist
 
 - [ ] Contrast computed, not eyeballed: 4.5:1 text, 3:1 large and non-text

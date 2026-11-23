@@ -45,3 +45,27 @@ A bump of the pin is a fresh review, written over the entry.
   two from line endings converted to CRLF on checkout,
   one in the retry test.
 - **Not recorded.** No adoption review of identity or executable content was written when the plugin was added.
+
+## stylelint (development only)
+
+- **Source.** `stylelint` 17.16.0 from the npm registry,
+  pinned exactly in `package.json`,
+  the tree locked in `package-lock.json`.
+  It runs the tests of `skills/interface-design/scripts/css/`;
+  nothing under `node_modules/` is installed with a plugin,
+  and a project that copies the shared configuration installs stylelint itself.
+- **Age.** 17.16.0 was published on 2026-10-01,
+  the last release of the 17 line.
+  18.0.0 (2026-11-03) and 18.1.0 (2026-11-20) were left for a later review,
+  and the tree was resolved with `npm install --before=2026-11-08`,
+  so no package in it was younger than two weeks on the day it was taken.
+- **Identity.** The package names `github.com/stylelint/stylelint` as its repository;
+  `npm audit signatures` verified the registry signatures of the tree and found 16 attestations.
+- **License.** stylelint is MIT.
+  Of the 115 packages in the tree, 98 are MIT, 9 ISC, 3 BSD-3-Clause,
+  3 MIT-0, 1 CC0-1.0 and 1 Python-2.0, read from each `package.json`;
+  all permissive, and none is combined into code this catalogue ships.
+- **Executable content.** No package in the tree declares an install script,
+  and the install ran with `--ignore-scripts`.
+- **Not done.** The license files themselves were not read package by package;
+  the counts are the declared licenses.

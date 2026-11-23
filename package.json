@@ -1,0 +1,9 @@
+{
+  "name": "shortarrow-skills-dev",
+  "private": true,
+  "description": "Development tools for the checks under skills/; nothing here is installed with a plugin",
+  "type": "module",
+  "devDependencies": {
+    "stylelint": "17.16.0"
+  }
+}

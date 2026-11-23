@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clean</title>
+<style>
+  body { margin: 0; font: 16px/1.5 sans-serif; }
+  main { max-width: 960px; margin: 0 auto; padding: 16px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+  .card { border: 1px solid #333; padding: 12px; }
+  img { max-width: 100%; height: auto; display: block; }
+  pre { overflow-x: auto; }
+</style>
+</head>
+<body>
+<main>
+  <h1>A page whose boxes hold their content</h1>
+  <p>Text wraps inside its parent at every width, and nothing is given a fixed height.</p>
+  <div class="cards">
+    <section class="card"><h2>One</h2><p>Short text.</p></section>
+    <section class="card"><h2>Two</h2><p>A longer paragraph that will wrap onto several lines at the narrow width and stay inside the card.</p></section>
+    <section class="card"><h2>Three</h2><ul><li>first</li><li>second</li></ul></section>
+  </div>
+  <pre><code>a very long line of code that scrolls inside its own box rather than pushing the page sideways at all</code></pre>
+</main>
+</body>
+</html>
