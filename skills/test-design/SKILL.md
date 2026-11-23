@@ -26,6 +26,7 @@ the count — only executes that decision.
 | skip error paths as unlikely | each failure mode is a class: invalid input, missing resource, denied, timeout, half-done |
 | leave a path unimplemented with no test, a skip marker or a stub nobody asserts | write a test that the path is refused as unimplemented today; it passes now and goes red the day someone builds it (below) |
 | test a feature by its main flow | read the alternate and exception flows off the use case; each is a class |
+| call a test right because removing the code under test turns it red | that shows the test depends on the code, not that it checks the result; ask the three questions below |
 | grade a suite by reading it | count it against the specification: classes, both bounds, rules, transitions |
 | add a fifth test to a covered class | spend it on an uncovered class — the fifth buys runtime and no coverage |
 | leave a case out because the type system rules it out | the type rules out structural errors only; a misreading of the input type-checks, so write the concrete input that shows the reading (below) |
@@ -249,6 +250,59 @@ MC/DC is not in the Foundation syllabus;
 it comes from the safety standards (DO-178C, ISO 26262),
 and listing it beside the others without saying so is the kind of mixed citation that reads as rigour.
 The rest of what a number owes its reader is in `measured-claims`.
+
+## What a passing test checks
+
+A test that passes has shown only what its assertions read.
+Three questions decide whether that is the behaviour the specification names:
+
+1. **The content, not only the event.** "The view was redrawn" is true of a wrong redraw,
+   and of a redraw some other path made.
+   The assertion reads what the call carried or what came of it:
+   the line redrawn, the text shown, the value returned.
+2. **What must not happen.** An event the test did not send gets no reaction,
+   and the call acts on its target and not on the one beside it.
+   A save on scroll, or the second row updated with the first,
+   passes every test that asserts only the reaction it expected.
+3. **Why this scenario, and which uses it leaves out.** The test's name or docstring says which real use the scenario stands for and why it was picked,
+   and the file lists the uses no test stands for.
+   A scenario chosen because it was easy to set up reads the same as one chosen because users do it,
+   until the reason is written down.
+
+### Removing the code shows dependence, not correctness
+
+A test that turns red when the code under test is removed shows that it depends on that code.
+It does not show that the code's result is right:
+it may still accept a wrong result the code produces.
+A test that stays green when the code is removed shows less still,
+that it does not pin that code at all.
+In one case the handler for edits was removed and the test "an edit redraws the line" stayed green:
+the handler for scrolling redrew as well,
+and the test asserted only that a redraw happened.
+Asserting the content of the redrawn line,
+and that a scroll alone left it unchanged,
+left the edit handler the only way to pass.
+
+### What a machine checks here, and what it cannot
+
+`scripts/occurrence-only.py` reads Python tests with the syntax tree and reports a test whose every assertion is that a call happened:
+`assert_called()`, `assert_called_once()`, `.called`, `.call_count`,
+and their unittest forms.
+An assertion on the arguments or on a value,
+or that a call did not happen, clears the test.
+Run over this catalogue's own tests, it reported none.
+
+The rest stays with a reader, for these reasons:
+
+- **Other languages.** The same check for Jest's `toHaveBeenCalled()` or NSubstitute's `Received()` needs each language's parser to know where a test ends,
+  and was not built; a line pattern cannot tell.
+- **Question 2.** Which events are unrelated,
+  and which targets sit beside the one acted on,
+  are the specification's to say.
+  A check could count `assert_not_called()`,
+  but a count rewards a negative assertion on the wrong event as much as on the right one.
+- **Question 3.** A check can require a docstring,
+  not that the reason in it is true or that the list of uses left out is complete.
 
 ## Checking a suite: count, do not judge
 
