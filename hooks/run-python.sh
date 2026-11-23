@@ -2,11 +2,14 @@
 # Starts a hook's Python script with the first interpreter that runs: python3, then python.
 #
 #   run-python.sh [--deny-without-python] <script.py> [args...]
-#   run-python.sh --which        prints the interpreter's name, or nothing
+#   run-python.sh --which        prints the interpreter's path, or nothing
 #
-# A name on PATH is not enough: Windows puts a python3 there that only prints a
-# Store message, and a Linux machine may have python3 and no python. Each name is
-# tried with a one-line program and kept only if it is Python 3 and exits 0.
+# A Linux machine may have python3 and no python, and on Windows the python3 on
+# PATH may be the Store stub that only prints a message. So the first of python3
+# and python found outside the Store folder (WindowsApps) is taken as it is; only
+# when both are in that folder, or absent, is each tried with a one-line program
+# and kept if it runs as Python 3. A trial run costs a process on every hook, which
+# on Windows came to most of a second.
 #
 # With no interpreter, a hook gives no verdict and exits 0, as it does when its
 # script is missing; with --deny-without-python it refuses the PreToolUse call and
@@ -14,10 +17,19 @@
 set -u
 
 pick() {
-  local p
+  local p path
   for p in python3 python; do
-    if "$p" -c 'import sys; sys.exit(sys.version_info[0] != 3)' </dev/null >/dev/null 2>&1; then
-      printf '%s' "$p"
+    path=$(command -v "$p" 2>/dev/null) || continue
+    case "$path" in
+      */[Ww]indows[Aa]pps/*) continue ;;
+    esac
+    printf '%s' "$path"
+    return 0
+  done
+  for p in python3 python; do
+    path=$(command -v "$p" 2>/dev/null) || continue
+    if "$path" -c 'import sys; sys.exit(sys.version_info[0] != 3)' </dev/null >/dev/null 2>&1; then
+      printf '%s' "$path"
       return 0
     fi
   done
