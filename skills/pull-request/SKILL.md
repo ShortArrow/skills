@@ -71,6 +71,21 @@ Here the body says only what the diff cannot,
 and everything below this section is the rule for that scale.
 Applying the large-project coverage here produces the padded body the moments table refuses.
 
+On Claude Code a hook tells the scale from two cues a machine can read before the command runs:
+whether the receiving repository's owner is the signed-in `gh` user,
+and whether the clone has a pull request template in one of the places `github-paths` names.
+Owned and without a template is small,
+so a first body over 120 characters is refused;
+someone else's with a template is large, and the limit does not apply.
+The other two combinations are not settled by these cues:
+an owned repository with a template may be a team's that reviews at the large scale,
+and someone else's without one may be a small project or a large one that never wrote a template.
+For those, and when the owner,
+the user or the body itself cannot be read,
+the hook adds the rule as context and refuses nothing;
+the scale is then the writer's call,
+made from the last merged pull requests.
+
 ## Only what the diff cannot say
 
 Three things live outside the diff and inside the body:
@@ -202,7 +217,7 @@ and each host covers the command for the session that skips the procedure:
 
 | Host | Cover |
 |---|---|
-| Claude Code | The writing-skills plugin runs a PreToolUse hook (`hooks/pr-body-context.sh`) that injects this rule as context before `gh pr create` and `gh pr edit` run, and the rule of A reply to a review before a reply is posted through `gh pr comment`, `gh pr review` with a body, or `gh api` on a pull request's comment or review endpoint, `issues/<n>/comments` included |
+| Claude Code | The writing-skills plugin runs a PreToolUse hook (`hooks/pr-body-context.sh`) that injects this rule as context before `gh pr create` and `gh pr edit` run, and the rule of A reply to a review before a reply is posted through `gh pr comment`, `gh pr review` with a body, or `gh api` on a pull request's comment or review endpoint, `issues/<n>/comments` included; a second hook (`hooks/pr-body-check.py`) refuses a body with an unpinned `blob/` link, a line broken with two spaces or a backslash, or a verified heading the template does not have, and a first body over 120 characters where the scale is known to be small |
 | Codex | `PreToolUse` in `.codex/hooks.json` or `config.toml` intercepts shell commands (learn.chatgpt.com/docs/hooks); this catalogue does not wire it, so a project adds the same script there or relies on step 1 of the procedure |
 | Copilot | `preToolUse` in `.github/hooks/<name>.json` for Copilot agents (docs.github.com); whether Copilot CLI reads it is not stated there. Not wired by this catalogue; step 1 of the procedure covers the command |
 | Cursor | `beforeShellExecution` or `preToolUse` in `.cursor/hooks.json` (cursor.com/docs/agent/hooks). Not wired by this catalogue; step 1 of the procedure covers the command |
