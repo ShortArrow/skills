@@ -393,6 +393,30 @@ and lets querying, running and ending a task through.
 `tests/test_check_ssh_task_registration.py` holds the shapes it refuses and lets through,
 and runs the marketplace's own command for each shell.
 
+`hooks/attack-guard.py` is the `attack-guard` plugin's one hook.
+An agent's ssh, port probe or key read looks the same to an endpoint detector as an intruder's,
+so a command shaped like a MITRE ATT&CK technique is left to a person at their own terminal.
+The shapes are data, in `hooks/attack-techniques.json`,
+so a hook written in another language reads the same table:
+a reader finds it under the `installLocation` that `~/.claude/plugins/known_marketplaces.json` records for this marketplace,
+which is the clone for a directory marketplace and Claude Code's own copy for a GitHub one.
+The table's semantics are in the script's docstring,
+and its regexes use no lookaround or backreference so that Rust's and Go's engines compile them.
+The technique ids are the ones attack.mitre.org gives today;
+ATT&CK has since moved T1562.001 to T1685,
+T1562.004 to T1686 and T1070.001 to T1685.005.
+Whether a match is refused or asked about belongs to the machine and is never written here:
+`ATTACK_GUARD=deny` or `ask` decides,
+and otherwise `~/.claude/attack-guard.json` refuses on the host names and remote URLs its globs list,
+and asks everywhere else.
+One fixed line, `echo attack-guard-canary`, is always refused,
+so a machine can see the hook is live without running anything a detector would flag.
+It is a plugin of its own so that a machine can keep it on whatever happens to the others,
+and so that installing the catalogue does not start asking about every `ssh`.
+`check-ssh-task-registration.sh` stays:
+it refuses a task registered on the ssh line on every machine,
+where this hook may only ask.
+
 Every script hook command ends in `|| true` and runs in bash.
 A marketplace update makes the client read the new hook commands while the installed plugin may still be the old commit,
 whose cache lacks the script they name;

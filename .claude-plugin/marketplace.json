@@ -323,6 +323,41 @@
       ]
     },
     {
+      "name": "attack-guard",
+      "description": "A PreToolUse guard that stops or asks about Bash and PowerShell commands shaped like a MITRE ATT&CK technique (remote shells, tunnels, key and credential reads, hidden or encoded PowerShell, persistence, disabled defences, tool downloads, port probes), so a person runs them at their own terminal and the agent does not",
+      "source": "./",
+      "strict": false,
+      "skills": [],
+      "hooks": {
+        "PreToolUse": [
+          {
+            "matcher": "Bash",
+            "hooks": [
+              {
+                "type": "command",
+                "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/attack-guard.py\" || true",
+                "shell": "bash",
+                "timeout": 10,
+                "statusMessage": "Checking for a command shaped like an ATT&CK technique"
+              }
+            ]
+          },
+          {
+            "matcher": "PowerShell",
+            "hooks": [
+              {
+                "type": "command",
+                "command": "python \"${CLAUDE_PLUGIN_ROOT}/hooks/attack-guard.py\" || true",
+                "shell": "bash",
+                "timeout": 10,
+                "statusMessage": "Checking for a command shaped like an ATT&CK technique"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
       "name": "product-skills",
       "description": "Framing what to build: idea generation as new combinations of needs and seeds, judged by empathy and feasibility",
       "source": "./",
