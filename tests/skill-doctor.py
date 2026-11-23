@@ -154,13 +154,13 @@ def examine_marketplace(repo, reports):
         pname = plugin.get('name', '?')
         total = 0
         listed = plugin.get('skills')
-        if listed is None:
-            # No explicit list: the plugin carries every skill under <source>/skills, the host's convention
-            source = os.path.join(repo, *str(plugin.get('source', './')).strip('./').split('/')) if str(plugin.get('source', './')).strip('./') else repo
+        source = os.path.normpath(os.path.join(repo, plugin['source'])) if isinstance(plugin.get('source', './'), str) else None
+        if not listed and source:
+            # No list, or an empty one: the host scans <source>/skills; only a root plugin's non-empty list replaces that
             listed = ['./skills/' + os.path.basename(d) for d in sorted(glob.glob(os.path.join(source, 'skills', '*'))) if os.path.isdir(d)]
-        for rel in listed:
+        for rel in listed or []:
             skill = os.path.basename(rel)
-            if not os.path.isdir(os.path.join(repo, *rel.strip('./').split('/'))):
+            if not os.path.isdir(os.path.normpath(os.path.join(source or repo, rel))):
                 out['errors'].append(f'member: {pname} lists {rel}, which does not exist')
                 continue
             seen.setdefault(skill, []).append(pname)
@@ -174,7 +174,7 @@ def examine_marketplace(repo, reports):
                 for group in groups:
                     for hook in group.get('hooks', []):
                         for script in PLUGIN_ROOT_SCRIPT.findall(hook.get('command', '')):
-                            if not os.path.exists(os.path.join(repo, *script.split('/'))):
+                            if not os.path.exists(os.path.join(source or repo, *script.split('/'))):
                                 out['errors'].append(f'hooks: {pname} {event} runs {script}, which does not exist')
         elif hooks is not None:
             out['errors'].append(f'hooks: {pname} hooks has an unexpected type {type(hooks).__name__}')
