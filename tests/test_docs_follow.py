@@ -323,6 +323,56 @@ def test_non_json_stdin_is_survived():
     check('exit 0 on junk stdin', proc.returncode, 0)
 
 
+def test_commits_a_remote_already_has_are_not_judged():
+    """A pull request branch that merged origin/main must not answer for main's commits.
+
+    Main gained a dependency bump (package.json, a surface, no document, as a bot
+    writes it); the branch merged main and adds a documented change of its own.
+    Only the branch's own commit and the merge go out; the bump is already on the remote.
+    """
+    import tempfile
+
+    def run(cwd, *args):
+        return subprocess.run(['git', '-c', 'user.name=t', '-c', 'user.email=t@example.com',
+                               '-c', 'commit.gpgsign=false', *args],
+                              cwd=cwd, check=True, capture_output=True, text=True).stdout.strip()
+
+    def write(cwd, path, text):
+        os.makedirs(os.path.dirname(os.path.join(cwd, path)) or cwd, exist_ok=True)
+        with open(os.path.join(cwd, path), 'w', encoding='utf-8') as f:
+            f.write(text)
+
+    with tempfile.TemporaryDirectory() as base:
+        remote, clone, bot = (os.path.join(base, n) for n in ('remote.git', 'clone', 'bot'))
+        run(base, 'init', '-q', '--bare', '-b', 'main', remote)
+        run(base, 'clone', '-q', remote, clone)
+        write(clone, 'README.md', 'r\n')
+        run(clone, 'add', '-A')
+        run(clone, 'commit', '-q', '-m', 'base')
+        run(clone, 'push', '-q', 'origin', 'main')
+        run(clone, 'switch', '-q', '-c', 'feat')
+        write(clone, 'hooks/x.py', 'x = 1\n')
+        write(clone, 'docs/x.md', 'x\n')
+        run(clone, 'add', '-A')
+        run(clone, 'commit', '-q', '-m', 'feature with its document')
+        run(clone, 'push', '-q', '-u', 'origin', 'feat')
+        run(base, 'clone', '-q', remote, bot)
+        write(bot, 'package.json', '{"dependencies": {"left-pad": "1.3.1"}}\n')
+        run(bot, 'add', '-A')
+        run(bot, 'commit', '-q', '-m', 'build(deps): bump left-pad')
+        bump = run(bot, 'rev-parse', 'HEAD')
+        run(bot, 'push', '-q', 'origin', 'main')
+        run(clone, 'fetch', '-q', 'origin')
+        run(clone, 'merge', '-q', '--no-edit', 'origin/main')
+        write(clone, 'hooks/y.py', 'y = 1\n')
+        write(clone, 'docs/y.md', 'y\n')
+        run(clone, 'add', '-A')
+        run(clone, 'commit', '-q', '-m', 'second feature commit with its document')
+        shas = [c['sha'] for c in hook.outgoing(clone)]
+        check("main's dependency bump is not among the outgoing commits", bump in shas, False)
+        check("the branch's own commits still are", len(shas), 2)
+        out = hook.push_verdict({'tool_input': {'command': 'git push'}}, hook.outgoing(clone))
+        check('the push of a branch that merged main is not refused for main', out, None)
 
 def test_push_detection_stays_fast_on_repeated_options():
     """A hook that runs past its timeout gives no verdict, and the push goes through."""
@@ -332,6 +382,75 @@ def test_push_detection_stays_fast_on_repeated_options():
         hook.PUSH.search(command)
         check(f'{command[:12]}... is judged in under half a second', time.perf_counter() - started < 0.5, True)
     check('git -c k=v push is still a push', bool(hook.PUSH.search('git -c k=v -C dir --no-pager push')), True)
+
+
+def _merge_of_two_hook_edits(base, resolve_by_hand):
+    """A repository whose branch merges main after both changed hooks/x.py, each with its document.
+
+    With resolve_by_hand the two edits collide and the merge writes a line of its own;
+    otherwise they touch different lines and git combines them. Returns (clone, merge sha).
+    """
+    def run(cwd, *args, check_ok=True):
+        return subprocess.run(['git', '-c', 'user.name=t', '-c', 'user.email=t@example.com',
+                               '-c', 'commit.gpgsign=false', *args],
+                              cwd=cwd, check=check_ok, capture_output=True, text=True).stdout.strip()
+
+    def write(cwd, path, text):
+        os.makedirs(os.path.dirname(os.path.join(cwd, path)) or cwd, exist_ok=True)
+        with open(os.path.join(cwd, path), 'w', encoding='utf-8') as f:
+            f.write(text)
+
+    remote, clone, other = (os.path.join(base, n) for n in ('remote.git', 'clone', 'other'))
+    run(base, 'init', '-q', '--bare', '-b', 'main', remote)
+    run(base, 'clone', '-q', remote, clone)
+    write(clone, 'hooks/x.py', 'a = 1\n\n\n\nb = 1\n')
+    write(clone, 'README.md', 'r\n')
+    run(clone, 'add', '-A')
+    run(clone, 'commit', '-q', '-m', 'base')
+    run(clone, 'push', '-q', 'origin', 'main')
+    run(clone, 'switch', '-q', '-c', 'feat')
+    write(clone, 'hooks/x.py', 'a = 2\n\n\n\nb = 1\n')
+    write(clone, 'docs/a.md', 'a is 2\n')
+    run(clone, 'add', '-A')
+    run(clone, 'commit', '-q', '-m', 'feat edits a, with its document')
+    run(clone, 'push', '-q', '-u', 'origin', 'feat')
+    run(base, 'clone', '-q', remote, other)
+    write(other, 'hooks/x.py', ('a = 3' if resolve_by_hand else 'a = 1') + '\n\n\n\nb = 2\n')
+    write(other, 'docs/b.md', 'b is 2\n')
+    run(other, 'add', '-A')
+    run(other, 'commit', '-q', '-m', 'main edits b, with its document')
+    run(other, 'push', '-q', 'origin', 'main')
+    run(clone, 'fetch', '-q', 'origin')
+    run(clone, 'merge', '-q', '--no-edit', 'origin/main', check_ok=not resolve_by_hand)
+    if resolve_by_hand:
+        write(clone, 'hooks/x.py', 'a = 4\n\n\n\nb = 2\n')
+        run(clone, 'add', '-A')
+        run(clone, 'commit', '-q', '--no-edit')
+    return clone, run(clone, 'rev-parse', 'HEAD')
+
+
+def test_a_merge_that_only_combines_both_sides_changes_no_surface():
+    """git show --name-only lists a file the merge took from both parents; the combined
+    diff (--cc) shows only what the merge wrote itself, and here it wrote nothing."""
+    import tempfile
+    with tempfile.TemporaryDirectory() as base:
+        clone, merge = _merge_of_two_hook_edits(base, resolve_by_hand=False)
+        paths = {c['sha']: c['paths'] for c in hook.outgoing(clone)}
+        check('the merge is outgoing', merge in paths, True)
+        check('a clean merge touches no path of its own', paths.get(merge), [])
+        out = hook.push_verdict({'tool_input': {'command': 'git push'}}, hook.outgoing(clone))
+        check('a clean merge of two documented edits is not refused', out, None)
+
+
+def test_a_merge_that_writes_its_own_line_is_judged_like_any_commit():
+    import tempfile
+    with tempfile.TemporaryDirectory() as base:
+        clone, merge = _merge_of_two_hook_edits(base, resolve_by_hand=True)
+        paths = {c['sha']: c['paths'] for c in hook.outgoing(clone)}
+        check('the resolved hook is a path of the merge', paths.get(merge), ['hooks/x.py'])
+        out = hook.push_verdict({'tool_input': {'command': 'git push'}}, hook.outgoing(clone))
+        check('a merge that rewrote a hook with no document is refused',
+              (out or {}).get('hookSpecificOutput', {}).get('permissionDecision'), 'deny')
 
 
 def main():
